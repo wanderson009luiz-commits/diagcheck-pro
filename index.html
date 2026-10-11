@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Avaliação técnica de carros usados: checklist com pesos, reparos estimados, FIPE ajustada pela quilometragem e oferta máxima.">
+<meta name="theme-color" content="#0c0d10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DiagCheck">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>DiagCheck Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* Layout: mesa de avaliação premium — trilho lateral grafite no desktop, barra inferior no celular.
+   Cada avaliação é um dossiê em 6 etapas: Veículo → Checklist → OBD → Reparos → Negócio → Laudo.
+   Assinatura visual: velocímetro de nota (0–100) e placa Mercosul. */
+:root{
+  --bg:#0c0d10; --surface:#14161a; --surface-2:#1b1e23; --line:#2a2e35; --line-soft:#1f2228;
+  --fg:#e9ebee; --fg-2:#a7adb6; --fg-3:#6f7680;
+  --silver:#c9ced6; --silver-hi:#f3f5f8; --silver-lo:#8a919b; --ink-on-silver:#0c0d10;
+  --ok:#5fb08a; --good:#8fb3d9; --warn:#d6a24a; --bad:#e0645c;
+  --ok-bg:rgba(95,176,138,.12); --good-bg:rgba(143,179,217,.12); --warn-bg:rgba(214,162,74,.12); --bad-bg:rgba(224,100,92,.12);
+  --plate-blue:#1f3f8f;
+  --metal:linear-gradient(115deg,#7f8690 0%,#e9edf2 28%,#9aa1ab 46%,#f5f7fa 64%,#8d949e 100%);
+  --f-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#eef0f3; --surface:#ffffff; --surface-2:#f5f6f8; --line:#d5d9df; --line-soft:#e4e7eb;
+  --fg:#121419; --fg-2:#4b525c; --fg-3:#7a818b;
+  --silver:#3b4048; --silver-hi:#121419; --silver-lo:#6b727c; --ink-on-silver:#f6f7f9;
+  --ok:#2f8a63; --good:#3a6ea5; --warn:#a8741a; --bad:#c2423a;
+  --ok-bg:rgba(47,138,99,.10); --good-bg:rgba(58,110,165,.10); --warn-bg:rgba(168,116,26,.10); --bad-bg:rgba(194,66,58,.10);
+  --metal:linear-gradient(115deg,#3a3f47 0%,#8d949e 30%,#2b2f35 52%,#9aa1ab 72%,#3a3f47 100%);
+  color-scheme:light;
+}}
+:root[data-theme="light"]{
+  --bg:#eef0f3; --surface:#ffffff; --surface-2:#f5f6f8; --line:#d5d9df; --line-soft:#e4e7eb;
+  --fg:#121419; --fg-2:#4b525c; --fg-3:#7a818b;
+  --silver:#3b4048; --silver-hi:#121419; --silver-lo:#6b727c; --ink-on-silver:#f6f7f9;
+  --ok:#2f8a63; --good:#3a6ea5; --warn:#a8741a; --bad:#c2423a;
+  --ok-bg:rgba(47,138,99,.10); --good-bg:rgba(58,110,165,.10); --warn-bg:rgba(168,116,26,.10); --bad-bg:rgba(194,66,58,.10);
+  --metal:linear-gradient(115deg,#3a3f47 0%,#8d949e 30%,#2b2f35 52%,#9aa1ab 72%,#3a3f47 100%);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--silver);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.num{font-variant-numeric:tabular-nums}
+
+/* shell */
+.app{display:grid;grid-template-columns:232px 1fr;min-height:100%}
+.rail{position:sticky;top:env(safe-area-inset-top,0px);height:100vh;border-right:1px solid var(--line-soft);padding:28px 18px;display:flex;flex-direction:column;gap:28px;background:var(--bg)}
+.brand{display:flex;flex-direction:column;gap:4px;padding-inline:8px}
+.brand-name{font-family:var(--f-display);font-size:26px;font-weight:400;line-height:1;background:var(--metal);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand-sub{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-3)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{display:flex;align-items:center;gap:12px;padding:10px;border:0;background:none;border-radius:8px;color:var(--fg-2);text-align:left;font-size:14px}
+.nav button svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.5}
+.nav button:hover{color:var(--fg);background:var(--surface)}
+.nav button[aria-current="true"]{color:var(--fg);background:var(--surface-2)}
+.rail-foot{margin-top:auto;font-size:12px;color:var(--fg-3);padding-inline:8px;display:flex;flex-direction:column;gap:8px}
+.sync{display:flex;align-items:center;gap:8px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--fg-3)}
+.dot.on{background:var(--ok)}
+.main{min-width:0;padding:36px clamp(16px,4vw,56px) 104px}
+.wrap{max-width:1060px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+
+/* type */
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-3)}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,4.4vw,46px);line-height:1.05;margin:0;text-wrap:balance}
+h1 em{font-style:italic;color:var(--fg-2)}
+h2{font-family:var(--f-display);font-weight:400;font-size:25px;margin:0;line-height:1.15;text-wrap:balance}
+h3{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;color:var(--fg-2);margin:0}
+.muted{color:var(--fg-2)} .faint{color:var(--fg-3)}
+.small{font-size:13px}
+.hairline{height:1px;background:var(--metal);opacity:.55;border:0;margin:0}
+
+/* controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--fg);font-size:14px;font-weight:500;white-space:nowrap;text-decoration:none}
+.btn:hover{border-color:var(--silver-lo)}
+.btn.primary{background:var(--silver-hi);color:var(--ink-on-silver);border-color:transparent}
+.btn.primary:hover{background:var(--silver)}
+.btn.ghost{border-color:transparent;color:var(--fg-2)}
+.btn.ghost:hover{color:var(--fg);background:var(--surface)}
+.btn.danger{color:var(--bad);border-color:transparent}
+.btn.sm{height:34px;padding:0 14px;font-size:13px}
+.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;flex:none}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.spacer{flex:1}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label,.lbl{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-3)}
+.input{width:100%;height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);outline:none}
+textarea.input{height:auto;min-height:88px;padding:12px 14px;resize:vertical;line-height:1.5}
+.input:focus{border-color:var(--silver-lo)}
+.money{position:relative}
+.money span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--fg-3);font-size:13px;pointer-events:none}
+.money .input{padding-left:38px;font-variant-numeric:tabular-nums}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.panel{background:var(--surface);border:1px solid var(--line-soft);border-radius:14px;padding:24px}
+.panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.hint{font-size:12.5px;color:var(--fg-3);margin:0}
+
+/* home */
+.hero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:32px;align-items:end}
+.hero p{margin:12px 0 0;max-width:48ch;color:var(--fg-2)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stat{padding:18px 4px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.stat+.stat{border-left:1px solid var(--line-soft);padding-left:20px}
+.stat b{font-family:var(--f-display);font-weight:400;font-size:34px;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat span{font-size:12px;color:var(--fg-3)}
+
+/* list */
+.list{display:flex;flex-direction:column}
+.item{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:18px;align-items:center;padding:16px 4px;border:0;border-bottom:1px solid var(--line-soft);background:none;text-align:left;width:100%;color:inherit}
+.item:first-child{border-top:1px solid var(--line-soft)}
+.item:hover{background:var(--surface)}
+.item-title{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-sub{font-size:13px;color:var(--fg-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-right{text-align:right;font-size:13px;color:var(--fg-2);display:flex;flex-direction:column;gap:2px}
+.item-right b{font-weight:500;color:var(--fg);font-size:14px}
+.pill{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:999px;font-size:11.5px;border:1px solid var(--line);color:var(--fg-2);white-space:nowrap}
+.pill.ok{color:var(--ok);border-color:transparent;background:var(--ok-bg)}
+.pill.good{color:var(--good);border-color:transparent;background:var(--good-bg)}
+.pill.warn{color:var(--warn);border-color:transparent;background:var(--warn-bg)}
+.pill.bad{color:var(--bad);border-color:transparent;background:var(--bad-bg)}
+.empty{padding:40px 24px;text-align:center;border:1px dashed var(--line);border-radius:14px;display:flex;flex-direction:column;gap:12px;align-items:center}
+.empty p{margin:0;color:var(--fg-2);max-width:46ch}
+
+/* placa Mercosul */
+.plate{display:inline-flex;flex-direction:column;width:96px;border-radius:5px;overflow:hidden;border:1.5px solid #20242b;background:#fbfbfc;flex:none}
+.plate i{display:block;height:9px;background:var(--plate-blue);color:#fff;font-style:normal;font-size:6px;letter-spacing:.3em;text-align:center;line-height:9px;font-family:var(--f-body);font-weight:600}
+.plate b{font-family:var(--f-mono);font-weight:500;color:#15181d;font-size:15px;letter-spacing:.08em;text-align:center;line-height:22px}
+.plate.lg{width:150px}.plate.lg i{height:13px;line-height:13px;font-size:8px}.plate.lg b{font-size:23px;line-height:34px}
+
+/* anel pequeno de nota */
+.ring{--p:0;--c:var(--ok);width:46px;height:46px;border-radius:50%;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--line-soft) 0);display:grid;place-items:center;flex:none}
+.ring span{width:38px;height:38px;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-size:13px;font-variant-numeric:tabular-nums}
+.item:hover .ring span{background:var(--surface)}
+
+/* velocímetro */
+.gauge{width:100%;max-width:260px;display:block;margin-inline:auto}
+.gauge .trk{fill:none;stroke:var(--line-soft);stroke-width:12}
+.gauge .zone{fill:none;stroke-width:3;opacity:.7}
+.gauge .val{fill:none;stroke-width:12;stroke-linecap:round}
+.gauge .tick{stroke:var(--fg-3);stroke-width:1}
+.gauge .tick.maj{stroke:var(--fg-2);stroke-width:1.5}
+.gauge .tl{fill:var(--fg-3);font-family:var(--f-mono);font-size:8px}
+.gauge .n{fill:var(--fg);font-family:var(--f-display);font-size:44px}
+.gauge .cl{font-family:var(--f-body);font-size:9.5px;letter-spacing:.18em}
+
+/* editor */
+.ed-head{display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap}
+.saved{font-size:12px;color:var(--fg-3)}
+.steps{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+.steps::-webkit-scrollbar{display:none}
+.steps button{border:0;background:none;padding:14px 12px 13px;color:var(--fg-3);font-size:14px;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;gap:8px;align-items:center}
+.steps button .n{font-family:var(--f-mono);font-size:11px}
+.steps button[aria-current="true"]{color:var(--fg);border-bottom-color:var(--silver)}
+.steps button:hover{color:var(--fg)}
+.badge{font-size:11px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--bad-bg);color:var(--bad);display:inline-grid;place-items:center}
+.progress{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--fg-2)}
+.bar{width:110px;height:4px;border-radius:2px;background:var(--line-soft);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--silver)}
+
+/* checklist */
+.sys{border-top:1px solid var(--line-soft)}
+.sys:last-child{border-bottom:1px solid var(--line-soft)}
+.sys summary{list-style:none;display:flex;align-items:center;gap:14px;padding:16px 4px;cursor:pointer}
+.sys summary::-webkit-details-marker{display:none}
+.sys summary .t{font-family:var(--f-display);font-size:21px;flex:1;min-width:0}
+.sys summary .w{font-family:var(--f-mono);font-size:11px;color:var(--fg-3)}
+.chev{width:16px;height:16px;stroke:var(--fg-3);fill:none;stroke-width:1.6;transition:transform .2s;flex:none}
+.sys[open] .chev{transform:rotate(180deg)}
+.sys-body{padding:0 4px 18px}
+.ck{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 16px;padding:12px 0;border-top:1px dashed var(--line-soft);align-items:center}
+.ck:first-of-type{border-top:0}
+.ck-name{font-size:14.5px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.ck-name small{font-family:var(--f-mono);font-size:11px;color:var(--fg-3)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;gap:2px}
+.seg button{border:0;background:none;height:30px;padding:0 12px;border-radius:999px;font-size:12.5px;color:var(--fg-3)}
+.seg button:hover{color:var(--fg)}
+.seg button[aria-pressed="true"][data-v="ok"]{background:var(--ok-bg);color:var(--ok)}
+.seg button[aria-pressed="true"][data-v="atencao"]{background:var(--warn-bg);color:var(--warn)}
+.seg button[aria-pressed="true"][data-v="critico"]{background:var(--bad-bg);color:var(--bad)}
+.seg button[aria-pressed="true"][data-v="na"]{background:var(--surface-2);color:var(--fg-2)}
+.ck-note{grid-column:1/-1}
+.ck-note .input{height:38px;font-size:13.5px}
+
+/* FIPE */
+.fipe-box{border:1px solid var(--line-soft);border-radius:12px;padding:18px;background:var(--surface-2);display:flex;flex-direction:column;gap:14px}
+.src{font-size:12px;display:inline-flex;gap:6px;align-items:center}
+
+/* obd */
+.obd-entry{display:grid;grid-template-columns:minmax(0,220px) auto 1fr;gap:12px;align-items:end}
+.codes{display:flex;flex-direction:column;gap:12px}
+.code{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 18px;padding:18px;border:1px solid var(--line-soft);border-radius:12px;background:var(--surface);align-items:start}
+.code-id{font-family:var(--f-mono);font-size:22px;letter-spacing:.04em;line-height:1.1}
+.code-meta{font-size:13px;color:var(--fg-2)}
+.code-meta ul{margin:6px 0 0;padding-left:18px}
+.code-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.sev{width:4px;align-self:stretch;border-radius:2px;background:var(--line)}
+.sev.alta{background:var(--bad)}.sev.media{background:var(--warn)}.sev.baixa{background:var(--ok)}
+.anatomy{display:flex;gap:4px;font-family:var(--f-mono);font-size:11.5px;color:var(--fg-3);margin-top:8px;flex-wrap:wrap}
+.anatomy span{padding:3px 7px;border:1px solid var(--line-soft);border-radius:4px}
+
+/* reparos */
+.rep{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 16px;align-items:center;padding:14px 0;border-top:1px solid var(--line-soft)}
+.rep:first-child{border-top:0}
+.rep .range{font-size:12.5px;color:var(--fg-3)}
+.rep .money{width:150px}
+.rep .money .input{height:38px;text-align:right}
+.rep .edited .input{border-color:var(--warn)}
+.sum{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-top:1px solid var(--line);padding-top:14px;margin-top:6px}
+.sum b{font-family:var(--f-display);font-weight:400;font-size:30px}
+
+/* negócio */
+.kmadj{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border:1px solid var(--line-soft);border-radius:12px;overflow:hidden}
+.kmadj>div{padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.kmadj>div+div{border-left:1px solid var(--line-soft)}
+.kmadj b{font-weight:500;font-variant-numeric:tabular-nums}
+.kmadj .foot{grid-column:1/-1;border-left:0!important;border-top:1px solid var(--line-soft);flex-direction:row;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.res{border:1px solid var(--line-soft);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.res b{font-family:var(--f-display);font-weight:400;font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums}
+.res small{font-size:12.5px;color:var(--fg-2)}
+.res.pos b{color:var(--ok)} .res.neg b{color:var(--bad)}
+.res.offer{background:var(--surface-2);border-color:var(--line)}
+.verdict{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:12px;font-size:14px}
+.verdict.ok{background:var(--ok-bg)} .verdict.warn{background:var(--warn-bg)} .verdict.bad{background:var(--bad-bg)}
+.verdict strong{display:block;font-weight:600}
+
+/* laudo */
+.report{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:28px;align-items:start}
+.report-side{display:flex;flex-direction:column;gap:14px;position:sticky;top:72px}
+.find{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:2px 14px;padding:12px 0;border-top:1px solid var(--line-soft);align-items:baseline}
+.find:first-of-type{border-top:0}
+.find .k{font-size:12.5px;color:var(--fg-3);grid-column:2/4}
+.cats{display:flex;flex-direction:column}
+.cat{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:10px 0;border-top:1px solid var(--line-soft);align-items:center}
+.cat:first-child{border-top:0}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:14px;margin:0;width:100%}
+.kv dt{color:var(--fg-3)}.kv dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
+
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--silver-hi);color:var(--ink-on-silver);padding:10px 18px;border-radius:999px;font-size:13.5px;z-index:50;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.notice{padding:12px 16px;border-radius:10px;background:var(--warn-bg);font-size:13.5px}
+.confirm{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 16px;border-radius:10px;background:var(--bad-bg);font-size:13.5px}
+.auth{min-height:100%;display:grid;place-items:center;padding:24px 16px}
+.auth-card{width:min(420px,100%);display:flex;flex-direction:column;gap:18px}
+.tabbar{display:none}
+.mobile-brand{display:none;align-items:baseline;justify-content:space-between}
+
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .rail{display:none}
+  .main{padding-top:20px}
+  .tabbar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+  .tabbar button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:var(--fg-3);padding:6px 0}
+  .tabbar button svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.5}
+  .tabbar button[aria-current="true"]{color:var(--fg)}
+  .mobile-brand{display:flex}
+  .hero{grid-template-columns:1fr}
+  .report{grid-template-columns:1fr}
+  .report-side{position:static}
+  .g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:560px){
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .item{grid-template-columns:auto minmax(0,1fr) auto;gap:12px}
+  .item .plate{display:none}
+  .ck{grid-template-columns:1fr}
+  .obd-entry{grid-template-columns:1fr auto}
+  .obd-entry .hint{grid-column:1/-1}
+  .code{grid-template-columns:auto minmax(0,1fr)}
+  .code-actions{grid-column:2;flex-direction:row;align-items:center;flex-wrap:wrap}
+  .rep{grid-template-columns:minmax(0,1fr)}
+  .rep>.pill{justify-self:start}
+  .rep .money{width:100%}
+  .stat b{font-size:26px}
+  .stat+.stat{padding-left:12px}
+  .panel{padding:18px}
+  .results{grid-template-columns:1fr}
+  .kmadj{grid-template-columns:1fr}
+  .kmadj>div+div{border-left:0;border-top:1px solid var(--line-soft)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+/* ===================== Dados de referência ===================== */
+const CATEGORIAS=[
+ {id:'motor',label:'Motor',itens:[['motor_partida','Partida a frio',3],['motor_fumaca','Ausência de fumaça',3],['motor_ruidos','Sem ruídos anormais',3],['motor_vazamentos','Sem vazamentos de óleo',4],['motor_nivel_oleo','Nível e qualidade do óleo',3],['motor_nivel_agua','Nível do líquido de arrefecimento',3],['motor_correia','Correia dentada e acessórios',3],['motor_velas','Velas de ignição',3]]},
+ {id:'transmissao',label:'Transmissão',itens:[['trans_marchas','Troca de marchas suave',4],['trans_embreagem','Embreagem sem patinar',4],['trans_ruidos','Sem ruídos na caixa',4],['trans_fluido','Fluido da transmissão',3]]},
+ {id:'freios',label:'Freios',itens:[['freio_pedal','Pedal firme e consistente',5],['freio_pastilhas','Pastilhas e lonas',4],['freio_discos','Discos e tambores',4],['freio_fluido','Fluido de freio',2]]},
+ {id:'suspensao',label:'Suspensão e direção',itens:[['susp_amortecedores','Amortecedores',3],['susp_buchas','Buchas e bandejas',3],['susp_direcao','Folga na direção',2],['susp_alinhamento','Alinhamento e balanceamento',2]]},
+ {id:'eletrica',label:'Elétrica',itens:[['elet_bateria','Bateria',3],['elet_alternador','Alternador',3],['elet_iluminacao','Iluminação completa',2],['elet_painel','Painel sem luzes de alerta',2]]},
+ {id:'carroceria',label:'Carroceria',itens:[['carr_lataria','Lataria sem amassados',2],['carr_pintura','Pintura original uniforme',2],['carr_corrosao','Sem corrosão ou ferrugem',3],['carr_portas','Portas e travas',2],['carr_vidros','Vidros e borrachas',1]]},
+ {id:'interior',label:'Interior',itens:[['int_bancos','Bancos e estofados',1],['int_painel','Painel e acabamentos',1],['int_ar','Ar-condicionado',2],['int_som','Som e multimídia',1]]},
+ {id:'pneus',label:'Pneus e rodas',itens:[['pneu_sulcos','Sulcos dos pneus',2],['pneu_desgaste','Desgaste uniforme',2],['pneu_estepe','Estepe em boas condições',1]]},
+ {id:'documentacao',label:'Documentação',itens:[['doc_crlv','CRLV em dia',2],['doc_historico','Histórico de manutenção',2],['doc_sinistro','Sem registro de sinistro grave',1]]},
+];
+const ITENS={};CATEGORIAS.forEach(c=>c.itens.forEach(([id,label,peso])=>ITENS[id]={id,label,peso,cat:c}));
+const ST={ok:{label:'OK',score:1},atencao:{label:'Atenção',score:.5},critico:{label:'Crítico',score:0},na:{label:'N/A',score:null}};
+const CUSTO={
+ motor_partida:['Partida a frio',150,600,375],motor_fumaca:['Fumaça no escapamento',800,4000,2400],motor_ruidos:['Ruído no motor',500,3500,2000],motor_vazamentos:['Vazamento de óleo',150,800,475],motor_nivel_oleo:['Troca de óleo',120,300,210],motor_nivel_agua:['Arrefecimento',150,350,250],motor_correia:['Correia dentada',400,1200,800],motor_velas:['Velas de ignição',120,400,260],
+ trans_marchas:['Trocas de marcha',800,2500,1650],trans_embreagem:['Embreagem',700,1800,1250],trans_ruidos:['Ruído na caixa',1500,4000,2750],trans_fluido:['Fluido de transmissão',150,400,275],
+ freio_pedal:['Reparo do pedal de freio',200,800,500],freio_pastilhas:['Pastilhas e lonas',150,400,275],freio_discos:['Discos e tambores',300,900,600],freio_fluido:['Fluido de freio',100,200,150],
+ susp_amortecedores:['Amortecedores',600,1800,1200],susp_buchas:['Buchas e bandejas',300,1200,750],susp_direcao:['Direção',400,1500,950],susp_alinhamento:['Alinhamento',80,200,140],
+ elet_bateria:['Bateria',350,700,525],elet_alternador:['Alternador',300,900,600],elet_iluminacao:['Iluminação',50,300,175],elet_painel:['Diagnóstico com scanner',100,300,200],
+ carr_lataria:['Amassados',150,800,475],carr_pintura:['Pintura',300,1500,900],carr_corrosao:['Ferrugem e corrosão',200,1200,700],carr_portas:['Travas e portas',150,500,325],carr_vidros:['Borrachas e vidros',100,400,250],
+ int_bancos:['Bancos e estofados',300,1500,900],int_painel:['Painel e acabamentos',150,600,375],int_ar:['Ar-condicionado',150,1200,675],int_som:['Som e multimídia',150,800,475],
+ pneu_sulcos:['Pneu novo',250,600,425],pneu_desgaste:['Alinhamento e balanceamento',80,200,140],pneu_estepe:['Estepe',200,500,350],
+ doc_crlv:['Regularização do CRLV',150,500,325],doc_historico:['Laudo técnico',100,300,200],doc_sinistro:['Sinistro / recuperado',2000,8000,5000],
+};
+const MARCAS=['Chevrolet','Fiat','Volkswagen','Ford','Toyota','Honda','Hyundai','Renault','Nissan','Jeep','Peugeot','Citroën','Mitsubishi','Kia','Chery','BYD','GWM','BMW','Mercedes-Benz','Audi','Volvo','Land Rover','RAM','Porsche'];
+const ANOS=Array.from({length:30},(_,k)=>String(new Date().getFullYear()+1-k));
+const COMBUSTIVEIS=['Flex','Gasolina','Diesel','Elétrico','Híbrido'];
+const CAMBIOS=['Manual','Automático','CVT','Automatizado'];
+const TRACOES=['4x2','4x4','AWD','FWD','RWD'];
+const OBD={
+ P0011:['Comando de admissão adiantado demais (banco 1)','media',['Nível ou qualidade do óleo','Solenoide do VVT','Corrente de distribuição esticada']],
+ P0016:['Correlação virabrequim x comando (banco 1)','alta',['Distribuição fora do ponto','Sensor de rotação ou fase','Solenoide do VVT']],
+ P0087:['Pressão do tubo de combustível muito baixa','alta',['Bomba de combustível fraca','Filtro entupido','Regulador de pressão']],
+ P0101:['Sensor MAF fora da faixa','media',['MAF sujo','Entrada falsa de ar','Filtro de ar obstruído']],
+ P0106:['Sensor MAP fora da faixa','media',['Mangueira de vácuo','Sensor MAP','Entrada falsa de ar']],
+ P0117:['Sensor de temperatura do motor com sinal baixo','media',['Sensor ECT em curto','Chicote em curto']],
+ P0118:['Sensor de temperatura do motor com sinal alto','media',['Sensor ECT aberto','Conector oxidado']],
+ P0121:['Sensor de posição da borboleta fora da faixa','media',['TPS desgastado','Corpo de borboleta sujo']],
+ P0128:['Motor abaixo da temperatura de trabalho (termostato)','baixa',['Termostato travado aberto','Sensor ECT']],
+ P0130:['Sonda lambda B1S1 com falha no circuito','media',['Sonda lambda','Chicote','Vazamento no escapamento']],
+ P0133:['Sonda lambda B1S1 com resposta lenta','media',['Sonda envelhecida','Contaminação']],
+ P0135:['Aquecedor da sonda B1S1 com falha','baixa',['Resistência da sonda aberta','Fusível ou relé']],
+ P0171:['Mistura pobre (banco 1)','media',['Entrada falsa de ar','MAF sujo','Pressão de combustível baixa','Bicos entupidos']],
+ P0172:['Mistura rica (banco 1)','media',['Bico gotejando','Pressão alta','Sonda lambda','MAF']],
+ P0217:['Superaquecimento do motor','alta',['Falta de líquido','Termostato','Bomba d\'água','Junta do cabeçote']],
+ P0234:['Sobrepressão do turbo','alta',['Wastegate travada','Atuador do turbo','Sensor de pressão']],
+ P0299:['Pressão do turbo abaixo do esperado','media',['Vazamento no intercooler','Wastegate aberta','Turbo desgastado']],
+ P0300:['Falha de combustão aleatória / vários cilindros','alta',['Velas','Bobinas','Entrada falsa de ar','Combustível adulterado','Compressão baixa']],
+ P0301:['Falha de combustão no cilindro 1','alta',['Vela','Bobina','Bico injetor','Compressão']],
+ P0302:['Falha de combustão no cilindro 2','alta',['Vela','Bobina','Bico injetor','Compressão']],
+ P0303:['Falha de combustão no cilindro 3','alta',['Vela','Bobina','Bico injetor','Compressão']],
+ P0304:['Falha de combustão no cilindro 4','alta',['Vela','Bobina','Bico injetor','Compressão']],
+ P0325:['Sensor de detonação (banco 1) com falha','media',['Sensor de detonação','Torque de fixação','Chicote']],
+ P0335:['Sensor de rotação (CKP) sem sinal','alta',['Sensor CKP','Roda fônica','Chicote']],
+ P0340:['Sensor de fase (CMP) com falha','alta',['Sensor CMP','Chicote','Ponto da distribuição']],
+ P0401:['Fluxo de EGR insuficiente','media',['Válvula EGR carbonizada','Passagens obstruídas']],
+ P0420:['Catalisador abaixo da eficiência (banco 1)','media',['Catalisador saturado','Sonda pós-catalisador','Falhas de combustão anteriores']],
+ P0442:['Vazamento pequeno no sistema EVAP','baixa',['Tampa do tanque','Mangueira do canister']],
+ P0455:['Vazamento grande no sistema EVAP','baixa',['Tampa do tanque solta','Mangueira desconectada']],
+ P0480:['Comando do eletroventilador 1','media',['Relé do ventilador','Ventilador travado','Fusível']],
+ P0500:['Sensor de velocidade do veículo','media',['Sensor VSS / ABS','Chicote']],
+ P0505:['Controle de marcha lenta','media',['Corpo de borboleta sujo','Válvula IAC','Entrada falsa de ar']],
+ P0562:['Tensão do sistema baixa','media',['Bateria fraca','Alternador','Cabos com mau contato']],
+ P0600:['Falha de comunicação interna da central','alta',['ECU','Alimentação ou aterramento']],
+ P0700:['Falha no controle da transmissão (TCM)','media',['Ler códigos do câmbio no TCM']],
+ P0715:['Sensor de rotação de entrada do câmbio','media',['Sensor de turbina','Chicote do câmbio']],
+ P0730:['Relação de marcha incorreta','alta',['Fluido baixo ou degradado','Solenoides','Desgaste interno']],
+ P0741:['Conversor de torque não trava','media',['Solenoide TCC','Fluido degradado']],
+ P2135:['Correlação sensores do pedal / borboleta','alta',['Corpo de borboleta eletrônico','Sensor do pedal','Chicote']],
+ P2187:['Mistura pobre em marcha lenta (B1)','media',['Entrada falsa de ar','Válvula PCV','Junta do coletor']],
+ U0100:['Sem comunicação com a central do motor','alta',['Rede CAN','Alimentação da ECU']],
+ U0101:['Sem comunicação com o módulo do câmbio','alta',['Rede CAN','TCM']],
+ U0121:['Sem comunicação com o módulo do ABS','alta',['Rede CAN','Módulo ABS','Fusível']],
+ C0035:['Sensor de roda dianteira esquerda (ABS)','media',['Sensor ABS','Anel de relutância','Chicote']],
+ C0040:['Sensor de roda dianteira direita (ABS)','media',['Sensor ABS','Anel de relutância','Chicote']],
+ B0001:['Circuito do airbag do motorista','alta',['Cinta do volante','Conector do airbag']],
+};
+const LETRA={P:'Trem de força',B:'Carroceria',C:'Chassi',U:'Rede de comunicação'};
+const SUBP={0:'Ar/combustível e emissões',1:'Medição de ar e combustível',2:'Injeção',3:'Ignição e falhas',4:'Emissões',5:'Velocidade e marcha lenta',6:'Central e saídas',7:'Transmissão',8:'Transmissão',9:'Transmissão',A:'Híbrido'};
+
+/* ===================== Utilidades ===================== */
+const $=(s,el=document)=>el.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const brl=n=>(Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+const dt=s=>{try{return new Date(s).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}catch(e){return ''}};
+const num=v=>{if(typeof v==='number')return v;const t=String(v??'').replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(t);return isNaN(n)?0:n};
+const fmtN=v=>{const n=num(v);return n?n.toLocaleString('pt-BR'):''};
+const fmtPlaca=p=>String(p||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,7);
+const uid=()=>'a'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const ICON={
+ home:'<svg viewBox="0 0 24 24"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z"/></svg>',
+ plus:'<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+ hist:'<svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>',
+ user:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.6 4-5 7-5s5.8 1.4 7 5"/></svg>',
+ chev:'<svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>',
+ dl:'<svg viewBox="0 0 24 24"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>',
+ wa:'<svg viewBox="0 0 24 24"><path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z"/></svg>',
+ back:'<svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>',
+ spark:'<svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>',
+ reset:'<svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></svg>',
+ search:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg>',
+};
+
+/* ===================== Camada de dados =====================
+   Dentro do Claude: armazenamento em nuvem da própria página (privado por pessoa).
+   Hospedado fora do Claude: Supabase com login por e-mail e senha. */
+const SUPA_URL='https://rkrxqkvgocclyxhvztzf.supabase.co';
+const SUPA_KEY='sb_publishable__XZi-2QdVgINCaJ2MZ9pjw_463vUiTK';
+const TABELA='avaliacoes';
+const store={mode:'memoria',ready:false,mem:{list:[],perfil:{}},base:null,sb:null,user:null,sample:null,downloads:null};
+const inClaude=()=>!!(window.claude&&typeof window.claude.use==='function');
+
+async function initStore(){
+  if(inClaude()){
+    try{
+      const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);
+      const id=user?await user.id():null;
+      if(db&&id){store.mode='claude';store.base=db.doc('data/users/'+id+'/perfil')}
+    }catch(e){}
+    claude.use('sample').then(s=>{store.sample=s;if(state.view==='editor')renderEditor()}).catch(()=>{});
+    claude.use('downloads').then(d=>{store.downloads=d}).catch(()=>{});
+    store.ready=true;return;
+  }
+  await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';s.onload=res;s.onerror=rej;document.head.appendChild(s)}).catch(()=>{});
+  if(window.supabase){
+    store.sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);store.mode='supabase';
+    const {data}=await store.sb.auth.getSession();store.user=data?.session?.user||null;
+  }
+  store.ready=true;
+}
+const CAMPOS=['status','placa','marca','modelo','ano','versao','km','combustivel','cambio','tracao','cor','vendedor','fipe','fipe_fonte','fipe_ref','answers','notes','obd','repair_overrides','extras','financeiro','observacoes'];
+function serial(a){const o={};CAMPOS.forEach(k=>o[k]=a[k]??null);o.km=a.km?Math.round(num(a.km)):null;o.fipe=a.fipe?num(a.fipe):null;o.score=calcScore(a.answers);o.reparo_total=reparos(a).total;
+  ['answers','notes','repair_overrides','financeiro'].forEach(k=>o[k]=o[k]||{});['obd','extras'].forEach(k=>o[k]=o[k]||[]);o.status=o.status||'em_andamento';return o}
+const api={
+  async list(){
+    if(store.mode==='claude'){const s=await store.base.collection(TABELA).get();return s.docs.map(d=>({...d.data(),id:d.id})).sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)))}
+    if(store.mode==='supabase'){const {data,error}=await store.sb.from(TABELA).select('*').order('created_at',{ascending:false});if(error)throw error;return data||[]}
+    return [...store.mem.list];
+  },
+  async save(a){
+    const now=new Date().toISOString();const body=serial(a);
+    if(store.mode==='claude'){
+      if(!a.id){a.id=uid();a.created_at=now;a.numero=nextNumero()}
+      await store.base.collection(TABELA).doc(a.id).set({...body,numero:a.numero,created_at:a.created_at,updated_at:now});return a;
+    }
+    if(store.mode==='supabase'){
+      if(!a.id){const {data,error}=await store.sb.from(TABELA).insert(body).select('id,numero,created_at').single();if(error)throw error;Object.assign(a,data);return a}
+      const {error}=await store.sb.from(TABELA).update(body).eq('id',a.id);if(error)throw error;return a;
+    }
+    if(!a.id){a.id=uid();a.created_at=now;a.numero=nextNumero();store.mem.list.unshift(a)}return a;
+  },
+  async remove(id){
+    if(store.mode==='claude')return store.base.collection(TABELA).doc(id).delete();
+    if(store.mode==='supabase'){const {error}=await store.sb.from(TABELA).delete().eq('id',id);if(error)throw error;return}
+    store.mem.list=store.mem.list.filter(x=>x.id!==id);
+  },
+  async getPerfil(){
+    if(store.mode==='claude'){const s=await store.base.get();return s.exists?(s.data().perfil||{}):{}}
+    if(store.mode==='supabase'){const {data}=await store.sb.from('workshop').select('*').maybeSingle();return data||{}}
+    return store.mem.perfil;
+  },
+  async savePerfil(p){
+    if(store.mode==='claude')return store.base.set({perfil:p});
+    if(store.mode==='supabase'){const {error}=await store.sb.from('workshop').upsert({...p,user_id:store.user.id});if(error)throw error;return}
+    store.mem.perfil=p;
+  }
+};
+function nextNumero(){return state.list.reduce((m,x)=>Math.max(m,Number(x.numero)||0),0)+1}
+
+/* ===================== Motor de cálculo ===================== */
+function calcScore(ans){let s=0,w=0;for(const id in ITENS){const st=(ans||{})[id];if(!st||st==='na')continue;s+=ITENS[id].peso*ST[st].score;w+=ITENS[id].peso}return w?Math.round(s/w*100):null}
+function categoria(p){
+  if(p==null)return{label:'Sem nota',cls:'',cor:'var(--fg-3)',rec:'Avalie os itens do checklist para gerar a nota.'};
+  if(p>=80)return{label:'Excelente',cls:'ok',cor:'var(--ok)',rec:'Compra recomendada. Veículo em ótimo estado.'};
+  if(p>=65)return{label:'Bom',cls:'good',cor:'var(--good)',rec:'Compra viável com pequenas ressalvas. Negocie os reparos.'};
+  if(p>=50)return{label:'Regular',cls:'warn',cor:'var(--warn)',rec:'Requer atenção. Negocie desconto para cobrir os reparos.'};
+  if(p>=35)return{label:'Ruim',cls:'warn',cor:'var(--warn)',rec:'Alto risco. Avalie bem os custos de reparo antes de decidir.'};
+  return{label:'Crítico',cls:'bad',cor:'var(--bad)',rec:'Não recomendado. Problemas graves identificados.'};
+}
+function completude(ans){const t=Object.keys(ITENS).length;const n=Object.keys(ITENS).filter(id=>(ans||{})[id]).length;return Math.round(n/t*100)}
+function marcados(a,st){return Object.values(ITENS).filter(i=>(a.answers||{})[i.id]===st)}
+function reparos(a){
+  const linhas=[];const ov=a.repair_overrides||{};
+  Object.values(ITENS).forEach(i=>{const st=(a.answers||{})[i.id];if(st!=='atencao'&&st!=='critico')return;const c=CUSTO[i.id];if(!c)return;
+    const padrao=st==='critico'?c[2]:c[3];const editado=ov[i.id]!=null&&ov[i.id]!=='';
+    linhas.push({id:i.id,item:i,st,nome:c[0],min:c[1],max:c[2],padrao,valor:editado?num(ov[i.id]):padrao,editado})});
+  const extras=(a.extras||[]).map(e=>({...e,valor:num(e.valor)}));
+  const total=linhas.reduce((s,l)=>s+l.valor,0)+extras.reduce((s,e)=>s+e.valor,0);
+  return{linhas,extras,total};
+}
+function ajusteKm(a){
+  const ano=parseInt(a.ano)||0,km=num(a.km),fipe=num(a.fipe);if(!ano||!km||!fipe)return null;
+  const idade=Math.max(0,new Date().getFullYear()-ano);const esperado=idade*12000;const dif=km-esperado;const d=-dif;
+  let adj;if(d<-30000)adj={pct:-20,label:'Muito alta',cls:'bad'};else if(d<-15000)adj={pct:-10,label:'Alta',cls:'warn'};else if(d<-5000)adj={pct:-5,label:'Acima do normal',cls:'warn'};else if(d<=5000)adj={pct:0,label:'Normal',cls:'ok'};else if(d<=15000)adj={pct:5,label:'Baixa',cls:'good'};else adj={pct:15,label:'Muito baixa',cls:'good'};
+  return{idade,esperado,km,dif,adj,fipe,ajustado:Math.round(fipe*(1+adj.pct/100))};
+}
+function negocio(a){
+  const f=a.financeiro||{};const pedido=num(f.pedido);const aj=ajusteKm(a);
+  const mercado=num(f.mercado)||(aj?aj.ajustado:num(a.fipe));const fonteMercado=num(f.mercado)?'informado':aj?'FIPE ajustada pela km':(num(a.fipe)?'FIPE':'');
+  const reparo=reparos(a).total;const lucro=f.lucro===''||f.lucro==null?num(state.perfil.lucro_padrao):num(f.lucro);
+  if(!mercado)return{ok:false,pedido,mercado,reparo,lucro,aj,fonteMercado};
+  const custo=pedido+reparo;const liquido=mercado-custo;const margem=mercado?liquido/mercado*100:0;const oferta=Math.max(0,mercado-reparo-lucro);
+  return{ok:true,pedido,mercado,reparo,lucro,custo,liquido,margem,oferta,aj,fonteMercado,acima:pedido?pedido-oferta:null};
+}
+function decodeOBD(code){
+  const c=code.toUpperCase();const k=OBD[c];const l=c[0],d1=c[1],d2=c[2];
+  return{code:c,known:!!k,desc:k?k[0]:null,sev:k?k[1]:null,causas:k?k[2]:[],anat:[LETRA[l]||'?',(d1==='0'||d1==='2')?'Genérico (SAE)':'Específico do fabricante',l==='P'?(SUBP[d2]||''):'']};
+}
+
+/* ===================== Estado ===================== */
+const state={view:'home',list:[],perfil:{},cur:null,step:'veiculo',open:{motor:true},q:'',saving:'',confirmDel:false,busy:null,loaded:false,authMode:'entrar',authMsg:'',fipe:null};
+const STEPS=[['veiculo','Veículo'],['checklist','Checklist'],['obd','Códigos OBD'],['reparos','Reparos'],['negocio','Negócio'],['laudo','Laudo']];
+function nova(){return{id:null,status:'em_andamento',placa:'',marca:'',modelo:'',ano:'',versao:'',km:'',combustivel:'',cambio:'',tracao:'',cor:'',vendedor:'',fipe:'',fipe_fonte:'',fipe_ref:'',answers:{},notes:{},obd:[],repair_overrides:{},extras:[],financeiro:{pedido:'',mercado:'',lucro:''},observacoes:''}}
+function exemplo(){
+  const ans={};Object.keys(ITENS).forEach(id=>ans[id]='ok');
+  Object.assign(ans,{freio_pastilhas:'critico',int_ar:'atencao',susp_amortecedores:'atencao',carr_pintura:'atencao',pneu_estepe:'na',doc_historico:'atencao'});
+  return{...nova(),exemplo:true,numero:0,status:'concluido',created_at:new Date().toISOString(),placa:'PEX1A23',marca:'Mercedes-Benz',modelo:'C 200',ano:'2019',versao:'Avantgarde 2.0 Turbo',km:96000,combustivel:'Gasolina',cambio:'Automático',tracao:'RWD',cor:'Prata',vendedor:'Exemplo · particular',
+   fipe:142000,fipe_fonte:'exemplo',answers:ans,
+   notes:{freio_pastilhas:'2 mm restantes, chiado ao frear',int_ar:'Saída a 14 °C, abaixo do ideal',susp_amortecedores:'Traseiros com suor de óleo',carr_pintura:'Para-choque dianteiro repintado',doc_historico:'Sem revisões após 60 mil km'},
+   obd:[{code:'P0171',nota:'Trim de longo prazo +18%'}],extras:[{desc:'P0171 · teste de fumaça na admissão',valor:250}],
+   financeiro:{pedido:118000,mercado:'',lucro:8000},observacoes:'Exemplo de avaliação para mostrar como o laudo fica.'};
+}
+
+/* ===================== Render: casca ===================== */
+const root=$('#root');
+function navBtn(v,label,icon,cur){return `<button data-nav="${v}" aria-current="${cur===v}">${ICON[icon]}<span>${label}</span></button>`}
+function shell(inner){
+  const cur=state.view==='editor'?(state.cur&&state.cur.id?'hist':'nova'):state.view;
+  const modo=store.mode==='claude'?'Sincronizado na nuvem':store.mode==='supabase'?esc(store.user?.email||'Supabase'):'Sem sincronização';
+  return `<div class="app">
+   <aside class="rail">
+    <div class="brand"><span class="brand-name">DiagCheck</span><span class="brand-sub">Pro · Avaliação de usados</span></div>
+    <nav class="nav">${navBtn('home','Início','home',cur)}${navBtn('nova','Nova avaliação','plus',cur)}${navBtn('hist','Histórico','hist',cur)}${navBtn('perfil','Perfil','user',cur)}</nav>
+    <div class="rail-foot"><div class="sync"><span class="dot ${store.mode!=='memoria'?'on':''}"></span>${modo}</div>${store.mode==='supabase'?'<button class="btn ghost sm" data-act="sair" style="justify-content:flex-start;padding:0">Sair</button>':''}</div>
+   </aside>
+   <main class="main"><div class="wrap">
+    <div class="mobile-brand"><span class="brand-name">DiagCheck</span><span class="brand-sub">Pro</span></div>
+    ${inner}
+   </div></main>
+   <nav class="tabbar">${navBtn('home','Início','home',cur)}${navBtn('nova','Avaliar','plus',cur)}${navBtn('hist','Histórico','hist',cur)}${navBtn('perfil','Perfil','user',cur)}</nav>
+  </div>`;
+}
+function render(){
+  if(!store.ready){root.innerHTML=shell('<p class="faint">Carregando…</p>');return}
+  if(store.mode==='supabase'&&!store.user){root.innerHTML=authView();return}
+  if(state.view==='editor')return renderEditor();
+  const v={home:homeView,hist:histView,perfil:perfilView}[state.view]||homeView;
+  root.innerHTML=shell(v());
+}
+function plate(p,lg){return `<span class="plate ${lg?'lg':''}"><i>BRASIL</i><b>${esc(fmtPlaca(p)||'———')}</b></span>`}
+function ring(p){const c=categoria(p);return `<span class="ring" style="--p:${p??0};--c:${c.cor}"><span>${p==null?'—':p}</span></span>`}
+function gauge(p){
+  const C=100,R=80;const pt=(v,r=R)=>{const a=Math.PI*(1-v/100);return[(C+r*Math.cos(a)).toFixed(2),(100-r*Math.sin(a)).toFixed(2)]};
+  const arc=(v1,v2,r=R)=>{const a=pt(v1,r),b=pt(v2,r);return `M${a[0]} ${a[1]} A${r} ${r} 0 0 1 ${b[0]} ${b[1]}`};
+  const cat=categoria(p);
+  const zonas=[[0,35,'var(--bad)'],[35,65,'var(--warn)'],[65,80,'var(--good)'],[80,100,'var(--ok)']].map(([a,b,c])=>`<path class="zone" d="${arc(a+.6,b-.6,95)}" style="stroke:${c}"/>`).join('');
+  let ticks='';for(let v=0;v<=100;v+=5){const maj=v%25===0;const a=pt(v,maj?86:88),b=pt(v,91);ticks+=`<line class="tick ${maj?'maj':''}" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`}
+  const labels=[0,50,100].map(v=>{const q=pt(v,72);return `<text class="tl" x="${q[0]}" y="${+q[1]+3}" text-anchor="middle">${v}</text>`}).join('');
+  return `<svg class="gauge" viewBox="0 0 200 128" role="img" aria-label="Nota ${p??'sem nota'} de 100, ${cat.label}">
+    <path class="trk" d="${arc(0,100)}"/>${zonas}${ticks}
+    ${p?`<path class="val" d="${arc(0,Math.max(p,1))}" style="stroke:${cat.cor}"/>`:''}
+    ${labels}
+    <text class="n" x="100" y="100" text-anchor="middle">${p??'—'}</text>
+    <text class="cl" x="100" y="122" text-anchor="middle" style="fill:${cat.cor}">${cat.label.toUpperCase()}</text></svg>`;
+}
+function titulo(a){return esc([a.marca,a.modelo].filter(Boolean).join(' ')||'Veículo')}
+function itemRow(a){
+  const p=calcScore(a.answers);const cat=categoria(p);const n=negocio(a);
+  const cr=marcados(a,'critico').length;
+  return `<button class="item" data-open="${esc(a.id||'exemplo')}">
+    ${ring(p)}
+    <span style="min-width:0;display:flex;flex-direction:column;gap:3px">
+      <span class="item-title">${titulo(a)} <span class="faint num">${esc(a.ano||'')}</span></span>
+      <span class="item-sub">${a.exemplo?'Exemplo · ':''}${a.km?fmtN(a.km)+' km · ':''}${dt(a.created_at)}${a.vendedor?' · '+esc(a.vendedor):''}</span>
+      <span class="row" style="gap:6px">${p!=null?`<span class="pill ${cat.cls}">${cat.label}</span>`:''}${cr?`<span class="pill bad">${cr} crítico${cr>1?'s':''}</span>`:''}${a.status!=='concluido'?'<span class="pill">Em andamento</span>':''}</span>
+    </span>
+    ${plate(a.placa)}
+    <span class="item-right">${n.ok?`<span>Oferta máx.</span><b class="num">${brl(n.oferta)}</b>`:a.fipe?`<span>FIPE</span><b class="num">${brl(a.fipe)}</b>`:''}</span>
+  </button>`;
+}
+function homeView(){
+  const l=state.list;const mes=new Date().toISOString().slice(0,7);
+  const doMes=l.filter(a=>String(a.created_at).slice(0,7)===mes).length;
+  const scs=l.map(a=>calcScore(a.answers)).filter(x=>x!=null);const media=scs.length?Math.round(scs.reduce((a,b)=>a+b,0)/scs.length):null;
+  const rep=l.reduce((s,a)=>s+reparos(a).total,0);
+  return `<section class="hero">
+     <div><div class="eyebrow">${esc(state.perfil.nome||'Avaliação técnica de seminovos')}</div>
+      <h1 style="margin-top:10px">Saiba o preço certo <em>antes de fechar negócio</em>.</h1>
+      <p>Checklist com pesos por sistema, estimativa de reparos, FIPE ajustada pela quilometragem e a oferta máxima para manter sua margem.</p></div>
+     <div class="row" style="justify-content:flex-end"><button class="btn primary" data-nav="nova">${ICON.plus}Nova avaliação</button></div>
+   </section>
+   <div class="stats">
+     <div class="stat"><b class="num">${doMes}</b><span>Avaliações no mês</span></div>
+     <div class="stat"><b class="num">${media??'—'}</b><span>Nota média</span></div>
+     <div class="stat"><b class="num">${brl(rep)}</b><span>Reparos identificados</span></div>
+   </div>
+   <section style="display:flex;flex-direction:column;gap:14px">
+     <div class="panel-head" style="margin:0"><h3>Últimas avaliações</h3>${l.length?'<button class="btn ghost sm" data-nav="hist">Ver todas</button>':''}</div>
+     ${!state.loaded?'<p class="faint">Carregando avaliações…</p>':l.length?`<div class="list">${l.slice(0,5).map(itemRow).join('')}</div>`:
+      `<div class="empty"><h2>Nenhuma avaliação ainda</h2><p>Cada carro avaliado aparece aqui com a nota, a placa e a oferta máxima calculada. Abra o exemplo para ver um laudo completo.</p>
+       <div class="row" style="justify-content:center"><button class="btn primary" data-nav="nova">${ICON.plus}Começar avaliação</button><button class="btn" data-open="exemplo">Abrir exemplo</button></div></div>`}
+   </section>
+   ${store.mode==='memoria'&&store.ready?'<div class="notice">Esta visualização não está salvando na nuvem. Abra o app logado na sua conta para guardar as avaliações.</div>':''}`;
+}
+function histFiltrado(){const q=state.q.trim().toLowerCase();return state.list.filter(a=>!q||[a.placa,a.marca,a.modelo,a.ano,a.vendedor].join(' ').toLowerCase().includes(q))}
+function histLista(){const l=histFiltrado();return l.length?`<div class="list">${l.map(itemRow).join('')}</div>`:`<div class="empty"><p>${state.list.length?'Nada encontrado para essa busca.':'As avaliações salvas aparecem aqui.'}</p></div>`}
+function histView(){
+  return `<div class="ed-head"><div><div class="eyebrow">${state.list.length} avaliação${state.list.length===1?'':'ões'}</div><h1 style="margin-top:8px">Histórico</h1></div><div class="spacer"></div>
+     <div class="field" style="width:min(320px,100%)"><label for="busca">Buscar</label><input id="busca" class="input" placeholder="Placa, marca, modelo ou vendedor" value="${esc(state.q)}"></div></div>
+   <div id="histList">${histLista()}</div>`;
+}
+function perfilView(){
+  const p=state.perfil;const f=(id,label,ph,cls='')=>`<div class="field"><label for="pf_${id}">${label}</label><input id="pf_${id}" data-pf="${id}" class="input ${cls}" placeholder="${ph}" value="${esc(p[id]??'')}"></div>`;
+  return `<div><div class="eyebrow">Configuração</div><h1 style="margin-top:8px">Perfil do avaliador</h1><p class="muted" style="margin:10px 0 0;max-width:58ch">Esses dados aparecem no cabeçalho do laudo em PDF. O lucro padrão entra no cálculo da oferta máxima de toda avaliação nova.</p></div>
+   <form class="panel grid" id="formPerfil" style="gap:18px">
+     <div class="grid g2">${f('nome','Empresa ou nome comercial','Ex.: Silva Seminovos')}${f('responsavel','Avaliador responsável','Seu nome')}</div>
+     <div class="grid g3">${f('telefone','Telefone','(81) 9 ....')}${f('documento','CNPJ / CPF','00.000.000/0001-00')}<div class="field"><label for="pf_lucro">Lucro desejado padrão</label><div class="money"><span>R$</span><input id="pf_lucro" data-pf="lucro_padrao" class="input" inputmode="numeric" placeholder="5.000" value="${esc(fmtN(p.lucro_padrao))}"></div></div></div>
+     ${f('endereco','Endereço','Rua, número, bairro, cidade')}
+     <div class="row"><button class="btn primary" type="submit">Salvar perfil</button><span class="faint small" id="pfMsg"></span></div>
+   </form>`;
+}
+function authView(){
+  const e=state.authMode==='entrar';
+  return `<div class="auth"><form class="auth-card" id="formAuth">
+    <div class="brand" style="padding:0"><span class="brand-name" style="font-size:42px">DiagCheck</span><span class="brand-sub">Pro · Avaliação de usados</span></div>
+    <hr class="hairline"><h2>${e?'Entrar':'Criar conta'}</h2>
+    <div class="field"><label for="au_email">E-mail</label><input id="au_email" class="input" type="email" autocomplete="email" required></div>
+    <div class="field"><label for="au_pass">Senha</label><input id="au_pass" class="input" type="password" minlength="6" autocomplete="${e?'current-password':'new-password'}" required></div>
+    ${state.authMsg?`<div class="notice">${esc(state.authMsg)}</div>`:''}
+    <button class="btn primary" type="submit">${e?'Entrar':'Criar conta'}</button>
+    <button class="btn ghost" type="button" data-act="authswap">${e?'Ainda não tem conta? Criar agora':'Já tenho conta'}</button>
+  </form></div>`;
+}
+
+/* ===================== Render: editor ===================== */
+function renderEditor(){
+  const a=state.cur;if(!a)return;
+  const p=calcScore(a.answers);const comp=completude(a.answers);const cr=marcados(a,'critico').length;const rp=reparos(a);
+  const head=`<div class="ed-head">
+    <button class="btn ghost sm" data-nav="${a.id?'hist':'home'}" style="padding-left:6px">${ICON.back}Voltar</button>
+    <div class="spacer"></div><span class="saved" id="saved">${a.exemplo?'Exemplo · alterações não são salvas':esc(state.saving)}</span></div>
+  <div class="ed-head">
+    <span id="edPlate">${plate(a.placa,true)}</span>
+    <div style="min-width:0;flex:1"><div class="eyebrow" id="edNum">${a.numero?'Avaliação nº '+String(a.numero).padStart(4,'0'):'Nova avaliação'}${a.status==='concluido'?' · Concluída':''}</div>
+      <h2 style="margin-top:6px" id="edTitle">${titulo(a)} <span class="faint">${esc(a.ano||'')}</span></h2></div>
+    <div class="progress"><span class="bar"><i style="width:${comp}%"></i></span><span class="num">${comp}%</span>${ring(p)}</div>
+  </div>
+  <nav class="steps">${STEPS.map(([k,l],n)=>`<button data-step="${k}" aria-current="${state.step===k}"><span class="n">0${n+1}</span>${l}${k==='checklist'&&cr?` <span class="badge">${cr}</span>`:''}${k==='obd'&&(a.obd||[]).length?` <span class="badge">${a.obd.length}</span>`:''}${k==='reparos'&&rp.total?` <span class="faint small num">${brl(rp.total)}</span>`:''}</button>`).join('')}</nav>`;
+  const body={veiculo:stepVeiculo,checklist:stepChecklist,obd:stepOBD,reparos:stepReparos,negocio:stepNegocio,laudo:stepLaudo}[state.step](a);
+  const idx=STEPS.findIndex(s=>s[0]===state.step);
+  const foot=state.step!=='laudo'?`<div class="row"><div class="spacer"></div>${idx>0?`<button class="btn" data-step="${STEPS[idx-1][0]}">Anterior</button>`:''}<button class="btn primary" data-step="${STEPS[idx+1][0]}">Próximo: ${STEPS[idx+1][1]}</button></div>`:'';
+  const y=window.scrollY;root.innerHTML=shell(head+body+foot);window.scrollTo(0,y);
+}
+function inp(id,label,ph,o={}){const a=state.cur;return `<div class="field"><label for="f_${id}">${label}</label><input id="f_${id}" data-f="${id}" class="input ${o.cls||''}" placeholder="${ph}" value="${esc(o.fmt?o.fmt(a[id]):a[id]??'')}" ${o.list?`list="${o.list}"`:''} ${o.im?`inputmode="${o.im}"`:''}></div>`}
+function sel(id,label,opts){const a=state.cur;return `<div class="field"><label for="f_${id}">${label}</label><select id="f_${id}" data-f="${id}" class="input"><option value="">Selecione</option>${opts.map(o=>`<option ${a[id]===o?'selected':''}>${esc(o)}</option>`).join('')}</select></div>`}
+function stepVeiculo(a){
+  return `<div class="panel grid" style="gap:18px">
+    <h3>Identificação</h3>
+    <div class="grid g4">${inp('placa','Placa','ABC1D23',{cls:'mono'})}${inp('marca','Marca','Ex.: Toyota',{list:'dl_marcas'})}${inp('modelo','Modelo','Ex.: Corolla')}${sel('ano','Ano modelo',ANOS)}</div>
+    <datalist id="dl_marcas">${MARCAS.map(m=>`<option value="${m}">`).join('')}</datalist>
+    <div class="grid g4">${inp('versao','Versão / motor','Ex.: 2.0 XEi')}${inp('km','Quilometragem','45.000',{cls:'mono',fmt:fmtN,im:'numeric'})}${sel('combustivel','Combustível',COMBUSTIVEIS)}${sel('cambio','Câmbio',CAMBIOS)}</div>
+    <div class="grid g3">${sel('tracao','Tração',TRACOES)}${inp('cor','Cor','Ex.: Prata')}${inp('vendedor','Vendedor / anunciante','Nome ou contato')}</div>
+  </div>
+  <div class="panel grid" style="gap:16px">
+    <div class="panel-head" style="margin:0"><h3>Valor FIPE</h3>${a.fipe_fonte&&a.fipe?`<span class="src pill ${a.fipe_fonte==='tabela'?'ok':a.fipe_fonte==='estimativa'?'warn':''}">${a.fipe_fonte==='tabela'?'Tabela FIPE oficial':a.fipe_fonte==='estimativa'?'Estimativa do Claude':'Informado'}</span>`:''}</div>
+    <div class="row" style="align-items:flex-end">
+      <div class="field" style="flex:1;min-width:180px"><label for="f_fipe">Valor (R$)</label><div class="money"><span>R$</span><input id="f_fipe" data-f="fipe" class="input" inputmode="numeric" placeholder="0" value="${esc(fmtN(a.fipe))}"></div></div>
+      ${store.mode==='supabase'||!inClaude()?`<button class="btn" data-act="fipeTabela">${ICON.search}Consultar tabela FIPE</button>`:''}
+      ${store.sample?`<button class="btn" data-act="fipeIA" ${state.busy==='fipe'||!(a.marca&&a.modelo&&a.ano)?'disabled':''}>${ICON.spark}${state.busy==='fipe'?'Estimando…':'Estimar com Claude'}</button>`:''}
+    </div>
+    ${a.fipe_ref?`<p class="hint">${esc(a.fipe_ref)}</p>`:''}
+    ${state.fipe?fipePanel():''}
+    ${a.fipe_fonte==='estimativa'?`<p class="hint">Estimativa sem acesso à internet. Confira o valor em <a href="https://veiculos.fipe.org.br" target="_blank" rel="noopener" style="color:inherit">veiculos.fipe.org.br</a> antes de negociar.</p>`:''}
+    ${!a.fipe?`<p class="hint">Consulte em <a href="https://veiculos.fipe.org.br" target="_blank" rel="noopener" style="color:inherit">veiculos.fipe.org.br</a> e digite aqui. ${store.sample?'Ou peça uma estimativa ao Claude depois de preencher marca, modelo e ano.':''}</p>`:''}
+  </div>`;
+}
+function fipePanel(){
+  const f=state.fipe;const opt=(arr,v)=>arr.map(o=>`<option value="${esc(o.codigo)}" ${String(o.codigo)===String(v)?'selected':''}>${esc(o.nome)}</option>`).join('');
+  return `<div class="fipe-box">
+    <div class="grid g3">
+      <div class="field"><label for="fp_m">Marca</label><select id="fp_m" class="input" data-fp="marca"><option value="">${f.load==='marcas'?'Carregando…':'Selecione'}</option>${opt(f.marcas||[],f.marca)}</select></div>
+      <div class="field"><label for="fp_mo">Modelo</label><select id="fp_mo" class="input" data-fp="modelo" ${f.modelos?'':'disabled'}><option value="">${f.load==='modelos'?'Carregando…':'Selecione'}</option>${opt(f.modelos||[],f.modelo)}</select></div>
+      <div class="field"><label for="fp_a">Ano / combustível</label><select id="fp_a" class="input" data-fp="ano" ${f.anos?'':'disabled'}><option value="">${f.load==='anos'?'Carregando…':'Selecione'}</option>${opt(f.anos||[],f.ano)}</select></div>
+    </div>
+    ${f.err?`<p class="hint" style="color:var(--bad)">${esc(f.err)}</p>`:''}
+    ${f.load==='valor'?'<p class="hint">Buscando valor…</p>':''}
+    <div class="row"><span class="hint">Dados da tabela FIPE pela API pública parallelum.com.br.</span><div class="spacer"></div><button class="btn ghost sm" data-act="fipeFechar">Fechar</button></div>
+  </div>`;
+}
+function stepChecklist(a){
+  const comp=completude(a.answers);
+  const cont=st=>marcados(a,st).length;
+  return `<div class="row"><span class="muted small num">${comp}% avaliado · a nota usa o peso de cada item</span><div class="spacer"></div>
+     <span class="pill ok">${cont('ok')} OK</span><span class="pill warn">${cont('atencao')} atenção</span><span class="pill bad">${cont('critico')} crítico</span></div>
+   <div>${CATEGORIAS.map(c=>{
+     const r=c.itens.map(([id])=>(a.answers||{})[id]);const feitos=r.filter(Boolean).length;const nc=r.filter(x=>x==='critico').length,na=r.filter(x=>x==='atencao').length;
+     return `<details class="sys" data-sys="${c.id}" ${state.open[c.id]?'open':''}>
+      <summary><span class="t">${c.label}</span>${nc?`<span class="pill bad">${nc}</span>`:''}${na?`<span class="pill warn">${na}</span>`:''}<span class="pill num">${feitos}/${c.itens.length}</span>${ICON.chev}</summary>
+      <div class="sys-body">
+        <div style="padding-bottom:6px"><button class="btn sm" data-allok="${c.id}">Marcar restantes como OK</button></div>
+        ${c.itens.map(([id,label,peso])=>{const s=(a.answers||{})[id];const n=(a.notes||{})[id]||'';
+          return `<div class="ck"><span class="ck-name">${esc(label)} <small>peso ${peso}</small></span>
+            <span class="seg" role="group" aria-label="${esc(label)}">${Object.keys(ST).map(v=>`<button data-ans="${id}" data-v="${v}" aria-pressed="${s===v}">${ST[v].label}</button>`).join('')}</span>
+            ${s==='atencao'||s==='critico'||n?`<div class="ck-note"><input class="input" id="n_${id}" data-note="${id}" placeholder="Observação: medida, local, ruído…" value="${esc(n)}"></div>`:''}
+          </div>`}).join('')}
+      </div></details>`}).join('')}</div>`;
+}
+function stepOBD(a){
+  const list=a.obd||[];
+  return `<div class="panel"><form class="obd-entry" id="formOBD">
+       <div class="field"><label for="obdIn">Código lido no scanner</label><input id="obdIn" class="input mono" placeholder="P0300" maxlength="5" autocomplete="off"></div>
+       <button class="btn primary" type="submit">Adicionar</button>
+       <span class="hint" id="obdMsg">Letra P, B, C ou U e mais 4 caracteres. Sem códigos? Siga para os reparos.</span>
+   </form></div>
+   <div class="codes">${list.length?list.map((o,k)=>{const d=decodeOBD(o.code);const ai=o.ai||{};const desc=d.desc||ai.descricao;const sev=d.sev||ai.gravidade;const causas=d.causas.length?d.causas:(ai.causas||[]);
+     const noReparo=(a.extras||[]).some(e=>String(e.desc).startsWith(d.code));
+     return `<div class="code"><span class="sev ${sev||''}"></span>
+       <div style="min-width:0"><div class="code-id">${esc(d.code)}</div>
+         <div style="margin-top:4px;font-weight:500">${desc?esc(desc):'<span class="muted">Código fora da base local</span>'}</div>
+         <div class="code-meta">
+           ${sev?`<span class="pill ${sev==='alta'?'bad':sev==='media'?'warn':'ok'}" style="margin-top:8px">Gravidade ${sev==='media'?'média':sev}</span>`:''}
+           ${causas.length?`<div style="margin-top:8px">Causas prováveis:</div><ul>${causas.map(c=>`<li>${esc(c)}</li>`).join('')}</ul>`:''}
+           ${ai.dica?`<div style="margin-top:6px">${esc(ai.dica)}</div>`:''}
+           <div class="anatomy">${d.anat.filter(Boolean).map(x=>`<span>${esc(x)}</span>`).join('')}</div>
+           <input class="input" style="margin-top:12px;height:38px;font-size:13.5px" id="obdn_${k}" data-obdnote="${k}" placeholder="Nota: freeze frame, trims, km da falha…" value="${esc(o.nota||'')}">
+         </div></div>
+       <div class="code-actions">
+         ${!d.known&&!o.ai&&store.sample?`<button class="btn sm" data-ai="${k}" ${state.busy===k?'disabled':''}>${ICON.spark}${state.busy===k?'Consultando…':'Consultar Claude'}</button>`:''}
+         ${noReparo?'<span class="pill">No reparo</span>':`<button class="btn sm" data-obdrep="${k}">${ICON.plus}Reparo</button>`}
+         <button class="btn ghost sm" data-delobd="${k}">Remover</button>
+       </div></div>`}).join(''):`<div class="empty"><p>Nenhum código registrado. Ligue o scanner na tomada OBD e registre o que aparecer, inclusive códigos apagados recentemente.</p></div>`}</div>`;
+}
+function stepReparos(a){
+  const r=reparos(a);
+  return `<div class="panel">
+    <div class="panel-head"><h3>Estimativa automática</h3><span class="hint">Atenção usa o valor médio; crítico usa o máximo da faixa</span></div>
+    ${r.linhas.length?`<div>${r.linhas.map(l=>`<div class="rep">
+        <span class="pill ${l.st==='critico'?'bad':'warn'}">${l.st==='critico'?'Crítico':'Atenção'}</span>
+        <div style="min-width:0"><div>${esc(l.nome)}</div><div class="range">${esc(l.item.cat.label)} · ${esc(l.item.label)} · faixa ${brl(l.min)} a ${brl(l.max)}</div></div>
+        <div class="row" style="gap:6px;flex-wrap:nowrap">${l.editado?`<button class="btn ghost sm" data-resetov="${l.id}" title="Voltar ao valor padrão" aria-label="Voltar ao valor padrão">${ICON.reset}</button>`:''}
+          <div class="money ${l.editado?'edited':''}"><span>R$</span><input class="input" id="ov_${l.id}" data-ov="${l.id}" inputmode="numeric" value="${esc(fmtN(l.valor))}"></div></div>
+      </div>`).join('')}</div>`:`<p class="muted" style="margin:0">Os custos aparecem aqui sozinhos quando você marca itens como Atenção ou Crítico no checklist.</p>`}
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h3>Itens avulsos</h3><button class="btn sm" data-addex="1">${ICON.plus}Adicionar item</button></div>
+    ${(a.extras||[]).length?a.extras.map((e,k)=>`<div class="rep" style="grid-template-columns:minmax(0,1fr) auto auto">
+        <input class="input" id="exd_${k}" data-ex="${k}|desc" value="${esc(e.desc)}" placeholder="Ex.: documentação, polimento, reparo de código OBD">
+        <div class="money"><span>R$</span><input class="input" id="exv_${k}" data-ex="${k}|valor" inputmode="numeric" value="${esc(fmtN(e.valor))}"></div>
+        <button class="btn ghost sm" data-delex="${k}" aria-label="Remover item">×</button></div>`).join(''):'<p class="hint">Use para gastos fora do checklist: reparo apontado pelo scanner, despachante, higienização.</p>'}
+    <div class="sum"><span class="lbl">Total estimado de reparos</span><b class="num" id="repTotal">${brl(r.total)}</b></div>
+  </div>`;
+}
+function negocioOut(a){
+  const n=negocio(a);const aj=n.aj;
+  const km=aj?`<div class="kmadj">
+     <div><span class="lbl">Km esperada</span><b>${aj.esperado.toLocaleString('pt-BR')} km</b><span class="faint small">${aj.idade} ano${aj.idade===1?'':'s'} × 12.000</span></div>
+     <div><span class="lbl">Km real</span><b>${aj.km.toLocaleString('pt-BR')} km</b></div>
+     <div><span class="lbl">Diferença</span><b style="color:${aj.dif>0?'var(--bad)':'var(--ok)'}">${aj.dif>0?'+':''}${aj.dif.toLocaleString('pt-BR')} km</b></div>
+     <div class="foot"><span>Rodagem <span class="pill ${aj.adj.cls}">${aj.adj.label} · ${aj.adj.pct>0?'+':''}${aj.adj.pct}%</span></span><span class="num">FIPE ${brl(aj.fipe)} → <b>${brl(aj.ajustado)}</b></span></div>
+   </div>`:`<p class="hint">Preencha ano, quilometragem e FIPE na etapa Veículo para ajustar o valor pela rodagem.</p>`;
+  let res='';
+  if(n.ok){
+    const v=!n.pedido?['warn','Informe o preço pedido','A oferta máxima já está calculada. Com o preço pedido, o app mostra se a compra fecha a conta.']:
+      n.pedido<=n.oferta?['ok','O preço pedido cabe na conta',`Sobram ${brl(n.oferta-n.pedido)} abaixo da oferta máxima, mantendo o lucro de ${brl(n.lucro)}.`]:
+      n.liquido>0?['warn','Negocie antes de fechar',`O pedido está ${brl(n.acima)} acima da oferta máxima. Fechando nesse preço, o resultado cai para ${brl(n.liquido)}.`]:
+      ['bad','A conta não fecha',`Pelo preço pedido, o custo total passa o valor de mercado em ${brl(-n.liquido)}.`];
+    res=`<div class="results">
+      <div class="res"><span class="lbl">Custo total</span><b>${brl(n.custo)}</b><small>Preço pedido + reparos</small></div>
+      <div class="res ${n.pedido?(n.liquido>=0?'pos':'neg'):''}"><span class="lbl">Resultado líquido</span><b>${n.pedido?(n.liquido<0?'−':'')+brl(Math.abs(n.liquido)):'—'}</b><small>${n.pedido?n.margem.toFixed(1).replace('.',',')+'% de margem':'Falta o preço pedido'}</small></div>
+      <div class="res offer"><span class="lbl">Oferta máxima</span><b>${brl(n.oferta)}</b><small>Mercado − reparos − lucro</small></div>
+    </div>
+    <div class="verdict ${v[0]}"><div><strong>${v[1]}</strong>${v[2]}</div></div>`;
+  }else res='<p class="hint">Informe o valor FIPE ou o valor de mercado para calcular a viabilidade.</p>';
+  return{km,res,n};
+}
+function stepNegocio(a){
+  const f=a.financeiro||{};const o=negocioOut(a);const n=o.n;
+  return `<div class="panel grid" style="gap:16px"><div class="panel-head" style="margin:0"><h3>Ajuste por quilometragem</h3></div><div id="kmOut">${o.km}</div></div>
+  <div class="panel grid" style="gap:18px">
+    <div class="panel-head" style="margin:0"><h3>Calculadora de viabilidade</h3></div>
+    <div class="grid g2">
+      <div class="field"><label for="fn_pedido">Preço pedido pelo vendedor</label><div class="money"><span>R$</span><input id="fn_pedido" data-fin="pedido" class="input" inputmode="numeric" placeholder="0" value="${esc(fmtN(f.pedido))}"></div></div>
+      <div class="field"><label for="fn_mercado">Valor de mercado</label><div class="money"><span>R$</span><input id="fn_mercado" data-fin="mercado" class="input" inputmode="numeric" placeholder="${n.mercado&&!num(f.mercado)?esc(fmtN(n.mercado))+' ('+esc(n.fonteMercado)+')':'0'}" value="${esc(fmtN(f.mercado))}"></div><span class="hint">Em branco, usa a ${n.aj?'FIPE ajustada pela km':'FIPE'}.</span></div>
+      <div class="field"><span class="lbl">Reparos estimados</span><div class="input num" style="display:flex;align-items:center;background:var(--surface-2)" id="fn_rep">${brl(n.reparo)}</div><span class="hint">Vem da etapa Reparos.</span></div>
+      <div class="field"><label for="fn_lucro">Lucro desejado</label><div class="money"><span>R$</span><input id="fn_lucro" data-fin="lucro" class="input" inputmode="numeric" placeholder="${state.perfil.lucro_padrao?esc(fmtN(state.perfil.lucro_padrao))+' (padrão)':'0'}" value="${esc(fmtN(f.lucro))}"></div></div>
+    </div>
+    <div id="finOut" class="grid" style="gap:14px">${o.res}</div>
+  </div>`;
+}
+function textoResumo(a){
+  const p=calcScore(a.answers);const c=categoria(p);const n=negocio(a);const r=reparos(a);
+  const it=[...marcados(a,'critico').map(i=>'❌ '+i.label),...marcados(a,'atencao').map(i=>'⚠️ '+i.label)];
+  return `*Laudo de avaliação ${a.numero?'nº '+String(a.numero).padStart(4,'0'):''}*${state.perfil.nome?'\n'+state.perfil.nome:''}\n\n🚗 ${[a.marca,a.modelo,a.versao,a.ano].filter(Boolean).join(' ')}${a.placa?' · '+fmtPlaca(a.placa):''}${a.km?' · '+fmtN(a.km)+' km':''}\nNota: ${p??'—'}/100 (${c.label})\n${c.rec}\n\n${it.length?it.join('\n'):'Nenhum item com problema.'}${(a.obd||[]).length?'\n\nCódigos OBD: '+a.obd.map(o=>o.code).join(', '):''}\n\nReparos estimados: ${brl(r.total)}${a.fipe?'\nFIPE: '+brl(a.fipe):''}${n.ok?'\nOferta máxima: '+brl(n.oferta):''}`;
+}
+function stepLaudo(a){
+  const p=calcScore(a.answers);const c=categoria(p);const n=negocio(a);const r=reparos(a);
+  const crit=marcados(a,'critico'),aten=marcados(a,'atencao');
+  const linha=(i,st)=>{const l=r.linhas.find(x=>x.id===i.id);return `<div class="find"><span class="pill ${st==='critico'?'bad':'warn'}">${ST[st].label}</span><span>${esc(i.label)}</span><span class="num faint small">${l?brl(l.valor):''}</span><span class="k">${esc(i.cat.label)}${(a.notes||{})[i.id]?' · '+esc(a.notes[i.id]):''}</span></div>`};
+  return `<div class="report">
+    <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+      <div class="panel"><div class="panel-head"><h3>Pontos críticos e de atenção</h3><span class="faint small num">${marcados(a,'ok').length} itens OK</span></div>
+        ${crit.length+aten.length?crit.map(i=>linha(i,'critico')).join('')+aten.map(i=>linha(i,'atencao')).join(''):'<p class="muted" style="margin:0">Nenhum item crítico ou de atenção.</p>'}</div>
+      ${(a.obd||[]).length?`<div class="panel"><div class="panel-head"><h3>Códigos OBD</h3></div>${a.obd.map(o=>{const d=decodeOBD(o.code);return `<div class="find"><span class="mono">${esc(d.code)}</span><span>${esc(d.desc||o.ai?.descricao||'Código fora da base local')}</span><span></span>${o.nota?`<span class="k">${esc(o.nota)}</span>`:''}</div>`}).join('')}</div>`:''}
+      <div class="panel"><div class="panel-head"><h3>Resumo por sistema</h3></div><div class="cats">${CATEGORIAS.map(ct=>{const s=ct.itens.map(([id])=>(a.answers||{})[id]);const ok=s.filter(x=>x==='ok').length,at=s.filter(x=>x==='atencao').length,cr=s.filter(x=>x==='critico').length;
+        return `<div class="cat"><span>${ct.label}</span><span class="row" style="gap:6px">${cr?`<span class="pill bad">${cr} crítico</span>`:''}${at?`<span class="pill warn">${at} atenção</span>`:''}${ok?`<span class="pill ok">${ok} OK</span>`:''}${!ok&&!at&&!cr?'<span class="faint small">Não avaliado</span>':''}</span></div>`}).join('')}</div></div>
+      <div class="panel"><div class="field"><label for="f_obs">Observações do avaliador</label><textarea id="f_obs" class="input" data-f="observacoes" placeholder="Impressões do test-drive, histórico, pontos de negociação…">${esc(a.observacoes||'')}</textarea></div></div>
+    </div>
+    <aside class="report-side">
+      <div class="panel" style="display:flex;flex-direction:column;align-items:center;gap:14px">
+        ${gauge(p)}
+        <p class="small" style="margin:0;text-align:center;color:var(--fg-2)">${esc(c.rec)}</p>
+        <hr class="hairline" style="width:100%">
+        <dl class="kv">
+          <dt>FIPE</dt><dd>${a.fipe?brl(a.fipe):'—'}</dd>
+          ${n.aj?`<dt>FIPE ajustada</dt><dd>${brl(n.aj.ajustado)}</dd>`:''}
+          <dt>Preço pedido</dt><dd>${n.pedido?brl(n.pedido):'—'}</dd>
+          <dt>Reparos</dt><dd>${brl(r.total)}</dd>
+          ${n.ok&&n.pedido?`<dt>Resultado</dt><dd style="color:${n.liquido>=0?'var(--ok)':'var(--bad)'}">${n.liquido<0?'−':''}${brl(Math.abs(n.liquido))}</dd>`:''}
+        </dl>
+        <div style="width:100%;display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:12px"><span class="eyebrow">Oferta máxima</span><span style="font-family:var(--f-display);font-size:28px" class="num">${n.ok?brl(n.oferta):'—'}</span></div>
+      </div>
+      <button class="btn primary" data-act="pdf">${ICON.dl}Baixar laudo em PDF</button>
+      <a class="btn" href="https://wa.me/?text=${encodeURIComponent(textoResumo(a))}" target="_blank" rel="noopener">${ICON.wa}Enviar resumo no WhatsApp</a>
+      ${a.exemplo?'':a.status!=='concluido'?'<button class="btn" data-act="concluir">Concluir avaliação</button>':'<button class="btn ghost" data-act="reabrir">Reabrir para edição</button>'}
+      ${a.exemplo||!a.id?'':state.confirmDel?'<div class="confirm"><span>Excluir esta avaliação?</span><button class="btn sm danger" data-act="delok">Excluir</button><button class="btn ghost sm" data-act="delno">Cancelar</button></div>':'<button class="btn danger" data-act="del">Excluir avaliação</button>'}
+    </aside></div>`;
+}
+
+/* ===================== PDF ===================== */
+function gerarPDF(a){
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4'});
+  const pf=state.perfil;const W=210,M=16;let y=18;
+  const ink=[18,20,25],gray=[110,116,124],line=[210,214,220],RED=[194,66,58],AMB=[168,116,26],GRN=[47,138,99],BLU=[58,110,165];
+  const p=calcScore(a.answers);const c=categoria(p);const n=negocio(a);const r=reparos(a);
+  const corCat=p==null?gray:p>=80?GRN:p>=65?BLU:p>=35?AMB:RED;
+  const need=h=>{if(y+h>280){doc.addPage();y=18}};
+  const sec=t=>{need(14);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...gray);doc.text(t.toUpperCase(),M,y);y+=2.5;doc.setDrawColor(...line);doc.setLineWidth(.3);doc.line(M,y,W-M,y);y+=6;doc.setFont('helvetica','normal');doc.setFontSize(9)};
+  doc.setFont('times','normal');doc.setFontSize(22);doc.setTextColor(...ink);doc.text(pf.nome||'DiagCheck Pro',M,y);
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...gray);const sub=[pf.endereco,pf.telefone,pf.documento].filter(Boolean).join('  ·  ');if(sub)doc.text(sub,M,y+6);
+  doc.setFontSize(8);doc.text('LAUDO DE AVALIAÇÃO VEICULAR',W-M,y-4,{align:'right'});doc.setFontSize(15);doc.setTextColor(...ink);doc.text(a.numero?'Nº '+String(a.numero).padStart(4,'0'):'Exemplo',W-M,y+3,{align:'right'});
+  y+=12;doc.setDrawColor(...line);doc.setLineWidth(.4);doc.line(M,y,W-M,y);y+=8;
+  const kv=[['Veículo',[a.marca,a.modelo,a.versao].filter(Boolean).join(' ')||'—'],['Ano',a.ano||'—'],['Placa',fmtPlaca(a.placa)||'—'],['Quilometragem',a.km?fmtN(a.km)+' km':'—'],['Conjunto',[a.combustivel,a.cambio,a.tracao].filter(Boolean).join(' · ')||'—'],['Cor',a.cor||'—'],['Vendedor',a.vendedor||'—'],['Data',dt(a.created_at||new Date())]];
+  doc.setFont('helvetica','normal');doc.setFontSize(9);
+  kv.forEach((rw,k)=>{const yy=y+k*5.6;doc.setTextColor(...gray);doc.text(rw[0],M,yy);doc.setTextColor(...ink);doc.text(String(rw[1]).slice(0,60),M+36,yy)});
+  // velocímetro
+  const cx=W-M-26,cy=y+22,R=20;doc.setLineWidth(2.6);doc.setDrawColor(...line);
+  const arcSeg=(v1,v2)=>{for(let v=v1;v<v2;v+=1){const a1=Math.PI*(1-v/100),a2=Math.PI*(1-Math.min(v+1,v2)/100);doc.line(cx+R*Math.cos(a1),cy-R*Math.sin(a1),cx+R*Math.cos(a2),cy-R*Math.sin(a2))}};
+  arcSeg(0,100);if(p){doc.setDrawColor(...corCat);arcSeg(0,p)}
+  doc.setFont('times','normal');doc.setFontSize(24);doc.setTextColor(...ink);doc.text(p==null?'—':String(p),cx,cy-2,{align:'center'});
+  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...corCat);doc.text(c.label.toUpperCase(),cx,cy+4,{align:'center'});
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...gray);doc.text(doc.splitTextToSize(c.rec,58),cx,cy+9,{align:'center'});
+  y+=kv.length*5.6+8;
+  sec('Resumo por sistema');
+  CATEGORIAS.forEach((ct,k)=>{const s=ct.itens.map(([id])=>(a.answers||{})[id]);const cr=s.filter(x=>x==='critico').length,at=s.filter(x=>x==='atencao').length,ok=s.filter(x=>x==='ok').length;
+    const colx=k%2?W/2+3:M;if(k%2===0&&k)y+=5.6;need(6);doc.setTextColor(...ink);doc.text(ct.label,colx,y);
+    const t=cr?[`${cr} crítico${at?' · '+at+' atenção':''}`,RED]:at?[`${at} atenção`,AMB]:ok?['OK',GRN]:['Não avaliado',gray];
+    doc.setTextColor(...t[1]);doc.text(t[0],colx+(W/2-M-7),y,{align:'right'})});
+  y+=10;
+  const flag=[...marcados(a,'critico').map(i=>[i,'critico']),...marcados(a,'atencao').map(i=>[i,'atencao'])];
+  sec(`Pontos críticos e de atenção (${flag.length})`);
+  if(!flag.length){doc.setTextColor(...gray);doc.text('Nenhum item crítico ou de atenção.',M,y);y+=7}
+  flag.forEach(([i,st])=>{const nota=(a.notes||{})[i.id];const nl=nota?doc.splitTextToSize(nota,105):[];need(6+nl.length*4.3);const l=r.linhas.find(x=>x.id===i.id);
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...(st==='critico'?RED:AMB));doc.text(st==='critico'?'CRÍTICO':'ATENÇÃO',M,y);
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...ink);doc.text(i.label,M+20,y);doc.setTextColor(...gray);doc.text(i.cat.label,M+128,y);doc.setTextColor(...ink);doc.text(l?brl(l.valor):'',W-M,y,{align:'right'});
+    if(nl.length){doc.setFontSize(8.3);doc.setTextColor(...gray);doc.text(nl,M+20,y+4.3);doc.setFontSize(9);y+=nl.length*4.3}y+=6.2});
+  (a.extras||[]).forEach(e=>{need(7);doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...gray);doc.text('AVULSO',M,y);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...ink);doc.text(String(e.desc||'—').slice(0,80),M+20,y);doc.text(brl(e.valor),W-M,y,{align:'right'});y+=6.2});
+  need(10);doc.setDrawColor(...line);doc.line(W-M-60,y-2,W-M,y-2);y+=3;doc.setFont('helvetica','bold');doc.text('Reparos estimados',W-M-60,y);doc.text(brl(r.total),W-M,y,{align:'right'});doc.setFont('helvetica','normal');y+=9;
+  if((a.obd||[]).length){sec('Códigos de falha (OBD)');a.obd.forEach(o=>{const d=decodeOBD(o.code);const ds=doc.splitTextToSize(d.desc||o.ai?.descricao||'Código fora da base local',125);need(5+ds.length*4.3);
+    doc.setFont('courier','bold');doc.setTextColor(...ink);doc.text(d.code,M,y);doc.setFont('helvetica','normal');doc.text(ds,M+20,y);y+=ds.length*4.3;if(o.nota){doc.setTextColor(...gray);doc.setFontSize(8.3);doc.text(doc.splitTextToSize(o.nota,125),M+20,y);doc.setFontSize(9);y+=4.3}y+=2.5});y+=4}
+  sec('Análise do negócio');
+  const fin=[['Valor FIPE',a.fipe?brl(a.fipe)+(a.fipe_fonte==='estimativa'?' (estimativa)':''):'—']];
+  if(n.aj)fin.push(['Ajuste por quilometragem',`${n.aj.adj.label} (${n.aj.adj.pct>0?'+':''}${n.aj.adj.pct}%) · ${brl(n.aj.ajustado)}`]);
+  fin.push(['Valor de mercado considerado',n.mercado?brl(n.mercado)+(n.fonteMercado?' · '+n.fonteMercado:''):'—'],['Preço pedido',n.pedido?brl(n.pedido):'—'],['Reparos estimados',brl(n.reparo)],['Lucro desejado',brl(n.lucro)]);
+  if(n.ok&&n.pedido)fin.push(['Custo total',brl(n.custo)],['Resultado líquido',`${n.liquido<0?'-':''}${brl(Math.abs(n.liquido))} (${n.margem.toFixed(1).replace('.',',')}%)`]);
+  fin.forEach(f=>{need(6);doc.setTextColor(...gray);doc.text(f[0],M,y);doc.setTextColor(...ink);doc.text(f[1],W-M,y,{align:'right'});y+=5.6});
+  if(n.ok){need(14);y+=2;doc.setDrawColor(...line);doc.line(M,y,W-M,y);y+=8;doc.setFont('times','normal');doc.setFontSize(15);doc.text('Oferta máxima sugerida',M,y);doc.text(brl(n.oferta),W-M,y,{align:'right'});doc.setFont('helvetica','normal');doc.setFontSize(9);y+=10}
+  if(a.observacoes){sec('Observações do avaliador');doc.setTextColor(...ink);const tx=doc.splitTextToSize(a.observacoes,W-2*M);need(tx.length*4.3);doc.text(tx,M,y);y+=tx.length*4.3+6}
+  need(24);y=Math.max(y+12,262);doc.setDrawColor(...gray);doc.setLineWidth(.2);doc.line(M,y,M+75,y);doc.line(W-M-75,y,W-M,y);doc.setFontSize(8);doc.setTextColor(...gray);
+  doc.text(pf.responsavel?'Avaliador: '+pf.responsavel:'Avaliador responsável',M,y+4.5);doc.text('Ciente',W-M-75,y+4.5);
+  const tp=doc.getNumberOfPages();for(let k=1;k<=tp;k++){doc.setPage(k);doc.setFontSize(7);doc.setTextColor(...gray);doc.text(`DiagCheck Pro · valores de reparo são estimativas de mercado · página ${k} de ${tp}`,W/2,291,{align:'center'})}
+  return doc;
+}
+async function baixarPDF(){
+  const a=state.cur;if(!window.jspdf){toast('O gerador de PDF não carregou. Verifique a internet e tente de novo.');return}
+  const doc=gerarPDF(a);const nome=`laudo-${fmtPlaca(a.placa)||'veiculo'}-${String(a.numero||0).padStart(4,'0')}.pdf`;
+  if(inClaude()){if(!store.downloads){toast('Download indisponível nesta visualização.');return}
+    try{await store.downloads.save({filename:nome,data:doc.output('blob')});toast('Laudo salvo')}catch(e){if(e&&e.code!=='declined')toast('Não foi possível salvar o PDF.')}}
+  else{doc.save(nome);toast('Laudo baixado')}
+}
+
+/* ===================== FIPE (tabela oficial via API pública, fora do Claude) ===================== */
+const FIPE_API='https://parallelum.com.br/fipe/api/v1/carros';
+async function fj(u){const r=await fetch(u);if(!r.ok)throw new Error(r.status);return r.json()}
+async function fipeAbrir(){
+  state.fipe={load:'marcas'};renderEditor();
+  try{const m=await fj(FIPE_API+'/marcas');const alvo=(state.cur.marca||'').toLowerCase().replace('mercedes-benz','m.benz');
+    const hit=m.find(x=>x.nome.toLowerCase()===alvo)||m.find(x=>alvo&&x.nome.toLowerCase().includes(alvo));
+    state.fipe={marcas:m,marca:hit?hit.codigo:''};renderEditor();if(hit)fipeModelos(hit.codigo);
+  }catch(e){state.fipe={err:'Não foi possível acessar a tabela FIPE agora. Digite o valor manualmente.'};renderEditor()}
+}
+async function fipeModelos(m){Object.assign(state.fipe,{marca:m,modelos:null,anos:null,modelo:'',ano:'',load:'modelos',err:''});renderEditor();
+  try{const r=await fj(`${FIPE_API}/marcas/${m}/modelos`);state.fipe.modelos=r.modelos;state.fipe.load=null}catch(e){state.fipe.err='Falha ao carregar modelos.';state.fipe.load=null}renderEditor()}
+async function fipeAnos(mo){const f=state.fipe;Object.assign(f,{modelo:mo,anos:null,ano:'',load:'anos',err:''});renderEditor();
+  try{f.anos=await fj(`${FIPE_API}/marcas/${f.marca}/modelos/${mo}/anos`);f.load=null}catch(e){f.err='Falha ao carregar anos.';f.load=null}renderEditor()}
+async function fipeValor(an){const f=state.fipe;Object.assign(f,{ano:an,load:'valor',err:''});renderEditor();
+  try{const v=await fj(`${FIPE_API}/marcas/${f.marca}/modelos/${f.modelo}/anos/${an}`);const a=state.cur;
+    a.fipe=num(v.Valor);a.fipe_fonte='tabela';a.fipe_ref=`${v.Marca} ${v.Modelo} · ${v.AnoModelo} · ${v.Combustivel} · código ${v.CodigoFipe} · ${v.MesReferencia}`;
+    if(!a.ano&&v.AnoModelo<3000)a.ano=String(v.AnoModelo);state.fipe=null;touch();renderEditor();toast('Valor FIPE preenchido')}
+  catch(e){f.err='Falha ao buscar o valor.';f.load=null;renderEditor()}}
+
+/* ===================== Claude: estimativa FIPE e códigos fora da base ===================== */
+async function fipeIA(){
+  const a=state.cur;if(!store.sample)return;state.busy='fipe';renderEditor();
+  try{const r=await store.sample.json(`Você conhece a tabela FIPE brasileira de carros. Estime o valor FIPE atual do veículo: ${[a.marca,a.modelo,a.versao,a.ano,a.combustivel,a.cambio].filter(Boolean).join(' ')}. Se não tiver uma referência razoável, responda valor 0. Responda só com JSON: {"valor": número inteiro em reais, "descricao": versão FIPE que você considerou, "confianca": "alta"|"media"|"baixa"}.`,{modelTier:'default'});
+    if(r&&num(r.valor)>0){a.fipe=Math.round(num(r.valor));a.fipe_fonte='estimativa';a.fipe_ref=`${r.descricao||''} · confiança ${r.confianca||'baixa'}`;touch();toast('Estimativa preenchida. Confira na tabela oficial.')}
+    else toast('O Claude não teve referência confiável para esse modelo. Digite o valor.')}
+  catch(e){if(e&&e.code==='not_granted')store.sample=null;else toast('Não foi possível estimar agora.')}
+  state.busy=null;renderEditor();
+}
+async function consultarIA(k){
+  const a=state.cur;const o=a.obd[k];if(!store.sample)return;state.busy=k;renderEditor();
+  try{const r=await store.sample.json(`Você é técnico automotivo brasileiro. Explique o código OBD-II "${o.code}" para ${[a.marca,a.modelo,a.ano].filter(Boolean).join(' ')||'um carro'}. Responda só com JSON: {"descricao": texto curto em português, "gravidade": "alta"|"media"|"baixa", "causas": [até 4 textos curtos], "dica": uma frase com o primeiro teste a fazer}. Se for código de fabricante e você não tiver certeza, diga isso na descrição.`,{modelTier:'quick'});
+    if(r&&r.descricao){o.ai={descricao:String(r.descricao),gravidade:['alta','media','baixa'].includes(r.gravidade)?r.gravidade:null,causas:Array.isArray(r.causas)?r.causas.slice(0,4).map(String):[],dica:r.dica?String(r.dica):''};touch()}}
+  catch(e){if(e&&e.code==='not_granted')store.sample=null;else toast('Não foi possível consultar agora.')}
+  state.busy=null;renderEditor();
+}
+
+/* ===================== Salvamento ===================== */
+let saveT=null,fila=Promise.resolve();
+function touch(){const a=state.cur;if(!a||a.exemplo)return;state.saving='Salvando…';setSaved();clearTimeout(saveT);saveT=setTimeout(salvar,800)}
+function salvar(){const a=state.cur;if(!a||a.exemplo)return;
+  fila=fila.then(async()=>{try{const novo=!a.id;await api.save(a);const k=state.list.findIndex(x=>x.id===a.id);if(k>=0)state.list[k]=a;else state.list.unshift(a);
+    state.saving='Salvo';setSaved();if(novo){const e=$('#edNum');if(e)e.textContent='Avaliação nº '+String(a.numero).padStart(4,'0')}}
+    catch(e){state.saving='Não salvou. Verifique a conexão.';setSaved()}})}
+function setSaved(){const e=$('#saved');if(e)e.textContent=state.saving}
+let toastT;function toast(m){let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2800)}
+
+/* atualizações parciais (sem redesenhar o que está sendo digitado) */
+function refreshNegocio(){const a=state.cur;const o=negocioOut(a);const f=$('#finOut');if(f)f.innerHTML=o.res;const k=$('#kmOut');if(k)k.innerHTML=o.km;const rp=$('#fn_rep');if(rp)rp.textContent=brl(o.n.reparo)}
+function refreshReparos(){const t=$('#repTotal');if(t)t.textContent=brl(reparos(state.cur).total)}
+function refreshHead(){const a=state.cur;const t=$('#edTitle');if(t)t.innerHTML=`${titulo(a)} <span class="faint">${esc(a.ano||'')}</span>`;const p=$('#edPlate');if(p)p.innerHTML=plate(a.placa,true)}
+
+/* ===================== Eventos ===================== */
+function abrir(id){
+  if(id==='exemplo'){state.cur=exemplo();state.step='laudo'}
+  else{const x=state.list.find(i=>i.id===id);if(!x)return;state.cur=JSON.parse(JSON.stringify(x));state.step=x.status==='concluido'?'laudo':'veiculo'}
+  state.view='editor';state.saving=state.cur.exemplo?'':'Salvo';state.confirmDel=false;state.fipe=null;render();window.scrollTo(0,0);
+}
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('button,[data-open]');if(!b)return;const d=b.dataset;const a=state.cur;
+  if(d.nav){e.preventDefault();if(d.nav==='nova'){state.cur=nova();state.view='editor';state.step='veiculo';state.saving='';state.confirmDel=false;state.fipe=null}else state.view=d.nav;render();window.scrollTo(0,0);return}
+  if(d.open){abrir(d.open);return}
+  if(d.step){state.step=d.step;state.confirmDel=false;render();window.scrollTo(0,0);return}
+  if(d.ans){const cur=a.answers[d.ans];if(cur===d.v)delete a.answers[d.ans];else a.answers[d.ans]=d.v;touch();renderEditor();
+    if(d.v==='atencao'||d.v==='critico'){const n=$('#n_'+d.ans);if(n&&!n.value)n.focus({preventScroll:true})}return}
+  if(d.allok){const c=CATEGORIAS.find(x=>x.id===d.allok);c.itens.forEach(([id])=>{if(!a.answers[id])a.answers[id]='ok'});touch();renderEditor();return}
+  if(d.resetov){delete a.repair_overrides[d.resetov];touch();renderEditor();return}
+  if(d.addex){a.extras=a.extras||[];a.extras.push({desc:'',valor:''});touch();renderEditor();const x=$('#exd_'+(a.extras.length-1));if(x)x.focus();return}
+  if(d.delex!=null){a.extras.splice(+d.delex,1);touch();renderEditor();return}
+  if(d.delobd!=null){a.obd.splice(+d.delobd,1);touch();renderEditor();return}
+  if(d.obdrep!=null){const o=a.obd[+d.obdrep];const dd=decodeOBD(o.code);a.extras=a.extras||[];a.extras.push({desc:`${dd.code} · ${dd.desc||o.ai?.descricao||'reparo'}`,valor:''});touch();renderEditor();toast('Adicionado aos reparos. Informe o valor na etapa Reparos.');return}
+  if(d.ai!=null){consultarIA(+d.ai);return}
+  const act=d.act;if(!act)return;
+  if(act==='pdf')baixarPDF();
+  if(act==='fipeTabela')fipeAbrir();
+  if(act==='fipeFechar'){state.fipe=null;renderEditor()}
+  if(act==='fipeIA')fipeIA();
+  if(act==='concluir'){a.status='concluido';touch();renderEditor();toast('Avaliação concluída')}
+  if(act==='reabrir'){a.status='em_andamento';touch();renderEditor()}
+  if(act==='del'){state.confirmDel=true;renderEditor()}
+  if(act==='delno'){state.confirmDel=false;renderEditor()}
+  if(act==='delok'){try{await api.remove(a.id);state.list=state.list.filter(x=>x.id!==a.id);state.cur=null;state.view='hist';render();toast('Avaliação excluída')}catch(err){toast('Não foi possível excluir. Tente de novo.')}}
+  if(act==='authswap'){state.authMode=state.authMode==='entrar'?'criar':'entrar';state.authMsg='';render()}
+  if(act==='sair'){await store.sb.auth.signOut();store.user=null;state.list=[];state.loaded=false;render()}
+});
+document.addEventListener('toggle',e=>{const el=e.target;if(el.matches&&el.matches('details.sys'))state.open[el.dataset.sys]=el.open},true);
+document.addEventListener('input',e=>{
+  const el=e.target;const a=state.cur;
+  if(el.id==='busca'){state.q=el.value;const h=$('#histList');if(h)h.innerHTML=histLista();return}
+  if(el.dataset.pf){state.perfil[el.dataset.pf]=el.dataset.pf==='lucro_padrao'?num(el.value):el.value;return}
+  if(!a)return;
+  if(el.dataset.f){const f=el.dataset.f;let v=el.value;
+    if(f==='placa'){v=fmtPlaca(v);el.value=v}
+    if(f==='km'||f==='fipe'){v=num(v);if(f==='fipe'){a.fipe_fonte=v?'manual':'';a.fipe_ref=''}}
+    a[f]=v;if(['placa','marca','modelo','ano'].includes(f))refreshHead();touch();return}
+  if(el.dataset.note){a.notes[el.dataset.note]=el.value;touch();return}
+  if(el.dataset.obdnote!=null){a.obd[+el.dataset.obdnote].nota=el.value;touch();return}
+  if(el.dataset.ov){a.repair_overrides[el.dataset.ov]=el.value===''?null:num(el.value);if(el.value==='')delete a.repair_overrides[el.dataset.ov];refreshReparos();touch();return}
+  if(el.dataset.ex){const [k,f]=el.dataset.ex.split('|');a.extras[+k][f]=f==='valor'?num(el.value):el.value;refreshReparos();touch();return}
+  if(el.dataset.fin){a.financeiro=a.financeiro||{};a.financeiro[el.dataset.fin]=el.value===''?'':num(el.value);refreshNegocio();touch();return}
+});
+document.addEventListener('change',e=>{
+  const el=e.target;const a=state.cur;
+  if(el.tagName==='SELECT'&&el.dataset.f){a[el.dataset.f]=el.value;refreshHead();touch();return}
+  if(el.dataset.fp==='marca'&&el.value)fipeModelos(el.value);
+  if(el.dataset.fp==='modelo'&&el.value)fipeAnos(el.value);
+  if(el.dataset.fp==='ano'&&el.value)fipeValor(el.value);
+  if(el.dataset.f==='km'||el.dataset.f==='fipe'||el.dataset.fin||el.dataset.ov||el.dataset.pf==='lucro_padrao'||(el.dataset.ex&&el.dataset.ex.endsWith('valor'))){if(el.value)el.value=fmtN(el.value)}
+});
+document.addEventListener('submit',async e=>{
+  e.preventDefault();const f=e.target;
+  if(f.id==='formOBD'){const i=$('#obdIn');const c=i.value.trim().toUpperCase();const m=$('#obdMsg');
+    if(!/^[PBCU][0-3][0-9A-F]{3}$/.test(c)){m.textContent='Formato inválido. Use P, B, C ou U seguido de 4 caracteres, como P0300.';m.style.color='var(--bad)';return}
+    const a=state.cur;if(a.obd.some(o=>o.code===c)){m.textContent=c+' já está na lista.';return}
+    a.obd.push({code:c,nota:''});touch();renderEditor();const n=$('#obdIn');if(n)n.focus();return}
+  if(f.id==='formPerfil'){const p=state.perfil;try{await api.savePerfil({nome:p.nome||'',responsavel:p.responsavel||'',telefone:p.telefone||'',documento:p.documento||'',endereco:p.endereco||'',lucro_padrao:num(p.lucro_padrao)||0});$('#pfMsg').textContent='Perfil salvo.'}catch(err){$('#pfMsg').textContent='Não salvou. Verifique a conexão e tente de novo.'}return}
+  if(f.id==='formAuth'){const email=$('#au_email').value.trim(),pass=$('#au_pass').value;
+    try{if(state.authMode==='entrar'){const {data,error}=await store.sb.auth.signInWithPassword({email,password:pass});if(error)throw error;store.user=data.user;state.authMsg='';await carregar()}
+      else{const {data,error}=await store.sb.auth.signUp({email,password:pass});if(error)throw error;if(data.session){store.user=data.user;await carregar()}else{state.authMode='entrar';state.authMsg='Conta criada. Confirme pelo link enviado ao seu e-mail e depois entre.';render()}}}
+    catch(err){state.authMsg=/invalid login/i.test(err.message||'')?'E-mail ou senha incorretos.':(err.message||'Não foi possível entrar.');render()}}
+});
+async function carregar(){
+  try{const [l,p]=await Promise.all([api.list(),api.getPerfil()]);state.list=l;state.perfil=p||{}}catch(e){toast('Não foi possível carregar os dados.')}
+  state.loaded=true;render();
+}
+(async()=>{render();await initStore();render();if(store.mode!=='supabase'||store.user)await carregar()})();
+</script>
+
+</body>
+</html>
