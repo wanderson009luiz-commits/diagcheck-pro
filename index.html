@@ -204,6 +204,16 @@ textarea.input{height:auto;min-height:88px;padding:12px 14px;resize:vertical;lin
 .ck-note{grid-column:1/-1}
 .ck-note .input{height:38px;font-size:13.5px}
 
+/* consulta por placa */
+.lookup{display:flex;flex-direction:column;gap:14px;background:var(--surface-2);border-color:var(--line)}
+.lookup-row{display:grid;grid-template-columns:minmax(0,320px) auto;gap:12px;align-items:end}
+.plate-in{height:56px;font-size:24px;letter-spacing:.14em;text-transform:uppercase;text-align:center;background:var(--surface)}
+.opt{display:flex;justify-content:space-between;gap:16px;align-items:center;text-align:left;width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:inherit}
+.opt:hover{border-color:var(--silver-lo)}
+.opt>span:first-child{display:flex;flex-direction:column;gap:2px}
+.linkbtn{border:0;background:none;padding:0;color:var(--fg-2);text-decoration:underline;font-size:inherit;cursor:pointer}
+.linkbtn[disabled]{opacity:.5;cursor:default}
+@media (max-width:560px){.lookup-row{grid-template-columns:1fr}}
 /* FIPE */
 .fipe-box{border:1px solid var(--line-soft);border-radius:12px;padding:18px;background:var(--surface-2);display:flex;flex-direction:column;gap:14px}
 .src{font-size:12px;display:inline-flex;gap:6px;align-items:center}
@@ -439,7 +449,7 @@ async function initStore(){
   }
   store.ready=true;
 }
-const CAMPOS=['status','placa','marca','modelo','ano','versao','km','combustivel','cambio','tracao','cor','vendedor','fipe','fipe_fonte','fipe_ref','answers','notes','obd','repair_overrides','extras','financeiro','observacoes'];
+const CAMPOS=['status','placa','marca','modelo','ano','versao','km','combustivel','cambio','tracao','cor','vendedor','fipe','fipe_fonte','fipe_ref','fipe_hist','answers','notes','obd','repair_overrides','extras','financeiro','observacoes'];
 function serial(a){const o={};CAMPOS.forEach(k=>o[k]=a[k]??null);o.km=a.km?Math.round(num(a.km)):null;o.fipe=a.fipe?num(a.fipe):null;o.score=calcScore(a.answers);o.reparo_total=reparos(a).total;
   ['answers','notes','repair_overrides','financeiro'].forEach(k=>o[k]=o[k]||{});['obd','extras'].forEach(k=>o[k]=o[k]||[]);o.status=o.status||'em_andamento';return o}
 const api={
@@ -664,22 +674,57 @@ function renderEditor(){
 }
 function inp(id,label,ph,o={}){const a=state.cur;return `<div class="field"><label for="f_${id}">${label}</label><input id="f_${id}" data-f="${id}" class="input ${o.cls||''}" placeholder="${ph}" value="${esc(o.fmt?o.fmt(a[id]):a[id]??'')}" ${o.list?`list="${o.list}"`:''} ${o.im?`inputmode="${o.im}"`:''}></div>`}
 function sel(id,label,opts){const a=state.cur;return `<div class="field"><label for="f_${id}">${label}</label><select id="f_${id}" data-f="${id}" class="input"><option value="">Selecione</option>${opts.map(o=>`<option ${a[id]===o?'selected':''}>${esc(o)}</option>`).join('')}</select></div>`}
+function placaPanel(a){
+  if(store.mode!=='supabase')return '';
+  const p=state.placa||{};const pl=fmtPlaca(a.placa);const ok=/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(pl);
+  return `<div class="panel lookup">
+    <div class="lookup-row">
+      <div class="field" style="min-width:0"><label for="f_placa2">Placa do veículo</label><input id="f_placa2" data-f="placa" class="input mono plate-in" placeholder="ABC1D23" maxlength="8" value="${esc(pl)}" autocomplete="off" autocapitalize="characters"></div>
+      <button class="btn primary" data-act="placa" ${!ok||p.busy?'disabled':''}>${ICON.search}${p.busy==='real'?'Consultando…':'Buscar pela placa'}</button>
+    </div>
+    <p class="hint">Preenche marca, modelo, ano, combustível, cor e FIPE. Custa R$ 0,06 por placa nova; placa já consultada nos últimos 30 dias sai de graça. <button class="linkbtn" data-act="placaTeste" ${p.busy?'disabled':''}>${p.busy==='teste'?'Testando…':'Testar conexão grátis'}</button></p>
+    ${p.err?`<div class="notice" style="background:var(--bad-bg)">${esc(p.err)}</div>`:''}
+    ${p.res?placaResultado(p.res):''}
+  </div>`;
+}
+function placaResultado(r){
+  const v=r.veiculo||{};
+  const info=[v.cor,v.combustivel,v.cilindradas?v.cilindradas+' cc':'',v.potencia?v.potencia+' cv':'',v.municipio&&v.uf?v.municipio+'/'+v.uf:''].filter(Boolean).map(s=>esc(String(s).toLowerCase())).join(' · ');
+  return `<div class="grid" style="gap:10px">
+    ${r.teste?'<div class="notice">Teste grátis: estes são os dados de exemplo da APIBrasil, não da sua placa. A conexão está funcionando.</div>':''}
+    ${r.opcoes.length>1?`<span class="lbl">${r.opcoes.length} versões FIPE encontradas · escolha a do carro</span>`:''}
+    ${r.opcoes.map((o,k)=>`<button class="opt" data-opt="${k}">
+      <span style="min-width:0"><b>${esc(o.marca||'')} ${esc(o.modelo||'')}</b><span class="faint small">${esc(o.anoModelo||'')} · ${esc(o.combustivel||'')} · código ${esc(o.codigoFipe||'—')}${o.principal&&r.opcoes.length>1?' · mais provável':''}</span></span>
+      <span class="num" style="white-space:nowrap">${brl(o.valor)}</span></button>`).join('')}
+    ${info?`<p class="hint" style="text-transform:none">Registro: ${info}${r.cache?' · consulta salva, sem custo':''}</p>`:''}
+  </div>`;
+}
+function spark(h){
+  const pts=(h||[]).slice().reverse();if(pts.length<3)return '';
+  const vs=pts.map(p=>num(p.valor));const mn=Math.min(...vs),mx=Math.max(...vs),W=220,H=44;
+  const xy=vs.map((v,i)=>[i/(vs.length-1)*W,H-4-(mx===mn?.5:(v-mn)/(mx-mn))*(H-10)]);
+  const d=xy.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const var12=vs[0]?((vs[vs.length-1]-vs[0])/vs[0]*100):0;
+  return `<div class="row" style="gap:14px;align-items:center"><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="max-width:100%" aria-hidden="true"><path d="${d} L${W} ${H} L0 ${H}Z" style="fill:var(--surface-2)"/><path d="${d}" style="fill:none;stroke:var(--silver);stroke-width:1.5"/><circle cx="${xy[xy.length-1][0]}" cy="${xy[xy.length-1][1]}" r="3" style="fill:var(--silver-hi)"/></svg>
+    <span class="small muted num">${var12>=0?'+':''}${var12.toFixed(1).replace('.',',')}% em ${pts.length} meses<br><span class="faint">${esc(pts[0].mes)} a ${esc(pts[pts.length-1].mes)}</span></span></div>`;
+}
 function stepVeiculo(a){
-  return `<div class="panel grid" style="gap:18px">
+  return `${placaPanel(a)}<div class="panel grid" style="gap:18px">
     <h3>Identificação</h3>
-    <div class="grid g4">${inp('placa','Placa','ABC1D23',{cls:'mono'})}${inp('marca','Marca','Ex.: Toyota',{list:'dl_marcas'})}${inp('modelo','Modelo','Ex.: Corolla')}${sel('ano','Ano modelo',ANOS)}</div>
+    <div class="grid g4">${store.mode==='supabase'?'':inp('placa','Placa','ABC1D23',{cls:'mono'})}${inp('marca','Marca','Ex.: Toyota',{list:'dl_marcas'})}${inp('modelo','Modelo','Ex.: Corolla')}${sel('ano','Ano modelo',ANOS)}</div>
     <datalist id="dl_marcas">${MARCAS.map(m=>`<option value="${m}">`).join('')}</datalist>
     <div class="grid g4">${inp('versao','Versão / motor','Ex.: 2.0 XEi')}${inp('km','Quilometragem','45.000',{cls:'mono',fmt:fmtN,im:'numeric'})}${sel('combustivel','Combustível',COMBUSTIVEIS)}${sel('cambio','Câmbio',CAMBIOS)}</div>
     <div class="grid g3">${sel('tracao','Tração',TRACOES)}${inp('cor','Cor','Ex.: Prata')}${inp('vendedor','Vendedor / anunciante','Nome ou contato')}</div>
   </div>
   <div class="panel grid" style="gap:16px">
-    <div class="panel-head" style="margin:0"><h3>Valor FIPE</h3>${a.fipe_fonte&&a.fipe?`<span class="src pill ${a.fipe_fonte==='tabela'?'ok':a.fipe_fonte==='estimativa'?'warn':''}">${a.fipe_fonte==='tabela'?'Tabela FIPE oficial':a.fipe_fonte==='estimativa'?'Estimativa do Claude':'Informado'}</span>`:''}</div>
+    <div class="panel-head" style="margin:0"><h3>Valor FIPE</h3>${a.fipe_fonte&&a.fipe?`<span class="src pill ${a.fipe_fonte==='tabela'||a.fipe_fonte==='placa'?'ok':a.fipe_fonte==='estimativa'?'warn':''}">${a.fipe_fonte==='tabela'?'Tabela FIPE oficial':a.fipe_fonte==='placa'?'Consulta pela placa':a.fipe_fonte==='estimativa'?'Estimativa do Claude':'Informado'}</span>`:''}</div>
     <div class="row" style="align-items:flex-end">
       <div class="field" style="flex:1;min-width:180px"><label for="f_fipe">Valor (R$)</label><div class="money"><span>R$</span><input id="f_fipe" data-f="fipe" class="input" inputmode="numeric" placeholder="0" value="${esc(fmtN(a.fipe))}"></div></div>
       ${store.mode==='supabase'||!inClaude()?`<button class="btn" data-act="fipeTabela">${ICON.search}Consultar tabela FIPE</button>`:''}
       ${store.sample?`<button class="btn" data-act="fipeIA" ${state.busy==='fipe'||!(a.marca&&a.modelo&&a.ano)?'disabled':''}>${ICON.spark}${state.busy==='fipe'?'Estimando…':'Estimar com Claude'}</button>`:''}
     </div>
     ${a.fipe_ref?`<p class="hint">${esc(a.fipe_ref)}</p>`:''}
+    ${spark(a.fipe_hist)}
     ${state.fipe?fipePanel():''}
     ${a.fipe_fonte==='estimativa'?`<p class="hint">Estimativa sem acesso à internet. Confira o valor em <a href="https://veiculos.fipe.org.br" target="_blank" rel="noopener" style="color:inherit">veiculos.fipe.org.br</a> antes de negociar.</p>`:''}
     ${!a.fipe?`<p class="hint">Consulte em <a href="https://veiculos.fipe.org.br" target="_blank" rel="noopener" style="color:inherit">veiculos.fipe.org.br</a> e digite aqui. ${store.sample?'Ou peça uma estimativa ao Claude depois de preencher marca, modelo e ano.':''}</p>`:''}
@@ -915,9 +960,37 @@ async function fipeAnos(mo){const f=state.fipe;Object.assign(f,{modelo:mo,anos:n
   try{f.anos=await fj(`${FIPE_API}/marcas/${f.marca}/modelos/${mo}/anos`);f.load=null}catch(e){f.err='Falha ao carregar anos.';f.load=null}renderEditor()}
 async function fipeValor(an){const f=state.fipe;Object.assign(f,{ano:an,load:'valor',err:''});renderEditor();
   try{const v=await fj(`${FIPE_API}/marcas/${f.marca}/modelos/${f.modelo}/anos/${an}`);const a=state.cur;
-    a.fipe=num(v.Valor);a.fipe_fonte='tabela';a.fipe_ref=`${v.Marca} ${v.Modelo} · ${v.AnoModelo} · ${v.Combustivel} · código ${v.CodigoFipe} · ${v.MesReferencia}`;
+    a.fipe=num(v.Valor);a.fipe_fonte='tabela';a.fipe_hist=null;a.fipe_ref=`${v.Marca} ${v.Modelo} · ${v.AnoModelo} · ${v.Combustivel} · código ${v.CodigoFipe} · ${v.MesReferencia}`;
     if(!a.ano&&v.AnoModelo<3000)a.ano=String(v.AnoModelo);state.fipe=null;touch();renderEditor();toast('Valor FIPE preenchido')}
   catch(e){f.err='Falha ao buscar o valor.';f.load=null;renderEditor()}}
+
+/* ===================== Consulta por placa (função consulta-placa no Supabase) ===================== */
+async function buscarPlaca(teste){
+  const a=state.cur;const placa=fmtPlaca(a.placa);if(!store.sb)return;
+  state.placa={busy:teste?'teste':'real'};renderEditor();
+  try{
+    const {data,error}=await store.sb.functions.invoke('consulta-placa',{body:{placa:teste?'ABC1234':placa,teste:!!teste}});
+    if(error){let msg='Falha na consulta. Tente de novo.';try{const j=await error.context.json();if(j&&j.erro)msg=j.erro}catch(e){}throw new Error(msg)}
+    if(!data||!data.opcoes||!data.opcoes.length)throw new Error('Nenhum dado encontrado para essa placa.');
+    state.placa={res:data};
+    if(!teste&&data.opcoes.length===1){aplicarPlaca(0);return}
+  }catch(e){state.placa={err:e.message||'Falha na consulta.'}}
+  renderEditor();
+}
+const COMB={gasolina:'Gasolina',diesel:'Diesel','álcool':'Flex',alcool:'Flex',flex:'Flex','alcool/gasolina':'Flex','álcool/gasolina':'Flex',eletrico:'Elétrico','elétrico':'Elétrico',hibrido:'Híbrido','híbrido':'Híbrido'};
+const cap=s=>String(s||'').toLowerCase().replace(/(^|\s)\S/g,c=>c.toUpperCase());
+function aplicarPlaca(k){
+  const a=state.cur;const r=state.placa&&state.placa.res;if(!r)return;const o=r.opcoes[k];const v=r.veiculo||{};
+  if(r.teste){toast('Conexão funcionando. Dados de exemplo não são aplicados.');return}
+  if(o.marca)a.marca=MARCAS.find(m=>m.toLowerCase()===String(o.marca).toLowerCase())||(/^m\.?\s?benz|mercedes/i.test(o.marca)?'Mercedes-Benz':cap(o.marca));
+  if(o.modelo)a.modelo=o.modelo;
+  if(o.anoModelo&&Number(o.anoModelo)<3000)a.ano=String(o.anoModelo);
+  const c=COMB[String(o.combustivel||v.combustivel||'').toLowerCase()];if(c)a.combustivel=c;
+  if(v.cor)a.cor=cap(v.cor);
+  const motor=[v.cilindradas?(Number(v.cilindradas)/1000).toFixed(1).replace('.',',')+' L':'',v.potencia?v.potencia+' cv':''].filter(Boolean).join(' · ');if(motor&&!a.versao)a.versao=motor;
+  if(o.valor){a.fipe=o.valor;a.fipe_fonte='placa';a.fipe_ref=`${o.marca} ${o.modelo} · ${o.anoModelo} · código ${o.codigoFipe} · ${o.mesReferencia}`;a.fipe_hist=o.historico||null}
+  state.placa=null;touch();renderEditor();refreshHead();toast('Dados da placa preenchidos');
+}
 
 /* ===================== Claude: estimativa FIPE e códigos fora da base ===================== */
 async function fipeIA(){
@@ -955,11 +1028,11 @@ function refreshHead(){const a=state.cur;const t=$('#edTitle');if(t)t.innerHTML=
 function abrir(id){
   if(id==='exemplo'){state.cur=exemplo();state.step='laudo'}
   else{const x=state.list.find(i=>i.id===id);if(!x)return;state.cur=JSON.parse(JSON.stringify(x));state.step=x.status==='concluido'?'laudo':'veiculo'}
-  state.view='editor';state.saving=state.cur.exemplo?'':'Salvo';state.confirmDel=false;state.fipe=null;render();window.scrollTo(0,0);
+  state.view='editor';state.saving=state.cur.exemplo?'':'Salvo';state.confirmDel=false;state.fipe=null;state.placa=null;render();window.scrollTo(0,0);
 }
 document.addEventListener('click',async e=>{
   const b=e.target.closest('button,[data-open]');if(!b)return;const d=b.dataset;const a=state.cur;
-  if(d.nav){e.preventDefault();if(d.nav==='nova'){state.cur=nova();state.view='editor';state.step='veiculo';state.saving='';state.confirmDel=false;state.fipe=null}else state.view=d.nav;render();window.scrollTo(0,0);return}
+  if(d.nav){e.preventDefault();if(d.nav==='nova'){state.cur=nova();state.view='editor';state.step='veiculo';state.saving='';state.confirmDel=false;state.fipe=null;state.placa=null}else state.view=d.nav;render();window.scrollTo(0,0);return}
   if(d.open){abrir(d.open);return}
   if(d.step){state.step=d.step;state.confirmDel=false;render();window.scrollTo(0,0);return}
   if(d.ans){const cur=a.answers[d.ans];if(cur===d.v)delete a.answers[d.ans];else a.answers[d.ans]=d.v;touch();renderEditor();
@@ -971,9 +1044,12 @@ document.addEventListener('click',async e=>{
   if(d.delobd!=null){a.obd.splice(+d.delobd,1);touch();renderEditor();return}
   if(d.obdrep!=null){const o=a.obd[+d.obdrep];const dd=decodeOBD(o.code);a.extras=a.extras||[];a.extras.push({desc:`${dd.code} · ${dd.desc||o.ai?.descricao||'reparo'}`,valor:''});touch();renderEditor();toast('Adicionado aos reparos. Informe o valor na etapa Reparos.');return}
   if(d.ai!=null){consultarIA(+d.ai);return}
+  if(d.opt!=null){aplicarPlaca(+d.opt);return}
   const act=d.act;if(!act)return;
   if(act==='pdf')baixarPDF();
   if(act==='fipeTabela')fipeAbrir();
+  if(act==='placa')buscarPlaca(false);
+  if(act==='placaTeste')buscarPlaca(true);
   if(act==='fipeFechar'){state.fipe=null;renderEditor()}
   if(act==='fipeIA')fipeIA();
   if(act==='concluir'){a.status='concluido';touch();renderEditor();toast('Avaliação concluída')}
@@ -991,8 +1067,8 @@ document.addEventListener('input',e=>{
   if(el.dataset.pf){state.perfil[el.dataset.pf]=el.dataset.pf==='lucro_padrao'?num(el.value):el.value;return}
   if(!a)return;
   if(el.dataset.f){const f=el.dataset.f;let v=el.value;
-    if(f==='placa'){v=fmtPlaca(v);el.value=v}
-    if(f==='km'||f==='fipe'){v=num(v);if(f==='fipe'){a.fipe_fonte=v?'manual':'';a.fipe_ref=''}}
+    if(f==='placa'){v=fmtPlaca(v);el.value=v;const bt=$('[data-act="placa"]');if(bt)bt.disabled=!/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(v)||!!(state.placa&&state.placa.busy)}
+    if(f==='km'||f==='fipe'){v=num(v);if(f==='fipe'){a.fipe_fonte=v?'manual':'';a.fipe_ref='';a.fipe_hist=null}}
     a[f]=v;if(['placa','marca','modelo','ano'].includes(f))refreshHead();touch();return}
   if(el.dataset.note){a.notes[el.dataset.note]=el.value;touch();return}
   if(el.dataset.obdnote!=null){a.obd[+el.dataset.obdnote].nota=el.value;touch();return}
