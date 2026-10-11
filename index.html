@@ -983,7 +983,9 @@ function aplicarPlaca(k){
   const a=state.cur;const r=state.placa&&state.placa.res;if(!r)return;const o=r.opcoes[k];const v=r.veiculo||{};
   if(r.teste){toast('Conexão funcionando. Dados de exemplo não são aplicados.');return}
   if(o.marca)a.marca=MARCAS.find(m=>m.toLowerCase()===String(o.marca).toLowerCase())||(/^m\.?\s?benz|mercedes/i.test(o.marca)?'Mercedes-Benz':cap(o.marca));
-  if(o.modelo)a.modelo=o.modelo;
+  if(o.modelo){a.modelo=o.modelo;const m=o.modelo;
+    if(!a.cambio){if(/\bCVT\b/i.test(m))a.cambio='CVT';else if(/\baut\b|aut\.|automático|automatico|tiptronic|\bAT\b|\bDCT\b|\bDSG\b|7G|9G|steptronic|powershift/i.test(m))a.cambio='Automático';else if(/\bmec\b|mec\.|manual/i.test(m))a.cambio='Manual'}
+    if(!a.tracao&&/4x4|4matic|quattro|xdrive|\bAWD\b|4motion|\b4WD\b/i.test(m))a.tracao=/4x4|4WD/i.test(m)?'4x4':'AWD'}
   if(o.anoModelo&&Number(o.anoModelo)<3000)a.ano=String(o.anoModelo);
   const c=COMB[String(o.combustivel||v.combustivel||'').toLowerCase()];if(c)a.combustivel=c;
   if(v.cor)a.cor=cap(v.cor);
