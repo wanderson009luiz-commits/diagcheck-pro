@@ -229,8 +229,8 @@ textarea.input{height:auto;min-height:88px;padding:12px 14px;resize:vertical;lin
 .check{display:flex;gap:10px;align-items:center;font-size:14px;cursor:pointer}
 .check input{width:18px;height:18px;accent-color:var(--silver-hi)}
 .range{width:100%;accent-color:var(--silver-hi)}
-.a4{position:relative;width:300px;max-width:100%;aspect-ratio:210/297;background:var(--paper);border-radius:4px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.2),0 12px 32px rgba(0,0,0,.18)}
-@media (max-width:860px){.ident{grid-template-columns:1fr}.ident-prev{position:static;align-items:center}}
+.a4{position:relative;width:300px;flex:none;aspect-ratio:210/297;background:var(--paper);border-radius:4px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.2),0 12px 32px rgba(0,0,0,.18)}
+@media (max-width:860px){.ident{grid-template-columns:minmax(0,1fr)}.ident-prev{position:static;align-items:center}}
 @media (max-width:560px){.fontes{grid-template-columns:1fr}}
 /* tela inicial */
 .start{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,520px);gap:28px;align-items:end}
@@ -239,10 +239,10 @@ textarea.input{height:auto;min-height:88px;padding:12px 14px;resize:vertical;lin
 .start-row .btn{height:56px;padding:0 24px;font-size:15px}
 .stats4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .home-sec{display:flex;flex-direction:column;gap:14px}
-.cont{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.cont{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:10px}
 .cont-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 16px;border:1px solid var(--line-soft);border-radius:12px;background:var(--surface);text-align:left;color:inherit}
 .cont-item:hover{border-color:var(--silver-lo)}
-.stks{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.stks{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:12px}
 .stk{display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid var(--line-soft);border-radius:14px;background:var(--surface);text-align:left;color:inherit}
 .stk:hover{border-color:var(--silver-lo)}
 .stk-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
@@ -252,9 +252,11 @@ textarea.input{height:auto;min-height:88px;padding:12px 14px;resize:vertical;lin
 .seg-wide button{padding:0 6px;font-size:12.5px}
 .seg-wide button[aria-pressed="true"]{background:var(--silver-hi);color:var(--ink-on-silver)}
 @media (max-width:860px){.start{grid-template-columns:1fr}.stats4{grid-template-columns:repeat(2,minmax(0,1fr))}.stats4 .stat:nth-child(3){border-left:0;padding-left:4px}.stats4 .stat:nth-child(n+3){border-top:1px solid var(--line-soft)}}
+@media (max-width:860px){.input{font-size:16px}}
+@media (max-width:560px){.plate.lg{width:120px}.plate.lg b{font-size:18px;line-height:28px}.plate.lg i{height:11px;line-height:11px;font-size:7px}}
 @media (max-width:560px){.cont-item{grid-template-columns:minmax(0,1fr) auto}.cont-item .plate{display:none}}
 /* preparação para revenda */
-.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(250px,100%),1fr));gap:8px}
 .chip{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg-2);text-align:left;font-size:14px}
 .chip:hover{border-color:var(--silver-lo);color:var(--fg)}
 .chip .num{font-size:13px;color:var(--fg-3)}
@@ -474,7 +476,7 @@ const SUBP={0:'Ar/combustível e emissões',1:'Medição de ar e combustível',2
 /* ===================== Utilidades ===================== */
 const $=(s,el=document)=>el.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const brl=n=>(Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+const brl=n=>(Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:0,maximumFractionDigits:0});
 const brlC=n=>{n=Number(n)||0;const a=Math.abs(n);if(a>=1e9)return 'R$ '+(n/1e9).toLocaleString('pt-BR',{maximumFractionDigits:1})+' bi';if(a>=1e6)return 'R$ '+(n/1e6).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mi';if(a>=1e5)return 'R$ '+Math.round(n/1e3).toLocaleString('pt-BR')+' mil';return brl(n)};
 const dt=s=>{try{return new Date(s).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}catch(e){return ''}};
 const num=v=>{if(typeof v==='number')return v;const t=String(v??'').replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(t);return isNaN(n)?0:n};
@@ -599,9 +601,9 @@ const PREP=[
 const prepPreco=id=>{const v=(state.perfil.prep||{})[id];return v!=null&&v!==''?num(v):PREP.find(p=>p.id===id).preco};
 function ajusteKm(a){
   const ano=parseInt(a.ano)||0,km=num(a.km),fipe=num(a.fipe);if(!ano||!km||!fipe)return null;
-  const idade=Math.max(0,new Date().getFullYear()-ano);const esperado=idade*12000;const dif=km-esperado;const d=-dif;
-  let adj;if(d<-30000)adj={pct:-20,label:'Muito alta',cls:'bad'};else if(d<-15000)adj={pct:-10,label:'Alta',cls:'warn'};else if(d<-5000)adj={pct:-5,label:'Acima do normal',cls:'warn'};else if(d<=5000)adj={pct:0,label:'Normal',cls:'ok'};else if(d<=15000)adj={pct:5,label:'Baixa',cls:'good'};else adj={pct:15,label:'Muito baixa',cls:'good'};
-  return{idade,esperado,km,dif,adj,fipe,ajustado:Math.round(fipe*(1+adj.pct/100))};
+  const idade=Math.max(.5,(Date.now()-new Date(ano-1,9,1).getTime())/3.156e10);const esperado=Math.round(idade*12000/1000)*1000;const dif=km-esperado;const d=-dif;
+  let adj;if(d<-30000)adj={pct:-20,label:'Muito alta',cls:'bad'};else if(d<-15000)adj={pct:-10,label:'Alta',cls:'warn'};else if(d<-5000)adj={pct:-5,label:'Acima do normal',cls:'warn'};else if(d<=5000)adj={pct:0,label:'Normal',cls:'ok'};else if(d<=15000)adj={pct:5,label:'Baixa',cls:'good'};else adj={pct:10,label:'Muito baixa',cls:'good'};
+  return{idade:Math.round(idade*10)/10,esperado,km,dif,adj,fipe,ajustado:Math.round(fipe*(1+adj.pct/100))};
 }
 function negocio(a){
   const f=a.financeiro||{};const pedido=num(f.pedido);const aj=ajusteKm(a);
@@ -655,6 +657,7 @@ function render(){
   if(state.view==='editor')return renderEditor();
   const v={home:homeView,hist:histView,perfil:perfilView}[state.view]||homeView;
   root.innerHTML=shell(v());
+  if(state.view==='perfil')encaixarA4();
 }
 function plate(p,lg){return `<span class="plate ${lg?'lg':''}"><i>BRASIL</i><b>${esc(fmtPlaca(p)||'———')}</b></span>`}
 function ring(p){const c=categoria(p);return `<span class="ring" style="--p:${p??0};--c:${c.cor}"><span>${p==null?'—':p}</span></span>`}
@@ -744,7 +747,7 @@ async function buscarFipeHoje(a){
     fipeHoje[k]={preco:hist[0].valor,mes:hist[0].mes,hist};
     try{localStorage.setItem(ck,JSON.stringify(fipeHoje[k]))}catch(e){}
   }catch(e){fipeHoje[k]={erro:true}}
-  if(state.view==='home')render();
+  if(state.view==='home'){clearTimeout(window.__stkT);window.__stkT=setTimeout(()=>{if(state.view!=='home')return;const i=$('#startPlaca');const v=i?i.value:'';const foc=i&&document.activeElement===i;render();const j=$('#startPlaca');if(j){j.value=v;if(foc){j.focus();try{j.setSelectionRange(v.length,v.length)}catch(e){}}}},150)}
 }
 
 /* ===================== Tela inicial ===================== */
@@ -786,17 +789,18 @@ function cardEstoque(a){
 }
 function homeView(){
   const l=state.list;const mes=hojeISO().slice(0,7);
-  const doMes=a=>String(a.created_at||'').slice(0,7)===mes;
+  const mesDe=d=>{if(!d)return '';if(/^\d{4}-\d{2}-\d{2}$/.test(d))return d.slice(0,7);const x=new Date(d);return isNaN(x)?'':x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')};
+  const doMes=a=>mesDe(a.created_at)===mes;
   const avaliadosMes=l.filter(doMes);
-  const compradosMes=l.filter(a=>(a.decisao==='comprado'||a.decisao==='vendido')&&String(a.data_compra||a.created_at||'').slice(0,7)===mes);
+  const compradosMes=l.filter(a=>(a.decisao==='comprado'||a.decisao==='vendido')&&mesDe(a.data_compra||a.created_at)===mes);
   const contas=compradosMes.map(contaNegocio);
   const margem=contas.reduce((t,c)=>t+(c.margemPrev||0),0);
   const abaixo=contas.reduce((t,c)=>t+Math.max(0,c.abaixo||0),0);
-  const taxa=avaliadosMes.length?Math.round(compradosMes.length/avaliadosMes.length*100):0;
+  const taxa=avaliadosMes.length?Math.round(avaliadosMes.filter(a=>a.decisao==='comprado'||a.decisao==='vendido').length/avaliadosMes.length*100):0;
   const andamento=l.filter(a=>a.status!=='concluido'&&!a.decisao).sort((x,y)=>String(y.updated_at||y.created_at).localeCompare(String(x.updated_at||x.created_at))).slice(0,4);
   const estoque=l.filter(a=>a.decisao==='comprado');
   estoque.forEach(buscarFipeHoje);
-  const vendMes=l.filter(a=>a.decisao==='vendido'&&String(a.data_venda||'').slice(0,7)===mes);
+  const vendMes=l.filter(a=>a.decisao==='vendido'&&mesDe(a.data_venda)===mes);
   const lucroMes=vendMes.map(contaNegocio).reduce((t,c)=>t+(c.lucro||0),0);
   const recentes=l.filter(a=>!andamento.includes(a)).slice(0,5);
   return `<section class="start">
@@ -853,7 +857,7 @@ function perfilView(){
        <hr class="hairline">
        <div class="field"><span class="lbl">Logo da empresa</span>
          <div class="row">
-           ${p.logo?`<span class="logo-thumb"><img src="${p.logo}" alt="Logo atual"></span>`:''}
+           ${p.logo?`<span class="logo-thumb"><img src="${esc(p.logo)}" alt="Logo atual"></span>`:''}
            <label class="btn sm" for="pf_logo">${ICON.plus}${p.logo?'Trocar logo':'Enviar logo'}</label><input type="file" id="pf_logo" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
            ${p.logo?'<button type="button" class="btn ghost sm" data-act="logoRemover">Remover</button>':''}
          </div>
@@ -878,9 +882,9 @@ function previewA4(){
   const tFam=(p.fonte||'moderna')==='elegante'?"'Bodoni Moda',Georgia,serif":`'${F.app}',sans-serif`;const bFam=`'${F.body}',sans-serif`;
   const ar=mc.lw&&mc.lh?mc.lw/mc.lh:null;
   let logo='',hx=16;
-  if(p.logo&&ar){const h=mc.logo_h;const w=Math.min(h*ar,90);logo=`<img src="${p.logo}" alt="" style="position:absolute;left:${mm(16)};top:${mm(12)};width:${mm(w)};height:${mm(w/ar)}">`;hx=16+w+5}
+  if(p.logo&&ar){const h=mc.logo_h;const w=Math.min(h*ar,90);logo=`<img src="${esc(p.logo)}" alt="" style="position:absolute;left:${mm(16)};top:${mm(12)};width:${mm(w)};height:${mm(w/ar)}">`;hx=16+w+5}
   const nome=(!p.logo||mc.nome_ao_lado)?`<div style="position:absolute;left:${mm(hx)};top:${mm(p.logo?12+Math.max((p.logo&&ar?Math.min(mc.logo_h*ar,90)/ar:0)/2,5)-4:11)};font-family:${tFam};font-weight:${(p.fonte||'moderna')==='elegante'?400:600};font-size:${pt(p.logo?15:21)};color:#121419;white-space:nowrap">${esc(p.nome||'Nome da sua loja')}</div>`:'';
-  let wm='';if(mc.wm){if(p.logo&&ar){let w=210*mc.wm_tam/100,h=w/ar;if(h>200){h=200;w=h*ar}wm=`<img src="${p.logo}" alt="" style="position:absolute;left:${mm((210-w)/2)};top:${mm((297-h)/2)};width:${mm(w)};height:${mm(h)};opacity:${mc.wm_op/100}">`}
+  let wm='';if(mc.wm){if(p.logo&&ar){let w=210*mc.wm_tam/100,h=w/ar;if(h>200){h=200;w=h*ar}wm=`<img src="${esc(p.logo)}" alt="" style="position:absolute;left:${mm((210-w)/2)};top:${mm((297-h)/2)};width:${mm(w)};height:${mm(h)};opacity:${mc.wm_op/100}">`}
     else if(p.nome)wm=`<div style="position:absolute;inset:0;display:grid;place-items:center;opacity:${mc.wm_op/100}"><span style="transform:rotate(-30deg);font-family:${tFam};font-size:${pt(Math.max(28,mc.wm_tam*.9))};color:${acc};white-space:nowrap">${esc(p.nome)}</span></div>`}
   const bar=(x,yy,w,c='#dfe2e7',h=1.6)=>`<i style="position:absolute;left:${mm(x)};top:${mm(yy)};width:${mm(w)};height:${mm(h)};background:${c};border-radius:1px"></i>`;
   let body='';const secs=[44,92,150,214];secs.forEach((sy,i)=>{body+=bar(16,sy,34,acc,1.4)+bar(16,sy+3,178,'#e6e8ec',.3);for(let j=0;j<[7,9,6,5][i];j++)body+=bar(16,sy+8+j*5.2,60+((j*37)%70))+bar(170,sy+8+j*5.2,24)});
@@ -911,6 +915,7 @@ let pfT=null;
 function salvarPerfilDepois(){const m=$('#pfMsg');if(m)m.textContent='Salvando…';clearTimeout(pfT);pfT=setTimeout(async()=>{const p=state.perfil;
   try{await api.savePerfil({nome:p.nome||'',responsavel:p.responsavel||'',telefone:p.telefone||'',documento:p.documento||'',endereco:p.endereco||'',lucro_padrao:num(p.lucro_padrao)||0,fonte:p.fonte||'moderna',cor:p.cor||'#1e2228',logo:p.logo||null,marca:marcaCfg(),prep:p.prep||{}});const mm=$('#pfMsg');if(mm)mm.textContent='Salvo'}
   catch(e){const mm=$('#pfMsg');if(mm)mm.textContent='Não salvou. Verifique a conexão.'}},700)}
+function encaixarA4(){const a4=$('#a4prev');if(!a4)return;const w=a4.parentElement.clientWidth;a4.style.zoom=w&&w<300?String(w/300):''}
 function refreshPreview(){const a4=$('#a4prev');if(a4)a4.innerHTML=previewA4()}
 function aplicarFonte(){document.documentElement.dataset.font=state.perfil.fonte||'moderna'}
 function authView(){
@@ -928,6 +933,7 @@ function authView(){
 
 /* ===================== Render: editor ===================== */
 function renderEditor(){
+  if(state.view!=='editor')return;
   const a=state.cur;if(!a)return;
   const p=calcScore(a.answers);const comp=completude(a.answers);const cr=marcados(a,'critico').length;const rp=reparos(a);
   const head=`<div class="ed-head">
@@ -1094,7 +1100,7 @@ function stepHistorico(a){
   ${h&&(h.renajud||[]).length?`<div class="panel"><div class="panel-head"><h3>Bloqueios judiciais</h3></div>${h.renajud.map(r=>`<div class="find"><span class="pill bad">Renajud</span><span>${esc(frase(r.restricao)||'Restrição')}</span><span class="faint small">${esc(r.data.slice(0,10))}</span><span class="k">${esc([r.tribunal,r.orgao,r.processo?'processo '+r.processo:''].filter(Boolean).join(' · '))}</span></div>`).join('')}</div>`:''}
   ${h&&h.multas&&h.multas.qtd?`<div class="panel"><div class="panel-head"><h3>Multas</h3><span class="faint small">${brl(h.multas.total)} em aberto</span></div>${h.multas.itens.slice(0,10).map(m=>`<div class="find"><span class="pill ${m.pago?'ok':'warn'}">${m.pago?'Paga':'Em aberto'}</span><span>${esc(frase(m.infracao)||'Infração '+m.codigo)}</span><span class="num small">${m.valor?brl(m.valor):''}</span><span class="k">${esc([m.data,frase(m.orgao)].filter(Boolean).join(' · '))}</span></div>`).join('')}</div>`:''}
   ${l&&(l.registros||[]).some(r=>r.fotos&&r.fotos.length)?`<div class="panel"><div class="panel-head"><h3>Fotos do leilão</h3></div><div class="fotos">${l.registros.flatMap(r=>r.fotos||[]).slice(0,8).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="Foto do lote" loading="lazy"></a>`).join('')}</div></div>`:''}
-  ${h&&h.pdf?`<p class="hint">Relatório oficial completo: <a href="${esc(h.pdf)}" target="_blank" rel="noopener" style="color:inherit">abrir PDF</a>. Ele contém dados do proprietário; use só para a sua conferência e não envie ao cliente.</p>`:''}`;
+  ${h&&/^https?:\/\//i.test(h.pdf||'')?`<p class="hint">Relatório oficial completo: <a href="${esc(h.pdf)}" target="_blank" rel="noopener" style="color:inherit">abrir PDF</a>. Ele contém dados do proprietário; use só para a sua conferência e não envie ao cliente.</p>`:''}`;
 }
 function quadroHist(a,teste){
   const lin=linhasHistorico(a).filter(x=>!teste||x[2]!=='');
@@ -1107,12 +1113,12 @@ async function consultarHist(servico,teste){
   try{
     const {data,error}=await store.sb.functions.invoke('consulta-veicular',{body:{servico,placa:fmtPlaca(a.placa),teste:!!teste}});
     if(error){let msg='Falha na consulta. Tente de novo.';try{const j=await error.context.json();if(j&&j.erro)msg=j.erro}catch(e){}throw new Error(msg)}
-    if(teste){state.hteste=data}
+    if(teste){if(state.cur===a)state.hteste=data}
     else{a[servico]=data;
       if(servico==='leilao'&&!a.answers.doc_sinistro){const st=statusLeilao(data);a.answers.doc_sinistro=st.cls==='bad'?'critico':st.cls==='warn'?'atencao':'ok';
         if(st.cls!=='ok')a.notes.doc_sinistro=(a.notes.doc_sinistro?a.notes.doc_sinistro+' · ':'')+'Consulta de leilão: '+st.label.toLowerCase();}
-      touch();toast(data.cache?'Consulta salva reaproveitada, sem custo':'Consulta concluída')}
-  }catch(e){state.herr=e.message||'Falha na consulta.'}
+      persistir(a);toast(data.cache?'Consulta salva reaproveitada, sem custo':'Consulta concluída')}
+  }catch(e){if(state.cur===a)state.herr=e.message||'Falha na consulta.'}
   state.hbusy=null;renderEditor();
 }
 const brl2=n=>(Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
@@ -1199,7 +1205,7 @@ function stepReparos(a){
 function negocioOut(a){
   const n=negocio(a);const aj=n.aj;
   const km=aj?`<div class="kmadj">
-     <div><span class="lbl">Km esperada</span><b>${aj.esperado.toLocaleString('pt-BR')} km</b><span class="faint small">${aj.idade} ano${aj.idade===1?'':'s'} × 12.000</span></div>
+     <div><span class="lbl">Km esperada</span><b>${aj.esperado.toLocaleString('pt-BR')} km</b><span class="faint small">${String(aj.idade).replace('.',',')} ano${aj.idade===1?'':'s'} de uso × 12.000</span></div>
      <div><span class="lbl">Km real</span><b>${aj.km.toLocaleString('pt-BR')} km</b></div>
      <div><span class="lbl">Diferença</span><b style="color:${aj.dif>0?'var(--bad)':'var(--ok)'}">${aj.dif>0?'+':''}${aj.dif.toLocaleString('pt-BR')} km</b></div>
      <div class="foot"><span>Rodagem <span class="pill ${aj.adj.cls}">${aj.adj.label} · ${aj.adj.pct>0?'+':''}${aj.adj.pct}%</span></span><span class="num">FIPE ${brl(aj.fipe)} → <b>${brl(aj.ajustado)}</b></span></div>
@@ -1324,14 +1330,14 @@ function gerarPDF(a,k=1){
   let hx=M,hTop=y-4,hH=0;
   if(logo){const h=Math.max(8,Math.min(26,mc.logo_h));const w=Math.min(h*logo.ar,90);const hh=w/logo.ar;doc.addImage(logo.src,'PNG',M,hTop,w,hh,'logo','FAST');hH=hh;hx=M+w+5}
   const showName=!logo||mc.nome_ao_lado;
-  if(showName){T();doc.setFontSize(logo?15:21);doc.setTextColor(...ink);const ny=logo?hTop+Math.max(hH/2,5)+1.5:y+2;doc.text(pf.nome||'DiagCheck Pro',hx,ny);
+  if(showName){T();let fs=logo?15:21;const maxW=W-M-66-hx;const nome=pf.nome||'DiagCheck Pro';doc.setFontSize(fs);while(fs>10&&doc.getTextWidth(nome)>maxW){fs-=1;doc.setFontSize(fs)}doc.setTextColor(...ink);const ny=logo?hTop+Math.max(hH/2,5)+1.5:y+2;doc.text(doc.splitTextToSize(nome,maxW)[0],hx,ny);
     if(!logo)hH=8}
   const sub=[pf.endereco,pf.telefone,pf.documento].filter(Boolean).join('   ·   ');
   B();doc.setFontSize(7.5);doc.setTextColor(...ACC);doc.text('LAUDO DE AVALIAÇÃO VEICULAR',W-M,hTop+3,{align:'right',charSpace:.3});
   T();doc.setFontSize(15);doc.setTextColor(...ink);doc.text(a.numero?'Nº '+String(a.numero).padStart(4,'0'):'Exemplo',W-M,hTop+10,{align:'right'});
   B();doc.setFontSize(7.5);doc.setTextColor(...gray);doc.text(dt(a.created_at||new Date()),W-M,hTop+14.5,{align:'right'});
   y=hTop+Math.max(hH,showName&&!logo?10:hH)+3;
-  if(sub){doc.setFontSize(7.8);doc.setTextColor(...gray);doc.text(sub,M,y+1.5);y+=4}
+  if(sub){doc.setFontSize(7.8);doc.setTextColor(...gray);const sl=doc.splitTextToSize(sub,W-2*M-64).slice(0,2);doc.text(sl,M,y+1.5);y+=4+(sl.length-1)*3.4}
   y=Math.max(y,hTop+17)+2;doc.setDrawColor(...ACC);doc.setLineWidth(.6);doc.line(M,y,W-M,y);y+=L(7);
 
   // veículo + nota
@@ -1349,9 +1355,9 @@ function gerarPDF(a,k=1){
   if(a.historico||a.leilao){
     sec('Histórico do veículo'+(a.historico&&a.historico.teste||a.leilao&&a.leilao.teste?' (dados de teste)':''));
     const COR={bad:RED,warn:AMB,ok:GRN,'':gray};
-    linhasHistorico(a).forEach(([k,v,c])=>{const vl=doc.splitTextToSize(String(v),112);need(L(5)+(vl.length-1)*L(3.9));
-      doc.setFillColor(...COR[c||'']);doc.circle(M+1,y-1.1,1,'F');doc.setFontSize(8.8);doc.setTextColor(...ink);doc.text(String(k),M+4,y);
-      if(c==='bad')B('bold');doc.setTextColor(...COR[c||'']);doc.text(vl,M+66,y);B();y+=L(4.9)+(vl.length-1)*L(3.9)});
+    linhasHistorico(a).forEach(([k,v,c])=>{doc.setFontSize(8.8);const kl=doc.splitTextToSize(String(k),58);const vl=doc.splitTextToSize(String(v),112);const nl=Math.max(kl.length,vl.length);need(L(5)+(nl-1)*L(3.9));
+      doc.setFillColor(...COR[c||'']);doc.circle(M+1,y-1.1,1,'F');doc.setTextColor(...ink);doc.text(kl,M+4,y);
+      if(c==='bad')B('bold');doc.setTextColor(...COR[c||'']);doc.text(vl,M+66,y);B();y+=L(4.9)+(nl-1)*L(3.9)});
     doc.setFontSize(9);y+=L(4);
   }
   sec('Resumo por sistema');
@@ -1368,12 +1374,12 @@ function gerarPDF(a,k=1){
     B('bold');doc.setFontSize(7);doc.setTextColor(...(st==='critico'?RED:AMB));doc.text(st==='critico'?'CRÍTICO':'ATENÇÃO',M,y);
     B();doc.setFontSize(9);doc.setTextColor(...ink);doc.text(i.label,M+19,y);doc.setTextColor(...gray);doc.text(i.cat.label,M+124,y);doc.setTextColor(...ink);doc.text(l?brl(l.valor):'',W-M,y,{align:'right'});
     if(nl.length){doc.setFontSize(8);doc.setTextColor(...gray);doc.text(nl,M+19,y+L(4));doc.setFontSize(9);y+=nl.length*L(4)}y+=L(5.8)});
-  (a.extras||[]).forEach(e=>{need(7);B('bold');doc.setFontSize(7);doc.setTextColor(...gray);doc.text('AVULSO',M,y);B();doc.setFontSize(9);doc.setTextColor(...ink);doc.text(String(e.desc||'—').slice(0,80),M+19,y);doc.text(brl(e.valor),W-M,y,{align:'right'});y+=L(5.8)});
+  (a.extras||[]).forEach(e=>{need(7);B('bold');doc.setFontSize(7);doc.setTextColor(...gray);doc.text('AVULSO',M,y);B();doc.setFontSize(9);doc.setTextColor(...ink);doc.text(doc.splitTextToSize(String(e.desc||'—'),122)[0],M+19,y);doc.text(brl(e.valor),W-M,y,{align:'right'});y+=L(5.8)});
   r.prep.forEach(pp=>{need(7);B('bold');doc.setFontSize(7);doc.setTextColor(...gray);doc.text('PREPARO',M,y);B();doc.setFontSize(9);doc.setTextColor(...ink);doc.text(pp.nome,M+19,y);doc.text(brl(pp.valor),W-M,y,{align:'right'});y+=L(5.8)});
   need(10);doc.setDrawColor(...line);doc.setLineWidth(.3);doc.line(W-M-62,y-L(2),W-M,y-L(2));y+=L(3);B('bold');doc.setTextColor(...ink);doc.text(r.prepTotal?'Reparos + preparação':'Reparos estimados',W-M-62,y);doc.text(brl(r.total),W-M,y,{align:'right'});B();y+=L(8);
 
-  if((a.obd||[]).length){sec('Códigos de falha (OBD)');a.obd.forEach(o=>{const d=decodeOBD(o.code);const ds=doc.splitTextToSize(d.desc||o.ai?.descricao||'Código fora da base local',125);need(L(5)+ds.length*L(4));
-    doc.setFont('courier','bold');doc.setTextColor(...ink);doc.text(d.code,M,y);B();doc.text(ds,M+19,y);y+=ds.length*L(4);if(o.nota){doc.setTextColor(...gray);doc.setFontSize(8);doc.text(doc.splitTextToSize(o.nota,125),M+19,y);doc.setFontSize(9);y+=L(4)}y+=L(2.4)});y+=L(3)}
+  if((a.obd||[]).length){sec('Códigos de falha (OBD)');a.obd.forEach(o=>{const d=decodeOBD(o.code);const ds=doc.splitTextToSize(d.desc||o.ai?.descricao||'Código fora da base local',125);const nt=o.nota?doc.splitTextToSize(o.nota,125):[];need(L(5)+(ds.length+nt.length)*L(4));
+    doc.setFont('courier','bold');doc.setTextColor(...ink);doc.text(d.code,M,y);B();doc.text(ds,M+19,y);y+=ds.length*L(4);if(nt.length){doc.setTextColor(...gray);doc.setFontSize(8);doc.text(nt,M+19,y);doc.setFontSize(9);y+=nt.length*L(3.6)}y+=L(2.4)});y+=L(3)}
 
   sec('Análise do negócio');
   const fin=[['Valor FIPE',a.fipe?brl(a.fipe)+(a.fipe_fonte==='estimativa'?' (est.)':''):'—']];
@@ -1386,7 +1392,7 @@ function gerarPDF(a,k=1){
   y+=half*L(5.4)+L(1);doc.setFontSize(9);
   if(n.ok){need(14);doc.setDrawColor(...ACC);doc.setLineWidth(.4);doc.line(M,y,W-M,y);y+=L(7.5);T();doc.setFontSize(14);doc.setTextColor(...ink);doc.text('Oferta máxima sugerida',M,y);doc.setTextColor(...ACC);doc.text(brl(n.oferta),W-M,y,{align:'right'});B();doc.setFontSize(9);y+=L(10)}
 
-  if(a.observacoes){sec('Observações do avaliador');doc.setTextColor(...ink);const tx=doc.splitTextToSize(a.observacoes,W-2*M);need(tx.length*L(4.2));doc.text(tx,M,y);y+=tx.length*L(4.2)+L(3)}
+  if(a.observacoes){const tx=doc.splitTextToSize(a.observacoes,W-2*M);need(L(14)+Math.min(3,tx.length)*L(4.2));sec('Observações do avaliador');tx.forEach(ln=>{need(L(4.2));doc.setTextColor(...ink);doc.setFontSize(9);doc.text(ln,M,y);y+=L(4.2)});y+=L(3)}
 
   // assinaturas logo após o conteúdo
   need(L(22));y+=L(14);doc.setDrawColor(...gray);doc.setLineWidth(.2);doc.line(M,y,M+75,y);doc.line(W-M-75,y,W-M,y);B();doc.setFontSize(7.8);doc.setTextColor(...gray);
@@ -1414,20 +1420,20 @@ const FIPE_API='https://parallelum.com.br/fipe/api/v1/carros';
 async function fj(u){const r=await fetch(u);if(!r.ok)throw new Error(r.status);return r.json()}
 async function fipeAbrir(){
   state.fipe={load:'marcas'};renderEditor();
-  try{const m=await fj(FIPE_API+'/marcas');const alvo=(state.cur.marca||'').toLowerCase().replace('mercedes-benz','m.benz');
+  try{const m=await fj(FIPE_API+'/marcas');if(!state.fipe||state.view!=='editor')return;const alvo=(state.cur.marca||'').toLowerCase().trim();
     const hit=m.find(x=>x.nome.toLowerCase()===alvo)||m.find(x=>alvo&&x.nome.toLowerCase().includes(alvo));
     state.fipe={marcas:m,marca:hit?hit.codigo:''};renderEditor();if(hit)fipeModelos(hit.codigo);
   }catch(e){state.fipe={err:'Não foi possível acessar a tabela FIPE agora. Digite o valor manualmente.'};renderEditor()}
 }
 async function fipeModelos(m){Object.assign(state.fipe,{marca:m,modelos:null,anos:null,modelo:'',ano:'',load:'modelos',err:''});renderEditor();
-  try{const r=await fj(`${FIPE_API}/marcas/${m}/modelos`);state.fipe.modelos=r.modelos;state.fipe.load=null}catch(e){state.fipe.err='Falha ao carregar modelos.';state.fipe.load=null}renderEditor()}
+  const f=state.fipe;try{const r=await fj(`${FIPE_API}/marcas/${m}/modelos`);if(state.fipe!==f)return;f.modelos=r.modelos;f.load=null}catch(e){if(state.fipe!==f)return;f.err='Falha ao carregar modelos.';f.load=null}renderEditor()}
 async function fipeAnos(mo){const f=state.fipe;Object.assign(f,{modelo:mo,anos:null,ano:'',load:'anos',err:''});renderEditor();
-  try{f.anos=await fj(`${FIPE_API}/marcas/${f.marca}/modelos/${mo}/anos`);f.load=null}catch(e){f.err='Falha ao carregar anos.';f.load=null}renderEditor()}
+  try{const r=await fj(`${FIPE_API}/marcas/${f.marca}/modelos/${mo}/anos`);if(state.fipe!==f)return;f.anos=r;f.load=null}catch(e){if(state.fipe!==f)return;f.err='Falha ao carregar anos.';f.load=null}renderEditor()}
 async function fipeValor(an){const f=state.fipe;Object.assign(f,{ano:an,load:'valor',err:''});renderEditor();
-  try{const v=await fj(`${FIPE_API}/marcas/${f.marca}/modelos/${f.modelo}/anos/${an}`);const a=state.cur;
+  const a=state.cur;try{const v=await fj(`${FIPE_API}/marcas/${f.marca}/modelos/${f.modelo}/anos/${an}`);if(state.fipe!==f||state.cur!==a)return;
     a.fipe=num(v.Valor);a.fipe_fonte='tabela';a.fipe_hist=null;a.fipe_ref=`${v.Marca} ${v.Modelo} · ${v.AnoModelo} · ${v.Combustivel} · código ${v.CodigoFipe} · ${v.MesReferencia}`;
     if(!a.ano&&v.AnoModelo<3000)a.ano=String(v.AnoModelo);state.fipe=null;touch();renderEditor();toast('Valor FIPE preenchido')}
-  catch(e){f.err='Falha ao buscar o valor.';f.load=null;renderEditor()}}
+  catch(e){if(state.fipe!==f)return;f.err='Falha ao buscar o valor.';f.load=null;renderEditor()}}
 
 /* ===================== Consulta por placa (função consulta-placa no Supabase) ===================== */
 async function buscarPlaca(teste){
@@ -1437,15 +1443,16 @@ async function buscarPlaca(teste){
     const {data,error}=await store.sb.functions.invoke('consulta-placa',{body:{placa:teste?'ABC1234':placa,teste:!!teste}});
     if(error){let msg='Falha na consulta. Tente de novo.';try{const j=await error.context.json();if(j&&j.erro)msg=j.erro}catch(e){}throw new Error(msg)}
     if(!data||!data.opcoes||!data.opcoes.length)throw new Error('Nenhum dado encontrado para essa placa.');
-    state.placa={res:data};
+    if(state.cur!==a)return;
+    state.placa={res:data,alvo:a};
     if(!teste&&data.opcoes.length===1){aplicarPlaca(0);return}
-  }catch(e){state.placa={err:e.message||'Falha na consulta.'}}
+  }catch(e){if(state.cur!==a)return;state.placa={err:e.message||'Falha na consulta.'}}
   renderEditor();
 }
 const COMB={gasolina:'Gasolina',diesel:'Diesel','álcool':'Flex',alcool:'Flex',flex:'Flex','alcool/gasolina':'Flex','álcool/gasolina':'Flex',eletrico:'Elétrico','elétrico':'Elétrico',hibrido:'Híbrido','híbrido':'Híbrido'};
 const cap=s=>String(s||'').toLowerCase().replace(/(^|\s)\S/g,c=>c.toUpperCase());
 function aplicarPlaca(k){
-  const a=state.cur;const r=state.placa&&state.placa.res;if(!r)return;const o=r.opcoes[k];const v=r.veiculo||{};
+  const r=state.placa&&state.placa.res;if(!r)return;const a=state.placa.alvo||state.cur;if(a!==state.cur)return;const o=r.opcoes[k];const v=r.veiculo||{};
   if(r.teste){toast('Conexão funcionando. Dados de exemplo não são aplicados.');return}
   if(o.marca)a.marca=MARCAS.find(m=>m.toLowerCase()===String(o.marca).toLowerCase())||(/^m\.?\s?benz|mercedes/i.test(o.marca)?'Mercedes-Benz':cap(o.marca));
   if(o.modelo){a.modelo=o.modelo;const m=o.modelo;
@@ -1463,7 +1470,7 @@ function aplicarPlaca(k){
 async function fipeIA(){
   const a=state.cur;if(!store.sample)return;state.busy='fipe';renderEditor();
   try{const r=await store.sample.json(`Você conhece a tabela FIPE brasileira de carros. Estime o valor FIPE atual do veículo: ${[a.marca,a.modelo,a.versao,a.ano,a.combustivel,a.cambio].filter(Boolean).join(' ')}. Se não tiver uma referência razoável, responda valor 0. Responda só com JSON: {"valor": número inteiro em reais, "descricao": versão FIPE que você considerou, "confianca": "alta"|"media"|"baixa"}.`,{modelTier:'default'});
-    if(r&&num(r.valor)>0){a.fipe=Math.round(num(r.valor));a.fipe_fonte='estimativa';a.fipe_ref=`${r.descricao||''} · confiança ${r.confianca||'baixa'}`;touch();toast('Estimativa preenchida. Confira na tabela oficial.')}
+    if(r&&num(r.valor)>0){a.fipe=Math.round(num(r.valor));a.fipe_fonte='estimativa';a.fipe_ref=`${r.descricao||''} · confiança ${r.confianca||'baixa'}`;persistir(a);toast('Estimativa preenchida. Confira na tabela oficial.')}
     else toast('O Claude não teve referência confiável para esse modelo. Digite o valor.')}
   catch(e){if(e&&e.code==='not_granted')store.sample=null;else toast('Não foi possível estimar agora.')}
   state.busy=null;renderEditor();
@@ -1471,18 +1478,20 @@ async function fipeIA(){
 async function consultarIA(k){
   const a=state.cur;const o=a.obd[k];if(!store.sample)return;state.busy=k;renderEditor();
   try{const r=await store.sample.json(`Você é técnico automotivo brasileiro. Explique o código OBD-II "${o.code}" para ${[a.marca,a.modelo,a.ano].filter(Boolean).join(' ')||'um carro'}. Responda só com JSON: {"descricao": texto curto em português, "gravidade": "alta"|"media"|"baixa", "causas": [até 4 textos curtos], "dica": uma frase com o primeiro teste a fazer}. Se for código de fabricante e você não tiver certeza, diga isso na descrição.`,{modelTier:'quick'});
-    if(r&&r.descricao){o.ai={descricao:String(r.descricao),gravidade:['alta','media','baixa'].includes(r.gravidade)?r.gravidade:null,causas:Array.isArray(r.causas)?r.causas.slice(0,4).map(String):[],dica:r.dica?String(r.dica):''};touch()}}
+    if(r&&r.descricao){o.ai={descricao:String(r.descricao),gravidade:['alta','media','baixa'].includes(r.gravidade)?r.gravidade:null,causas:Array.isArray(r.causas)?r.causas.slice(0,4).map(String):[],dica:r.dica?String(r.dica):''};persistir(a)}}
   catch(e){if(e&&e.code==='not_granted')store.sample=null;else toast('Não foi possível consultar agora.')}
   state.busy=null;renderEditor();
 }
 
 /* ===================== Salvamento ===================== */
-let saveT=null,fila=Promise.resolve();
-function touch(){const a=state.cur;if(!a||a.exemplo)return;state.saving='Salvando…';setSaved();clearTimeout(saveT);saveT=setTimeout(salvar,800)}
-function salvar(){const a=state.cur;if(!a||a.exemplo)return;
+let saveT=null,saveAlvo=null,fila=Promise.resolve();
+function touch(){const a=state.cur;if(!a||a.exemplo)return;saveAlvo=a;state.saving='Salvando…';setSaved();clearTimeout(saveT);saveT=setTimeout(()=>{saveT=null;salvar(saveAlvo)},800)}
+function flushSave(){if(saveT){clearTimeout(saveT);saveT=null;salvar(saveAlvo)}}
+function persistir(a){if(a===state.cur)touch();else salvar(a)}
+function salvar(a){if(!a||a.exemplo)return;
   fila=fila.then(async()=>{try{const novo=!a.id;await api.save(a);const k=state.list.findIndex(x=>x.id===a.id);if(k>=0)state.list[k]=a;else state.list.unshift(a);
-    state.saving='Salvo';setSaved();if(novo){const e=$('#edNum');if(e)e.textContent='Avaliação nº '+String(a.numero).padStart(4,'0')}}
-    catch(e){state.saving='Não salvou. Verifique a conexão.';setSaved()}})}
+    if(a===state.cur){state.saving='Salvo';setSaved();if(novo){const e=$('#edNum');if(e)e.textContent='Avaliação nº '+String(a.numero).padStart(4,'0')}}}
+    catch(e){if(a===state.cur){state.saving='Não salvou. Verifique a conexão.';setSaved()}else toast('Uma alteração não foi salva. Verifique a conexão.')}})}
 function setSaved(){const e=$('#saved');if(e)e.textContent=state.saving}
 let toastT;function toast(m){let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2800)}
 
@@ -1493,13 +1502,14 @@ function refreshHead(){const a=state.cur;const t=$('#edTitle');if(t)t.innerHTML=
 
 /* ===================== Eventos ===================== */
 function abrir(id){
+  flushSave();
   if(id==='exemplo'){state.cur=exemplo();state.step='laudo'}
   else{const x=state.list.find(i=>i.id===id);if(!x)return;state.cur=JSON.parse(JSON.stringify(x));state.step=x.status==='concluido'?'laudo':'veiculo'}
   state.view='editor';state.saving=state.cur.exemplo?'':'Salvo';state.confirmDel=false;state.fipe=null;state.placa=null;state.hteste=null;state.hconf=null;state.herr=null;render();window.scrollTo(0,0);
 }
 document.addEventListener('click',async e=>{
   const b=e.target.closest('button,[data-open]');if(!b)return;const d=b.dataset;const a=state.cur;
-  if(d.nav){e.preventDefault();if(d.nav==='nova'){state.cur=nova();state.view='editor';state.step='veiculo';state.saving='';state.confirmDel=false;state.fipe=null;state.placa=null;state.hteste=null;state.hconf=null;state.herr=null}else state.view=d.nav;render();window.scrollTo(0,0);return}
+  if(d.nav){e.preventDefault();flushSave();if(d.nav==='nova'){state.cur=nova();state.view='editor';state.step='veiculo';state.saving='';state.confirmDel=false;state.fipe=null;state.placa=null;state.hteste=null;state.hconf=null;state.herr=null}else state.view=d.nav;render();window.scrollTo(0,0);return}
   if(d.open){abrir(d.open);return}
   if(d.step){state.step=d.step;state.confirmDel=false;render();window.scrollTo(0,0);return}
   if(d.ans){const cur=a.answers[d.ans];if(cur===d.v)delete a.answers[d.ans];else a.answers[d.ans]=d.v;touch();renderEditor();
@@ -1542,7 +1552,7 @@ document.addEventListener('click',async e=>{
   if(act==='delno'){state.confirmDel=false;renderEditor()}
   if(act==='delok'){try{await api.remove(a.id);state.list=state.list.filter(x=>x.id!==a.id);state.cur=null;state.view='hist';render();toast('Avaliação excluída')}catch(err){toast('Não foi possível excluir. Tente de novo.')}}
   if(act==='authswap'){state.authMode=state.authMode==='entrar'?'criar':'entrar';state.authMsg='';render()}
-  if(act==='sair'){await store.sb.auth.signOut();store.user=null;state.list=[];state.loaded=false;render()}
+  if(act==='sair'){flushSave();await fila;await store.sb.auth.signOut();store.user=null;state.list=[];state.loaded=false;state.cur=null;state.view='home';state.perfil={};state.q='';aplicarFonte();render()}
 });
 document.addEventListener('toggle',e=>{const el=e.target;if(el.matches&&el.matches('details.sys'))state.open[el.dataset.sys]=el.open},true);
 document.addEventListener('input',e=>{
@@ -1581,7 +1591,7 @@ document.addEventListener('change',async e=>{
 });
 document.addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target;
-  if(f.id==='formStart'){const i=$('#startPlaca');const pl=fmtPlaca(i.value);
+  if(f.id==='formStart'){flushSave();const i=$('#startPlaca');const pl=fmtPlaca(i.value);
     if(!/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(pl)){toast('Placa inválida. Use o formato ABC1D23 ou ABC1234.');i.focus();return}
     state.cur=nova();state.cur.placa=pl;state.view='editor';state.step='veiculo';state.saving='';state.confirmDel=false;state.fipe=null;state.placa=null;state.hteste=null;state.hconf=null;state.herr=null;
     render();window.scrollTo(0,0);if(store.mode==='supabase')buscarPlaca(false);else touch();return}
