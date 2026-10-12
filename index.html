@@ -175,6 +175,8 @@ textarea.input{height:auto;min-height:88px;padding:12px 14px;resize:vertical;lin
 
 /* editor */
 .ed-head{display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap}
+.ed-id{flex:1 1 300px;min-width:0}.ed-id h2{overflow-wrap:anywhere}
+@media (max-width:560px){.ed-head{gap:14px;align-items:center}.ed-head .progress{flex:1 1 100%}.ed-head .progress .bar{flex:1;width:auto}.ed-id h2{font-size:22px;line-height:1.2}}
 .saved{font-size:12px;color:var(--fg-3)}
 .steps{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
 .steps::-webkit-scrollbar{display:none}
@@ -960,7 +962,7 @@ function renderEditor(){
     <div class="spacer"></div><span class="saved" id="saved">${a.exemplo?'Exemplo · alterações não são salvas':esc(state.saving)}</span></div>
   <div class="ed-head">
     <span id="edPlate">${plate(a.placa,true)}</span>
-    <div style="min-width:0;flex:1"><div class="eyebrow" id="edNum">${a.numero?'Avaliação nº '+String(a.numero).padStart(4,'0'):'Nova avaliação'}${a.status==='concluido'?' · Concluída':''}</div>
+    <div class="ed-id"><div class="eyebrow" id="edNum">${a.numero?'Avaliação nº '+String(a.numero).padStart(4,'0'):'Nova avaliação'}${a.status==='concluido'?' · Concluída':''}</div>
       <h2 style="margin-top:6px" id="edTitle">${titulo(a)} <span class="faint">${esc(a.ano||'')}</span></h2></div>
     <div class="progress"><span class="bar"><i style="width:${comp}%"></i></span><span class="num">${comp}%</span>${ring(p)}</div>
   </div>
