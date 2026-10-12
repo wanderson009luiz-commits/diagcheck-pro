@@ -239,9 +239,10 @@ textarea.input{height:auto;min-height:88px;padding:12px 14px;resize:vertical;lin
 .dotst{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--line);flex:none}
 .dotst.ok{background:var(--ok)}.dotst.warn{background:var(--warn)}.dotst.bad{background:var(--bad)}
 .hlist{display:flex;flex-direction:column}
-.hrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line-soft);font-size:14px}
+.hrow{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1.25fr);gap:14px;align-items:baseline;padding:11px 0;border-top:1px solid var(--line-soft);font-size:14px}
 .hrow:first-child{border-top:0}
-.hrow>span:last-child{text-align:right;max-width:60%}
+.hrow>.dotst{align-self:center}
+.hrow>span:last-child{text-align:right}
 .t-bad{color:var(--bad);font-weight:600}.t-warn{color:var(--warn)}.t-ok{color:var(--ok)}
 .fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
 .fotos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;display:block}
@@ -867,6 +868,7 @@ function statusHist(h){if(!h)return null;const f=h.flags||{};const al=h.alertas|
   if(f.roubo_furto||f.baixado||f.renajud)return{cls:'bad',label:'Restrição grave'};
   if(f.restricao_geral||(h.multas&&h.multas.total>0)||al.length||(h.recall&&h.recall.qtd)||(h.comunicado_venda&&h.comunicado_venda.qtd))return{cls:'warn',label:'Requer atenção'};
   return{cls:'ok',label:'Nada consta'}}
+const JUDICIAL=/vara|comarca|tribunal|justi[cç]a|juiz|f[oó]rum|autos:/i;
 const GRAVE=/sucata|grande monta|m[eé]dia monta|inserv|irrecuper|baixa definitiva/i;
 function statusLeilao(l){if(!l)return null;const regs=l.registros||[];
   if(regs.some(r=>r.seguradora||GRAVE.test(r.condicao+' '+r.classificacao)))return{cls:'bad',label:'Leilão de sinistro'};
@@ -886,7 +888,7 @@ function linhasHistorico(a){
   }else L.push(['Roubo, Renajud, restrições e multas','Não consultado','']);
   if(l){const regs=l.registros||[];const n=l.qtd||regs.length;const st=statusLeilao(l);
     L.push(['Leilão',n?`${n} registro${n>1?'s':''}`:'Nada consta',st.cls]);
-    regs.slice(0,4).forEach(r=>L.push([`Leilão em ${r.data||'data não informada'}`,[r.seguradora?'Seguradora: '+frase(r.comitente):frase(r.comitente),frase(r.condicao),r.classificacao&&!/nao foi possivel|não foi possível/i.test(r.classificacao)?frase(r.classificacao):''].filter(x=>x&&!/^n[aã]o (informado|divulgado)$/i.test(x)).join(' · ')||'Sem detalhes',r.seguradora||GRAVE.test(r.condicao+' '+r.classificacao)?'bad':'warn']));
+    regs.slice(0,4).forEach(r=>L.push([`Leilão em ${r.data&&!/0001|0000/.test(r.data)?r.data:'data não informada'}`,[r.seguradora?'Seguradora: '+frase(r.comitente):JUDICIAL.test(r.comitente)?'Leilão judicial: '+frase(r.comitente):frase(r.comitente),frase(r.condicao),r.classificacao&&!/nao foi possivel|não foi possível/i.test(r.classificacao)?frase(r.classificacao):''].filter(x=>x&&!/^n[aã]o (informado|divulgado)$/i.test(x)).join(' · ')||'Sem detalhes',r.seguradora||GRAVE.test(r.condicao+' '+r.classificacao)?'bad':'warn']));
     if(l.parecer)L.push(['Parecer da consulta de leilão',frase(l.parecer),/nao foi encontrado|não foi encontrado|sem risco/i.test(l.parecer)?'ok':'warn']);
   }else L.push(['Leilão e sinistro','Não consultado','']);
   return L;
