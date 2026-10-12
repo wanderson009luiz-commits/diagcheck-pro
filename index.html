@@ -602,7 +602,7 @@ const prepPreco=id=>{const v=(state.perfil.prep||{})[id];return v!=null&&v!==''?
 function ajusteKm(a){
   const ano=parseInt(a.ano)||0,km=num(a.km),fipe=num(a.fipe);if(!ano||!km||!fipe)return null;
   const idade=Math.max(.5,(Date.now()-new Date(ano-1,9,1).getTime())/3.156e10);const esperado=Math.round(idade*12000/1000)*1000;const dif=km-esperado;const d=-dif;
-  let adj;if(d<-30000)adj={pct:-20,label:'Muito alta',cls:'bad'};else if(d<-15000)adj={pct:-10,label:'Alta',cls:'warn'};else if(d<-5000)adj={pct:-5,label:'Acima do normal',cls:'warn'};else if(d<=5000)adj={pct:0,label:'Normal',cls:'ok'};else if(d<=15000)adj={pct:5,label:'Baixa',cls:'good'};else adj={pct:10,label:'Muito baixa',cls:'good'};
+  let adj;if(d<-30000)adj={pct:-20,label:'Muito alta',cls:'bad'};else if(d<-15000)adj={pct:-10,label:'Alta',cls:'warn'};else if(d<-5000)adj={pct:-5,label:'Acima do normal',cls:'warn'};else if(d<=5000)adj={pct:0,label:'Normal',cls:'ok'};else if(d<=15000)adj={pct:5,label:'Baixa',cls:'good'};else adj={pct:15,label:'Muito baixa',cls:'good'};
   return{idade:Math.round(idade*10)/10,esperado,km,dif,adj,fipe,ajustado:Math.round(fipe*(1+adj.pct/100))};
 }
 function negocio(a){
