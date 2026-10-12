@@ -387,9 +387,7 @@ textarea.input{height:auto;min-height:88px;padding:12px 14px;resize:vertical;lin
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
-</head>
-<body>
-<div id="root"></div>
+</head><body><div id="root"></div>
 
 <script>
 /* ===================== Dados de referência ===================== */
@@ -599,11 +597,26 @@ const PREP=[
  {id:'vitrificacao',nome:'Vitrificação ou cristalização',preco:700},
 ];
 const prepPreco=id=>{const v=(state.perfil.prep||{})[id];return v!=null&&v!==''?num(v):PREP.find(p=>p.id===id).preco};
+// Rodagem: média KBB Brasil (~12,9 mil km no 1º ano, caindo ~400 km/ano) ≈ 12.000 km/ano até uns 8 anos.
+// Ajustes de preço calibrados pelo Mobiauto 2023/2024: km alta ≈ −3% (até −8% em alguns modelos), km baixa ≈ +2% a +5%.
+// Tudo editável no Perfil (cada loja define o próprio critério).
+const KM_PADRAO={km_ano:12000,muito_alta:-8,alta:-5,acima:-3,baixa:2,muito_baixa:5};
+const kmCfg=()=>{const c=state.perfil.km||{};const o={};for(const k in KM_PADRAO){const v=c[k];o[k]=v!=null&&v!==''&&isFinite(Number(v))?Number(v):KM_PADRAO[k]}if(o.km_ano<1000)o.km_ano=KM_PADRAO.km_ano;return o};
+function dataEmplac(a){
+  const t=String((a.historico&&a.historico.data_emplacamento)||'').trim();if(!t)return null;let d=null,m;
+  if(m=t.match(/^(\d{2})\/(\d{2})\/(\d{4})/))d=new Date(+m[3],+m[2]-1,+m[1]);
+  else if(m=t.match(/^(\d{4})-(\d{2})-(\d{2})/))d=new Date(+m[1],+m[2]-1,+m[3]);
+  else if(m=t.match(/^(\d{2})(\d{2})(\d{4})$/))d=new Date(+m[3],+m[2]-1,+m[1]);
+  if(!d||isNaN(d))return null;const ano=parseInt(a.ano)||0;const y=d.getFullYear();
+  if(d.getTime()>Date.now()||(ano&&(y<ano-2||y>ano+1)))return null; // data estranha (reemplacamento etc.): usa a estimativa
+  return d;
+}
 function ajusteKm(a){
-  const ano=parseInt(a.ano)||0,km=num(a.km),fipe=num(a.fipe);if(!ano||!km||!fipe)return null;
-  const idade=Math.max(.5,(Date.now()-new Date(ano-1,9,1).getTime())/3.156e10);const esperado=Math.round(idade*12000/1000)*1000;const dif=km-esperado;const d=-dif;
-  let adj;if(d<-30000)adj={pct:-20,label:'Muito alta',cls:'bad'};else if(d<-15000)adj={pct:-10,label:'Alta',cls:'warn'};else if(d<-5000)adj={pct:-5,label:'Acima do normal',cls:'warn'};else if(d<=5000)adj={pct:0,label:'Normal',cls:'ok'};else if(d<=15000)adj={pct:5,label:'Baixa',cls:'good'};else adj={pct:15,label:'Muito baixa',cls:'good'};
-  return{idade:Math.round(idade*10)/10,esperado,km,dif,adj,fipe,ajustado:Math.round(fipe*(1+adj.pct/100))};
+  const ano=parseInt(a.ano)||0,km=num(a.km),fipe=num(a.fipe);if(!ano||!km||!fipe)return null;const C=kmCfg();
+  const emp=dataEmplac(a);const inicio=emp||new Date(ano-1,9,1); // sem emplacamento: carro "ano X" começa a rodar ~out/(X−1)
+  const idade=Math.max(.5,(Date.now()-inicio.getTime())/3.156e10);const esperado=Math.round(idade*C.km_ano/1000)*1000;const dif=km-esperado;const d=-dif;
+  let adj;if(d<-30000)adj={pct:C.muito_alta,label:'Muito alta',cls:'bad'};else if(d<-15000)adj={pct:C.alta,label:'Alta',cls:'warn'};else if(d<-5000)adj={pct:C.acima,label:'Acima do normal',cls:'warn'};else if(d<=5000)adj={pct:0,label:'Normal',cls:'ok'};else if(d<=15000)adj={pct:C.baixa,label:'Baixa',cls:'good'};else adj={pct:C.muito_baixa,label:'Muito baixa',cls:'good'};
+  return{idade:Math.round(idade*10)/10,esperado,km,dif,adj,fipe,kmAno:C.km_ano,emplac:emp?`${String(emp.getMonth()+1).padStart(2,'0')}/${emp.getFullYear()}`:null,ajustado:Math.round(fipe*(1+adj.pct/100))};
 }
 function negocio(a){
   const f=a.financeiro||{};const pedido=num(f.pedido);const aj=ajusteKm(a);
@@ -874,6 +887,12 @@ function perfilView(){
    <section class="panel grid" style="gap:14px">
      <div class="panel-head" style="margin:0"><div><h3>Tabela de preparação para revenda</h3><p class="hint" style="margin-top:6px">Coloque o que você paga no seu lava-jato ou estética. Esses preços entram em toda avaliação nova.</p></div><button class="btn ghost sm" data-act="prepPadrao">Restaurar padrões</button></div>
      <div class="grid g2">${PREP.map(it=>`<div class="field"><label for="pp_${it.id}">${esc(it.nome)}</label><div class="money"><span>R$</span><input id="pp_${it.id}" data-pp="${it.id}" class="input" inputmode="numeric" placeholder="${fmtN(it.preco)}" value="${esc(fmtN((p.prep||{})[it.id]))}"></div></div>`).join('')}</div>
+   </section>
+   <section class="panel grid" style="gap:14px">
+     <div class="panel-head" style="margin:0"><div><h3>Ajuste de preço pela quilometragem</h3><p class="hint" style="margin-top:6px">Quanto a FIPE sobe ou desce conforme a rodagem do carro. Os padrões vêm de pesquisas de mercado (KBB e Mobiauto). Ajuste ao critério da sua loja.</p></div><button class="btn ghost sm" data-act="kmPadrao">Restaurar padrões</button></div>
+     <div class="grid g3">${(()=>{const c=state.perfil.km||{};const k=(id,label,un)=>`<div class="field"><label for="km_${id}">${label}</label><div class="money"><span>${un}</span><input id="km_${id}" data-km="${id}" class="input" inputmode="${id==='km_ano'?'numeric':'decimal'}" placeholder="${id==='km_ano'?fmtN(KM_PADRAO[id]):(KM_PADRAO[id]>0?'+':'')+KM_PADRAO[id]}" value="${esc(c[id]==null?'':id==='km_ano'?fmtN(c[id]):String(c[id]))}"></div></div>`;
+       return k('km_ano','Km por ano esperada','km')+k('muito_alta','Muito alta (+30 mil km)','%')+k('alta','Alta (+15 a 30 mil km)','%')+k('acima','Acima do normal (+5 a 15 mil)','%')+k('baixa','Baixa (−5 a 15 mil km)','%')+k('muito_baixa','Muito baixa (−15 mil km ou mais)','%')})()}</div>
+     <p class="hint">Use sinal de menos para desconto. Entre −5 mil e +5 mil km da média o carro é "Normal" e fica na FIPE. Com a consulta de histórico, a idade conta da data real de emplacamento.</p>
    </section>`;
 }
 function previewA4(){
@@ -913,7 +932,7 @@ async function processarLogo(file){
 }
 let pfT=null;
 function salvarPerfilDepois(){const m=$('#pfMsg');if(m)m.textContent='Salvando…';clearTimeout(pfT);pfT=setTimeout(async()=>{const p=state.perfil;
-  try{await api.savePerfil({nome:p.nome||'',responsavel:p.responsavel||'',telefone:p.telefone||'',documento:p.documento||'',endereco:p.endereco||'',lucro_padrao:num(p.lucro_padrao)||0,fonte:p.fonte||'moderna',cor:p.cor||'#1e2228',logo:p.logo||null,marca:marcaCfg(),prep:p.prep||{}});const mm=$('#pfMsg');if(mm)mm.textContent='Salvo'}
+  try{await api.savePerfil({nome:p.nome||'',responsavel:p.responsavel||'',telefone:p.telefone||'',documento:p.documento||'',endereco:p.endereco||'',lucro_padrao:num(p.lucro_padrao)||0,fonte:p.fonte||'moderna',cor:p.cor||'#1e2228',logo:p.logo||null,marca:marcaCfg(),prep:p.prep||{},km:p.km||null});const mm=$('#pfMsg');if(mm)mm.textContent='Salvo'}
   catch(e){const mm=$('#pfMsg');if(mm)mm.textContent='Não salvou. Verifique a conexão.'}},700)}
 function encaixarA4(){const a4=$('#a4prev');if(!a4)return;const w=a4.parentElement.clientWidth;a4.style.zoom=w&&w<300?String(w/300):''}
 function refreshPreview(){const a4=$('#a4prev');if(a4)a4.innerHTML=previewA4()}
@@ -1205,7 +1224,7 @@ function stepReparos(a){
 function negocioOut(a){
   const n=negocio(a);const aj=n.aj;
   const km=aj?`<div class="kmadj">
-     <div><span class="lbl">Km esperada</span><b>${aj.esperado.toLocaleString('pt-BR')} km</b><span class="faint small">${String(aj.idade).replace('.',',')} ano${aj.idade===1?'':'s'} de uso × 12.000</span></div>
+     <div><span class="lbl">Km esperada</span><b>${aj.esperado.toLocaleString('pt-BR')} km</b><span class="faint small">${String(aj.idade).replace('.',',')} ano${aj.idade===1?'':'s'} de uso × ${aj.kmAno.toLocaleString('pt-BR')}${aj.emplac?` · emplacado em ${aj.emplac}`:' · estimado pelo ano'}</span></div>
      <div><span class="lbl">Km real</span><b>${aj.km.toLocaleString('pt-BR')} km</b></div>
      <div><span class="lbl">Diferença</span><b style="color:${aj.dif>0?'var(--bad)':'var(--ok)'}">${aj.dif>0?'+':''}${aj.dif.toLocaleString('pt-BR')} km</b></div>
      <div class="foot"><span>Rodagem <span class="pill ${aj.adj.cls}">${aj.adj.label} · ${aj.adj.pct>0?'+':''}${aj.adj.pct}%</span></span><span class="num">FIPE ${brl(aj.fipe)} → <b>${brl(aj.ajustado)}</b></span></div>
@@ -1538,6 +1557,7 @@ document.addEventListener('click',async e=>{
   if(d.fonte){state.perfil.fonte=d.fonte;aplicarFonte();document.querySelectorAll('.fontopt').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.fonte===d.fonte)));refreshPreview();salvarPerfilDepois();return}
   if(d.cor){state.perfil.cor=d.cor;document.querySelectorAll('.sw[data-cor]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.cor===d.cor)));const ci=$('#pf_cor');if(ci)ci.value=d.cor;refreshPreview();salvarPerfilDepois();return}
   const act=d.act;if(!act)return;
+  if(act==='kmPadrao'){state.perfil.km=null;render();salvarPerfilDepois();toast('Padrões de quilometragem restaurados');return}
   if(act==='prepPadrao'){state.perfil.prep={};render();salvarPerfilDepois();toast('Preços padrão restaurados');return}
   if(act==='logoRemover'){state.perfil.logo=null;const m={...marcaCfg()};delete m.lw;delete m.lh;state.perfil.marca=m;render();salvarPerfilDepois();return}
   if(act==='pdf')baixarPDF();
@@ -1560,6 +1580,7 @@ document.addEventListener('input',e=>{
   if(el.id==='startPlaca'){el.value=fmtPlaca(el.value);return}
   if(el.id==='busca'){state.q=el.value;const h=$('#histList');if(h)h.innerHTML=histLista();return}
   if(el.dataset.pf){state.perfil[el.dataset.pf]=el.dataset.pf==='lucro_padrao'?num(el.value):el.value;if(el.dataset.pf==='nome')refreshPreview();salvarPerfilDepois();return}
+  if(el.dataset.km){const id=el.dataset.km;const k={...(state.perfil.km||{})};const t=el.value.trim();if(t===''||t==='-'||t==='+')delete k[id];else{const v=id==='km_ano'?num(t):Number(t.replace(',','.'));if(isFinite(v))k[id]=v}state.perfil.km=Object.keys(k).length?k:null;salvarPerfilDepois();return}
   if(el.dataset.pp){const pp={...(state.perfil.prep||{})};if(el.value==='')delete pp[el.dataset.pp];else pp[el.dataset.pp]=num(el.value);state.perfil.prep=pp;salvarPerfilDepois();return}
   if(el.id==='pf_cor'){state.perfil.cor=el.value;document.querySelectorAll('.sw[data-cor]').forEach(b=>b.setAttribute('aria-pressed','false'));refreshPreview();salvarPerfilDepois();return}
   if(el.dataset.mc&&el.type==='range'){const k=el.dataset.mc;state.perfil.marca={...marcaCfg(),[k]:Number(el.value)};const o=$('#out_'+k);if(o)o.textContent=el.value+(k==='logo_h'?' mm':k==='wm_tam'?'% da largura':'%');refreshPreview();salvarPerfilDepois();return}
@@ -1587,7 +1608,7 @@ document.addEventListener('change',async e=>{
   if(el.dataset.fp==='marca'&&el.value)fipeModelos(el.value);
   if(el.dataset.fp==='modelo'&&el.value)fipeAnos(el.value);
   if(el.dataset.fp==='ano'&&el.value)fipeValor(el.value);
-  if(el.dataset.f==='km'||el.dataset.f==='fipe'||el.dataset.fin||(el.dataset.fd&&/^preco/.test(el.dataset.fd))||el.dataset.ov||el.dataset.pf==='lucro_padrao'||(el.dataset.ex&&el.dataset.ex.endsWith('valor'))){if(el.value)el.value=fmtN(el.value)}
+  if(el.dataset.f==='km'||el.dataset.km==='km_ano'||el.dataset.f==='fipe'||el.dataset.fin||(el.dataset.fd&&/^preco/.test(el.dataset.fd))||el.dataset.ov||el.dataset.pf==='lucro_padrao'||(el.dataset.ex&&el.dataset.ex.endsWith('valor'))){if(el.value)el.value=fmtN(el.value)}
 });
 document.addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target;
@@ -1612,6 +1633,3 @@ async function carregar(){
 }
 (async()=>{aplicarFonte();render();await initStore();render();if(store.mode!=='supabase'||store.user)await carregar()})();
 </script>
-
-</body>
-</html>
