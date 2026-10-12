@@ -232,6 +232,14 @@ textarea.input{height:auto;min-height:88px;padding:12px 14px;resize:vertical;lin
 .a4{position:relative;width:300px;max-width:100%;aspect-ratio:210/297;background:var(--paper);border-radius:4px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.2),0 12px 32px rgba(0,0,0,.18)}
 @media (max-width:860px){.ident{grid-template-columns:1fr}.ident-prev{position:static;align-items:center}}
 @media (max-width:560px){.fontes{grid-template-columns:1fr}}
+/* preparação para revenda */
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.chip{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg-2);text-align:left;font-size:14px}
+.chip:hover{border-color:var(--silver-lo);color:var(--fg)}
+.chip .num{font-size:13px;color:var(--fg-3)}
+.chip[aria-pressed="true"]{border-color:var(--silver-hi);color:var(--fg);box-shadow:inset 0 0 0 1px var(--silver-hi);background:var(--surface-2)}
+.chip[aria-pressed="true"] .num{color:var(--fg)}
+.chip[aria-pressed="true"]::before{content:"✓";font-weight:600;margin-right:-4px}
 /* histórico */
 .svcs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .svc{display:flex;flex-direction:column;gap:12px;padding:20px;border:1px solid var(--line-soft);border-radius:14px;background:var(--surface)}
@@ -493,7 +501,7 @@ async function initStore(){
   }
   store.ready=true;
 }
-const CAMPOS=['status','placa','marca','modelo','ano','versao','km','combustivel','cambio','tracao','cor','vendedor','fipe','fipe_fonte','fipe_ref','fipe_hist','historico','leilao','answers','notes','obd','repair_overrides','extras','financeiro','observacoes'];
+const CAMPOS=['status','placa','marca','modelo','ano','versao','km','combustivel','cambio','tracao','cor','vendedor','fipe','fipe_fonte','fipe_ref','fipe_hist','historico','leilao','answers','notes','obd','repair_overrides','extras','preparo','financeiro','observacoes'];
 function serial(a){const o={};CAMPOS.forEach(k=>o[k]=a[k]??null);o.km=a.km?Math.round(num(a.km)):null;o.fipe=a.fipe?num(a.fipe):null;o.score=calcScore(a.answers);o.reparo_total=reparos(a).total;
   ['answers','notes','repair_overrides','financeiro'].forEach(k=>o[k]=o[k]||{});['obd','extras'].forEach(k=>o[k]=o[k]||[]);o.status=o.status||'em_andamento';return o}
 const api={
@@ -550,9 +558,24 @@ function reparos(a){
     const padrao=st==='critico'?c[2]:c[3];const editado=ov[i.id]!=null&&ov[i.id]!=='';
     linhas.push({id:i.id,item:i,st,nome:c[0],min:c[1],max:c[2],padrao,valor:editado?num(ov[i.id]):padrao,editado})});
   const extras=(a.extras||[]).map(e=>({...e,valor:num(e.valor)}));
-  const total=linhas.reduce((s,l)=>s+l.valor,0)+extras.reduce((s,e)=>s+e.valor,0);
-  return{linhas,extras,total};
+  const pr=a.preparo||{};const psel=pr.sel||{},pov=pr.ov||{};
+  const prep=PREP.filter(p=>psel[p.id]).map(p=>{const ed=pov[p.id]!=null&&pov[p.id]!=='';return{...p,padrao:prepPreco(p.id),valor:ed?num(pov[p.id]):prepPreco(p.id),editado:ed}});
+  const prepTotal=prep.reduce((s,p)=>s+p.valor,0);
+  const mecanico=linhas.reduce((s,l)=>s+l.valor,0)+extras.reduce((s,e)=>s+e.valor,0);
+  return{linhas,extras,prep,prepTotal,mecanico,total:mecanico+prepTotal};
 }
+/* preparação para revenda (estética): não entra na nota, só no custo */
+const PREP=[
+ {id:'lavagem',nome:'Lavagem detalhada',preco:150},
+ {id:'higienizacao',nome:'Higienização interna (bancos e carpetes)',preco:250},
+ {id:'plasticos',nome:'Revitalização de plásticos e borrachas',preco:80},
+ {id:'polimento',nome:'Polimento técnico da pintura',preco:450},
+ {id:'farois',nome:'Polimento de faróis',preco:120},
+ {id:'motor',nome:'Lavagem do motor',preco:100},
+ {id:'odor',nome:'Oxi-sanitização (remoção de odor)',preco:150},
+ {id:'vitrificacao',nome:'Vitrificação ou cristalização',preco:700},
+];
+const prepPreco=id=>{const v=(state.perfil.prep||{})[id];return v!=null&&v!==''?num(v):PREP.find(p=>p.id===id).preco};
 function ajusteKm(a){
   const ano=parseInt(a.ano)||0,km=num(a.km),fipe=num(a.fipe);if(!ano||!km||!fipe)return null;
   const idade=Math.max(0,new Date().getFullYear()-ano);const esperado=idade*12000;const dif=km-esperado;const d=-dif;
@@ -710,6 +733,10 @@ function perfilView(){
        <span class="saved" id="pfMsg"></span>
      </div>
      <div class="ident-prev"><span class="lbl">Prévia do laudo</span><div class="a4" id="a4prev">${previewA4()}</div></div>
+   </section>
+   <section class="panel grid" style="gap:14px">
+     <div class="panel-head" style="margin:0"><div><h3>Tabela de preparação para revenda</h3><p class="hint" style="margin-top:6px">Coloque o que você paga no seu lava-jato ou estética. Esses preços entram em toda avaliação nova.</p></div><button class="btn ghost sm" data-act="prepPadrao">Restaurar padrões</button></div>
+     <div class="grid g2">${PREP.map(it=>`<div class="field"><label for="pp_${it.id}">${esc(it.nome)}</label><div class="money"><span>R$</span><input id="pp_${it.id}" data-pp="${it.id}" class="input" inputmode="numeric" placeholder="${fmtN(it.preco)}" value="${esc(fmtN((p.prep||{})[it.id]))}"></div></div>`).join('')}</div>
    </section>`;
 }
 function previewA4(){
@@ -749,7 +776,7 @@ async function processarLogo(file){
 }
 let pfT=null;
 function salvarPerfilDepois(){const m=$('#pfMsg');if(m)m.textContent='Salvando…';clearTimeout(pfT);pfT=setTimeout(async()=>{const p=state.perfil;
-  try{await api.savePerfil({nome:p.nome||'',responsavel:p.responsavel||'',telefone:p.telefone||'',documento:p.documento||'',endereco:p.endereco||'',lucro_padrao:num(p.lucro_padrao)||0,fonte:p.fonte||'moderna',cor:p.cor||'#1e2228',logo:p.logo||null,marca:marcaCfg()});const mm=$('#pfMsg');if(mm)mm.textContent='Salvo'}
+  try{await api.savePerfil({nome:p.nome||'',responsavel:p.responsavel||'',telefone:p.telefone||'',documento:p.documento||'',endereco:p.endereco||'',lucro_padrao:num(p.lucro_padrao)||0,fonte:p.fonte||'moderna',cor:p.cor||'#1e2228',logo:p.logo||null,marca:marcaCfg(),prep:p.prep||{}});const mm=$('#pfMsg');if(mm)mm.textContent='Salvo'}
   catch(e){const mm=$('#pfMsg');if(mm)mm.textContent='Não salvou. Verifique a conexão.'}},700)}
 function refreshPreview(){const a4=$('#a4prev');if(a4)a4.innerHTML=previewA4()}
 function aplicarFonte(){document.documentElement.dataset.font=state.perfil.fonte||'moderna'}
@@ -972,7 +999,17 @@ function stepChecklist(a){
             <span class="seg" role="group" aria-label="${esc(label)}">${Object.keys(ST).map(v=>`<button data-ans="${id}" data-v="${v}" aria-pressed="${s===v}">${ST[v].label}</button>`).join('')}</span>
             ${s==='atencao'||s==='critico'||n?`<div class="ck-note"><input class="input" id="n_${id}" data-note="${id}" placeholder="Observação: medida, local, ruído…" value="${esc(n)}"></div>`:''}
           </div>`}).join('')}
-      </div></details>`}).join('')}</div>`;
+      </div></details>`}).join('')}</div>
+   ${prepPanel(a)}`;
+}
+function prepPanel(a){
+  const sel=(a.preparo||{}).sel||{};const r=reparos(a);
+  return `<div class="panel prep">
+    <div class="panel-head" style="margin-bottom:10px"><div><h3>Preparação para revenda</h3><p class="hint" style="margin-top:6px">Não entra na nota do carro. Os itens marcados somam no custo e reduzem a oferta máxima.</p></div>
+      <div class="row" style="gap:8px"><button class="btn sm" data-prepall="nada">Carro novo, não precisa</button><button class="btn sm" data-prepall="tudo">Pacote completo</button></div></div>
+    <div class="chips">${PREP.map(p=>`<button class="chip" data-prep="${p.id}" aria-pressed="${!!sel[p.id]}"><span>${esc(p.nome)}</span><span class="num">${brl(prepPreco(p.id))}</span></button>`).join('')}</div>
+    <div class="sum" style="margin-top:14px"><span class="lbl">Total da preparação</span><b class="num" style="font-size:22px" id="prepTotal">${brl(r.prepTotal)}</b></div>
+  </div>`;
 }
 function stepOBD(a){
   const list=a.obd||[];
@@ -1015,8 +1052,15 @@ function stepReparos(a){
     ${(a.extras||[]).length?a.extras.map((e,k)=>`<div class="rep" style="grid-template-columns:minmax(0,1fr) auto auto">
         <input class="input" id="exd_${k}" data-ex="${k}|desc" value="${esc(e.desc)}" placeholder="Ex.: documentação, polimento, reparo de código OBD">
         <div class="money"><span>R$</span><input class="input" id="exv_${k}" data-ex="${k}|valor" inputmode="numeric" value="${esc(fmtN(e.valor))}"></div>
-        <button class="btn ghost sm" data-delex="${k}" aria-label="Remover item">×</button></div>`).join(''):'<p class="hint">Use para gastos fora do checklist: reparo apontado pelo scanner, despachante, higienização.</p>'}
-    <div class="sum"><span class="lbl">Total estimado de reparos</span><b class="num" id="repTotal">${brl(r.total)}</b></div>
+        <button class="btn ghost sm" data-delex="${k}" aria-label="Remover item">×</button></div>`).join(''):'<p class="hint">Use para gastos fora do checklist: reparo apontado pelo scanner, despachante, documentação.</p>'}
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h3>Preparação para revenda</h3><button class="btn ghost sm" data-step="checklist">Escolher itens</button></div>
+    ${r.prep.length?r.prep.map(p=>`<div class="rep" style="grid-template-columns:minmax(0,1fr) auto">
+        <div style="min-width:0"><div>${esc(p.nome)}</div><div class="range">Preço da sua tabela: ${brl(p.padrao)}</div></div>
+        <div class="row" style="gap:6px;flex-wrap:nowrap">${p.editado?`<button class="btn ghost sm" data-resetpov="${p.id}" title="Voltar ao preço da tabela" aria-label="Voltar ao preço da tabela">${ICON.reset}</button>`:''}
+          <div class="money ${p.editado?'edited':''}"><span>R$</span><input class="input" id="pov_${p.id}" data-pov="${p.id}" inputmode="numeric" value="${esc(fmtN(p.valor))}"></div></div></div>`).join(''):'<p class="hint">Nenhum item de preparação marcado. Marque no fim do Checklist, ou deixe assim se o carro já está pronto para venda.</p>'}
+    <div class="sum"><span class="lbl">Reparos ${brl(r.mecanico)} + preparação ${brl(r.prepTotal)}</span><b class="num" id="repTotal">${brl(r.total)}</b></div>
   </div>`;
 }
 function negocioOut(a){
@@ -1050,7 +1094,7 @@ function stepNegocio(a){
     <div class="grid g2">
       <div class="field"><label for="fn_pedido">Preço pedido pelo vendedor</label><div class="money"><span>R$</span><input id="fn_pedido" data-fin="pedido" class="input" inputmode="numeric" placeholder="0" value="${esc(fmtN(f.pedido))}"></div></div>
       <div class="field"><label for="fn_mercado">Valor de mercado</label><div class="money"><span>R$</span><input id="fn_mercado" data-fin="mercado" class="input" inputmode="numeric" placeholder="${n.mercado&&!num(f.mercado)?esc(fmtN(n.mercado))+' ('+esc(n.fonteMercado)+')':'0'}" value="${esc(fmtN(f.mercado))}"></div><span class="hint">Em branco, usa a ${n.aj?'FIPE ajustada pela km':'FIPE'}.</span></div>
-      <div class="field"><span class="lbl">Reparos estimados</span><div class="input num" style="display:flex;align-items:center;background:var(--surface-2)" id="fn_rep">${brl(n.reparo)}</div><span class="hint">Vem da etapa Reparos.</span></div>
+      <div class="field"><span class="lbl">Reparos e preparação</span><div class="input num" style="display:flex;align-items:center;background:var(--surface-2)" id="fn_rep">${brl(n.reparo)}</div><span class="hint">Vem da etapa Reparos.</span></div>
       <div class="field"><label for="fn_lucro">Lucro desejado</label><div class="money"><span>R$</span><input id="fn_lucro" data-fin="lucro" class="input" inputmode="numeric" placeholder="${state.perfil.lucro_padrao?esc(fmtN(state.perfil.lucro_padrao))+' (padrão)':'0'}" value="${esc(fmtN(f.lucro))}"></div></div>
     </div>
     <div id="finOut" class="grid" style="gap:14px">${o.res}</div>
@@ -1084,7 +1128,7 @@ function stepLaudo(a){
           <dt>FIPE</dt><dd>${a.fipe?brl(a.fipe):'—'}</dd>
           ${n.aj?`<dt>FIPE ajustada</dt><dd>${brl(n.aj.ajustado)}</dd>`:''}
           <dt>Preço pedido</dt><dd>${n.pedido?brl(n.pedido):'—'}</dd>
-          <dt>Reparos</dt><dd>${brl(r.total)}</dd>
+          <dt>Reparos</dt><dd>${brl(r.mecanico)}</dd>${r.prepTotal?`<dt>Preparação</dt><dd>${brl(r.prepTotal)}</dd>`:''}
           ${n.ok&&n.pedido?`<dt>Resultado</dt><dd style="color:${n.liquido>=0?'var(--ok)':'var(--bad)'}">${n.liquido<0?'−':''}${brl(Math.abs(n.liquido))}</dd>`:''}
         </dl>
         <div style="width:100%;display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:12px"><span class="eyebrow">Oferta máxima</span><span style="font-family:var(--f-display);font-size:28px" class="num">${n.ok?brl(n.oferta):'—'}</span></div>
@@ -1191,7 +1235,8 @@ function gerarPDF(a,k=1){
     B();doc.setFontSize(9);doc.setTextColor(...ink);doc.text(i.label,M+19,y);doc.setTextColor(...gray);doc.text(i.cat.label,M+124,y);doc.setTextColor(...ink);doc.text(l?brl(l.valor):'',W-M,y,{align:'right'});
     if(nl.length){doc.setFontSize(8);doc.setTextColor(...gray);doc.text(nl,M+19,y+L(4));doc.setFontSize(9);y+=nl.length*L(4)}y+=L(5.8)});
   (a.extras||[]).forEach(e=>{need(7);B('bold');doc.setFontSize(7);doc.setTextColor(...gray);doc.text('AVULSO',M,y);B();doc.setFontSize(9);doc.setTextColor(...ink);doc.text(String(e.desc||'—').slice(0,80),M+19,y);doc.text(brl(e.valor),W-M,y,{align:'right'});y+=L(5.8)});
-  need(10);doc.setDrawColor(...line);doc.setLineWidth(.3);doc.line(W-M-62,y-L(2),W-M,y-L(2));y+=L(3);B('bold');doc.setTextColor(...ink);doc.text('Reparos estimados',W-M-62,y);doc.text(brl(r.total),W-M,y,{align:'right'});B();y+=L(8);
+  r.prep.forEach(pp=>{need(7);B('bold');doc.setFontSize(7);doc.setTextColor(...gray);doc.text('PREPARO',M,y);B();doc.setFontSize(9);doc.setTextColor(...ink);doc.text(pp.nome,M+19,y);doc.text(brl(pp.valor),W-M,y,{align:'right'});y+=L(5.8)});
+  need(10);doc.setDrawColor(...line);doc.setLineWidth(.3);doc.line(W-M-62,y-L(2),W-M,y-L(2));y+=L(3);B('bold');doc.setTextColor(...ink);doc.text(r.prepTotal?'Reparos + preparação':'Reparos estimados',W-M-62,y);doc.text(brl(r.total),W-M,y,{align:'right'});B();y+=L(8);
 
   if((a.obd||[]).length){sec('Códigos de falha (OBD)');a.obd.forEach(o=>{const d=decodeOBD(o.code);const ds=doc.splitTextToSize(d.desc||o.ai?.descricao||'Código fora da base local',125);need(L(5)+ds.length*L(4));
     doc.setFont('courier','bold');doc.setTextColor(...ink);doc.text(d.code,M,y);B();doc.text(ds,M+19,y);y+=ds.length*L(4);if(o.nota){doc.setTextColor(...gray);doc.setFontSize(8);doc.text(doc.splitTextToSize(o.nota,125),M+19,y);doc.setFontSize(9);y+=L(4)}y+=L(2.4)});y+=L(3)}
@@ -1199,7 +1244,7 @@ function gerarPDF(a,k=1){
   sec('Análise do negócio');
   const fin=[['Valor FIPE',a.fipe?brl(a.fipe)+(a.fipe_fonte==='estimativa'?' (est.)':''):'—']];
   if(n.aj)fin.push([`Ajuste km (${n.aj.adj.label.toLowerCase()})`,`${n.aj.adj.pct>0?'+':''}${n.aj.adj.pct}% · ${brl(n.aj.ajustado)}`]);
-  fin.push(['Valor de mercado',n.mercado?brl(n.mercado):'—'],['Preço pedido',n.pedido?brl(n.pedido):'—'],['Reparos estimados',brl(n.reparo)],['Lucro desejado',brl(n.lucro)]);
+  fin.push(['Valor de mercado',n.mercado?brl(n.mercado):'—'],['Preço pedido',n.pedido?brl(n.pedido):'—'],[r.prepTotal?'Reparos + preparação':'Reparos estimados',brl(n.reparo)],['Lucro desejado',brl(n.lucro)]);
   if(n.ok&&n.pedido)fin.push(['Custo total',brl(n.custo)],['Resultado líquido',`${n.liquido<0?'-':''}${brl(Math.abs(n.liquido))} (${n.margem.toFixed(1).replace('.',',')}%)`]);
   // duas colunas para economizar espaço
   const half=Math.ceil(fin.length/2);
@@ -1327,6 +1372,9 @@ document.addEventListener('click',async e=>{
     if(d.v==='atencao'||d.v==='critico'){const n=$('#n_'+d.ans);if(n&&!n.value)n.focus({preventScroll:true})}return}
   if(d.allok){const c=CATEGORIAS.find(x=>x.id===d.allok);c.itens.forEach(([id])=>{if(!a.answers[id])a.answers[id]='ok'});touch();renderEditor();return}
   if(d.resetov){delete a.repair_overrides[d.resetov];touch();renderEditor();return}
+  if(d.prep){a.preparo=a.preparo||{sel:{},ov:{}};a.preparo.sel=a.preparo.sel||{};a.preparo.sel[d.prep]=!a.preparo.sel[d.prep];if(!a.preparo.sel[d.prep])delete a.preparo.sel[d.prep];touch();renderEditor();return}
+  if(d.prepall){a.preparo=a.preparo||{sel:{},ov:{}};a.preparo.sel={};if(d.prepall==='tudo')PREP.filter(p=>p.id!=='vitrificacao').forEach(p=>a.preparo.sel[p.id]=true);touch();renderEditor();toast(d.prepall==='tudo'?'Pacote completo marcado (sem vitrificação)':'Preparação zerada');return}
+  if(d.resetpov){if(a.preparo&&a.preparo.ov)delete a.preparo.ov[d.resetpov];touch();renderEditor();return}
   if(d.addex){a.extras=a.extras||[];a.extras.push({desc:'',valor:''});touch();renderEditor();const x=$('#exd_'+(a.extras.length-1));if(x)x.focus();return}
   if(d.delex!=null){a.extras.splice(+d.delex,1);touch();renderEditor();return}
   if(d.delobd!=null){a.obd.splice(+d.delobd,1);touch();renderEditor();return}
@@ -1341,6 +1389,7 @@ document.addEventListener('click',async e=>{
   if(d.fonte){state.perfil.fonte=d.fonte;aplicarFonte();document.querySelectorAll('.fontopt').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.fonte===d.fonte)));refreshPreview();salvarPerfilDepois();return}
   if(d.cor){state.perfil.cor=d.cor;document.querySelectorAll('.sw[data-cor]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.cor===d.cor)));const ci=$('#pf_cor');if(ci)ci.value=d.cor;refreshPreview();salvarPerfilDepois();return}
   const act=d.act;if(!act)return;
+  if(act==='prepPadrao'){state.perfil.prep={};render();salvarPerfilDepois();toast('Preços padrão restaurados');return}
   if(act==='logoRemover'){state.perfil.logo=null;const m={...marcaCfg()};delete m.lw;delete m.lh;state.perfil.marca=m;render();salvarPerfilDepois();return}
   if(act==='pdf')baixarPDF();
   if(act==='fipeTabela')fipeAbrir();
@@ -1361,6 +1410,7 @@ document.addEventListener('input',e=>{
   const el=e.target;const a=state.cur;
   if(el.id==='busca'){state.q=el.value;const h=$('#histList');if(h)h.innerHTML=histLista();return}
   if(el.dataset.pf){state.perfil[el.dataset.pf]=el.dataset.pf==='lucro_padrao'?num(el.value):el.value;if(el.dataset.pf==='nome')refreshPreview();salvarPerfilDepois();return}
+  if(el.dataset.pp){const pp={...(state.perfil.prep||{})};if(el.value==='')delete pp[el.dataset.pp];else pp[el.dataset.pp]=num(el.value);state.perfil.prep=pp;salvarPerfilDepois();return}
   if(el.id==='pf_cor'){state.perfil.cor=el.value;document.querySelectorAll('.sw[data-cor]').forEach(b=>b.setAttribute('aria-pressed','false'));refreshPreview();salvarPerfilDepois();return}
   if(el.dataset.mc&&el.type==='range'){const k=el.dataset.mc;state.perfil.marca={...marcaCfg(),[k]:Number(el.value)};const o=$('#out_'+k);if(o)o.textContent=el.value+(k==='logo_h'?' mm':k==='wm_tam'?'% da largura':'%');refreshPreview();salvarPerfilDepois();return}
   if(!a)return;
@@ -1370,6 +1420,7 @@ document.addEventListener('input',e=>{
     a[f]=v;if(['placa','marca','modelo','ano'].includes(f))refreshHead();touch();return}
   if(el.dataset.note){a.notes[el.dataset.note]=el.value;touch();return}
   if(el.dataset.obdnote!=null){a.obd[+el.dataset.obdnote].nota=el.value;touch();return}
+  if(el.dataset.pov){a.preparo=a.preparo||{sel:{},ov:{}};a.preparo.ov=a.preparo.ov||{};if(el.value==='')delete a.preparo.ov[el.dataset.pov];else a.preparo.ov[el.dataset.pov]=num(el.value);refreshReparos();touch();return}
   if(el.dataset.ov){a.repair_overrides[el.dataset.ov]=el.value===''?null:num(el.value);if(el.value==='')delete a.repair_overrides[el.dataset.ov];refreshReparos();touch();return}
   if(el.dataset.ex){const [k,f]=el.dataset.ex.split('|');a.extras[+k][f]=f==='valor'?num(el.value):el.value;refreshReparos();touch();return}
   if(el.dataset.fin){a.financeiro=a.financeiro||{};a.financeiro[el.dataset.fin]=el.value===''?'':num(el.value);refreshNegocio();touch();return}
