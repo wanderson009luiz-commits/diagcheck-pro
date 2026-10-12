@@ -15,7 +15,7 @@
 <title>DiagCheck Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Inter:wght@400;500;600&family=Barlow:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* Layout: mesa de avaliação premium — trilho lateral grafite no desktop, barra inferior no celular.
@@ -27,7 +27,7 @@
   --silver:#c9ced6; --silver-hi:#f3f5f8; --silver-lo:#8a919b; --ink-on-silver:#0c0d10;
   --ok:#5fb08a; --good:#8fb3d9; --warn:#d6a24a; --bad:#e0645c;
   --ok-bg:rgba(95,176,138,.12); --good-bg:rgba(143,179,217,.12); --warn-bg:rgba(214,162,74,.12); --bad-bg:rgba(224,100,92,.12);
-  --plate-blue:#1f3f8f;
+  --plate-blue:#1f3f8f; --paper:#ffffff;
   --metal:linear-gradient(115deg,#7f8690 0%,#e9edf2 28%,#9aa1ab 46%,#f5f7fa 64%,#8d949e 100%);
   --f-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
   --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -52,6 +52,13 @@
   --metal:linear-gradient(115deg,#3a3f47 0%,#8d949e 30%,#2b2f35 52%,#9aa1ab 72%,#3a3f47 100%);
   color-scheme:light;
 }
+/* estilos de fonte escolhidos no Perfil */
+:root[data-font="moderna"]{--f-display:"Inter",system-ui,sans-serif;--f-body:"Inter",system-ui,sans-serif}
+:root[data-font="automotiva"]{--f-display:"Barlow",system-ui,sans-serif;--f-body:"Barlow",system-ui,sans-serif}
+:root[data-font="moderna"] :is(h1,h2,.brand-name,.stat b,.sys summary .t,.res b,.sum b,.gauge .n),
+:root[data-font="automotiva"] :is(h1,h2,.brand-name,.stat b,.sys summary .t,.res b,.sum b,.gauge .n){font-weight:600;letter-spacing:-.02em}
+:root[data-font="moderna"] h1 em,:root[data-font="automotiva"] h1 em{font-style:normal;font-weight:400}
+:root[data-font="automotiva"] body{font-size:15.5px}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
@@ -204,6 +211,27 @@ textarea.input{height:auto;min-height:88px;padding:12px 14px;resize:vertical;lin
 .ck-note{grid-column:1/-1}
 .ck-note .input{height:38px;font-size:13.5px}
 
+/* identidade visual (Perfil) */
+.ident{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:32px;align-items:start}
+.ident-ctrl{display:flex;flex-direction:column;gap:18px;min-width:0}
+.ident-prev{display:flex;flex-direction:column;gap:8px;position:sticky;top:20px}
+.fontes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.fontopt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-align:left;color:inherit}
+.fontopt:hover{border-color:var(--silver-lo)}
+.fontopt[aria-pressed="true"]{border-color:var(--silver-hi);box-shadow:inset 0 0 0 1px var(--silver-hi)}
+.fo-a{font-size:30px;line-height:1.1}.fo-n{font-weight:600;font-size:14px}.fo-s{font-size:12px;color:var(--fg-3)}
+.sw{width:30px;height:30px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 2px var(--silver-hi)}
+.sw-custom{display:inline-grid;place-items:center;overflow:hidden;background:conic-gradient(#e0645c,#d6a24a,#5fb08a,#3a6ea5,#5b3f8c,#e0645c);cursor:pointer;position:relative}
+.sw-custom input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.logo-thumb{display:inline-grid;place-items:center;height:48px;min-width:64px;max-width:160px;padding:6px 10px;border-radius:8px;background:var(--paper);border:1px solid var(--line)}
+.logo-thumb img{max-height:36px;max-width:140px}
+.check{display:flex;gap:10px;align-items:center;font-size:14px;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--silver-hi)}
+.range{width:100%;accent-color:var(--silver-hi)}
+.a4{position:relative;width:300px;max-width:100%;aspect-ratio:210/297;background:var(--paper);border-radius:4px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.2),0 12px 32px rgba(0,0,0,.18)}
+@media (max-width:860px){.ident{grid-template-columns:1fr}.ident-prev{position:static;align-items:center}}
+@media (max-width:560px){.fontes{grid-template-columns:1fr}}
 /* consulta por placa */
 .lookup{display:flex;flex-direction:column;gap:14px;background:var(--surface-2);border-color:var(--line)}
 .lookup-row{display:grid;grid-template-columns:minmax(0,320px) auto;gap:12px;align-items:end}
@@ -403,6 +431,7 @@ const SUBP={0:'Ar/combustível e emissões',1:'Medição de ar e combustível',2
 const $=(s,el=document)=>el.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const brl=n=>(Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+const brlC=n=>{n=Number(n)||0;const a=Math.abs(n);if(a>=1e9)return 'R$ '+(n/1e9).toLocaleString('pt-BR',{maximumFractionDigits:1})+' bi';if(a>=1e6)return 'R$ '+(n/1e6).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mi';if(a>=1e5)return 'R$ '+Math.round(n/1e3).toLocaleString('pt-BR')+' mil';return brl(n)};
 const dt=s=>{try{return new Date(s).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}catch(e){return ''}};
 const num=v=>{if(typeof v==='number')return v;const t=String(v??'').replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.');const n=parseFloat(t);return isNaN(n)?0:n};
 const fmtN=v=>{const n=num(v);return n?n.toLocaleString('pt-BR'):''};
@@ -601,9 +630,10 @@ function itemRow(a){
 }
 function homeView(){
   const l=state.list;const mes=new Date().toISOString().slice(0,7);
-  const doMes=l.filter(a=>String(a.created_at).slice(0,7)===mes).length;
-  const scs=l.map(a=>calcScore(a.answers)).filter(x=>x!=null);const media=scs.length?Math.round(scs.reduce((a,b)=>a+b,0)/scs.length):null;
-  const rep=l.reduce((s,a)=>s+reparos(a).total,0);
+  const mesL=l.filter(a=>String(a.created_at).slice(0,7)===mes);const doMes=mesL.length;
+  const base=mesL.length?mesL:l;
+  const scs=base.map(a=>calcScore(a.answers)).filter(x=>x!=null);const media=scs.length?Math.round(scs.reduce((a,b)=>a+b,0)/scs.length):null;
+  const reps=base.map(a=>reparos(a).total).filter(v=>v>0);const repMedio=reps.length?reps.reduce((a,b)=>a+b,0)/reps.length:0;
   return `<section class="hero">
      <div><div class="eyebrow">${esc(state.perfil.nome||'Avaliação técnica de seminovos')}</div>
       <h1 style="margin-top:10px">Saiba o preço certo <em>antes de fechar negócio</em>.</h1>
@@ -612,8 +642,8 @@ function homeView(){
    </section>
    <div class="stats">
      <div class="stat"><b class="num">${doMes}</b><span>Avaliações no mês</span></div>
-     <div class="stat"><b class="num">${media??'—'}</b><span>Nota média</span></div>
-     <div class="stat"><b class="num">${brl(rep)}</b><span>Reparos identificados</span></div>
+     <div class="stat"><b class="num">${media??'—'}</b><span>Nota média ${mesL.length?'no mês':'geral'}</span></div>
+     <div class="stat"><b class="num">${repMedio?brlC(repMedio):'—'}</b><span>Reparo médio por carro</span></div>
    </div>
    <section style="display:flex;flex-direction:column;gap:14px">
      <div class="panel-head" style="margin:0"><h3>Últimas avaliações</h3>${l.length?'<button class="btn ghost sm" data-nav="hist">Ver todas</button>':''}</div>
@@ -630,16 +660,84 @@ function histView(){
      <div class="field" style="width:min(320px,100%)"><label for="busca">Buscar</label><input id="busca" class="input" placeholder="Placa, marca, modelo ou vendedor" value="${esc(state.q)}"></div></div>
    <div id="histList">${histLista()}</div>`;
 }
+const CORES=['#1e2228','#1f3f8f','#0f6b5c','#8a1c1c','#b4691f','#5b3f8c'];
 function perfilView(){
-  const p=state.perfil;const f=(id,label,ph,cls='')=>`<div class="field"><label for="pf_${id}">${label}</label><input id="pf_${id}" data-pf="${id}" class="input ${cls}" placeholder="${ph}" value="${esc(p[id]??'')}"></div>`;
-  return `<div><div class="eyebrow">Configuração</div><h1 style="margin-top:8px">Perfil do avaliador</h1><p class="muted" style="margin:10px 0 0;max-width:58ch">Esses dados aparecem no cabeçalho do laudo em PDF. O lucro padrão entra no cálculo da oferta máxima de toda avaliação nova.</p></div>
+  const p=state.perfil;const mc=marcaCfg();const fonte=p.fonte||'moderna';
+  const f=(id,label,ph,cls='')=>`<div class="field"><label for="pf_${id}">${label}</label><input id="pf_${id}" data-pf="${id}" class="input ${cls}" placeholder="${ph}" value="${esc(p[id]??'')}"></div>`;
+  const rng=(k,label,min,max,un)=>`<div class="field"><div class="row" style="justify-content:space-between"><label for="mc_${k}">${label}</label><span class="small num muted" id="out_${k}">${mc[k]}${un}</span></div><input type="range" id="mc_${k}" data-mc="${k}" min="${min}" max="${max}" step="1" value="${mc[k]}" class="range"></div>`;
+  return `<div><div class="eyebrow">Configuração</div><h1 style="margin-top:8px">Perfil e identidade</h1><p class="muted" style="margin:10px 0 0;max-width:60ch">Os dados e a marca da loja aparecem no laudo em PDF. Tudo o que você muda aqui salva sozinho e já aparece na prévia ao lado.</p></div>
    <form class="panel grid" id="formPerfil" style="gap:18px">
+     <h3>Dados da empresa</h3>
      <div class="grid g2">${f('nome','Empresa ou nome comercial','Ex.: Silva Seminovos')}${f('responsavel','Avaliador responsável','Seu nome')}</div>
      <div class="grid g3">${f('telefone','Telefone','(81) 9 ....')}${f('documento','CNPJ / CPF','00.000.000/0001-00')}<div class="field"><label for="pf_lucro">Lucro desejado padrão</label><div class="money"><span>R$</span><input id="pf_lucro" data-pf="lucro_padrao" class="input" inputmode="numeric" placeholder="5.000" value="${esc(fmtN(p.lucro_padrao))}"></div></div></div>
      ${f('endereco','Endereço','Rua, número, bairro, cidade')}
-     <div class="row"><button class="btn primary" type="submit">Salvar perfil</button><span class="faint small" id="pfMsg"></span></div>
-   </form>`;
+   </form>
+   <section class="panel ident">
+     <div class="ident-ctrl">
+       <h3>Identidade visual</h3>
+       <div class="field"><span class="lbl">Estilo de fonte (app e laudo)</span>
+         <div class="fontes">${Object.entries(FONTES).map(([id,F])=>`<button type="button" class="fontopt" data-fonte="${id}" aria-pressed="${fonte===id}"><span class="fo-a" style="font-family:${id==='elegante'?'\'Bodoni Moda\',Georgia,serif':`'${F.app}',sans-serif`};font-weight:${id==='elegante'?400:600}">Aa</span><span class="fo-n">${F.nome}</span><span class="fo-s" style="font-family:'${F.body}',sans-serif">${id==='moderna'?'Inter':id==='automotiva'?'Barlow':'Bodoni + Inter'}</span></button>`).join('')}</div></div>
+       <div class="field"><span class="lbl">Cor de destaque</span>
+         <div class="row" style="gap:8px">${CORES.map(c=>`<button type="button" class="sw" data-cor="${c}" style="background:${c}" aria-label="Cor ${c}" aria-pressed="${(p.cor||'#1e2228').toLowerCase()===c}"></button>`).join('')}<label class="sw sw-custom" title="Outra cor"><input type="color" id="pf_cor" value="${esc(p.cor||'#1e2228')}" aria-label="Escolher outra cor"></label></div></div>
+       <hr class="hairline">
+       <div class="field"><span class="lbl">Logo da empresa</span>
+         <div class="row">
+           ${p.logo?`<span class="logo-thumb"><img src="${p.logo}" alt="Logo atual"></span>`:''}
+           <label class="btn sm" for="pf_logo">${ICON.plus}${p.logo?'Trocar logo':'Enviar logo'}</label><input type="file" id="pf_logo" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+           ${p.logo?'<button type="button" class="btn ghost sm" data-act="logoRemover">Remover</button>':''}
+         </div>
+         <p class="hint" id="logoMsg">PNG com fundo transparente fica melhor. O app recorta as bordas vazias e mantém a proporção sozinho, então qualquer tamanho serve.</p></div>
+       ${p.logo?`${rng('logo_h','Altura do logo no cabeçalho',8,26,' mm')}
+       <label class="check"><input type="checkbox" data-mc="nome_ao_lado" ${mc.nome_ao_lado?'checked':''}> Mostrar o nome da empresa ao lado do logo</label>`:''}
+       <hr class="hairline">
+       <label class="check"><input type="checkbox" data-mc="wm" ${mc.wm?'checked':''}> Marca d'água no fundo do laudo ${p.logo?'(usa o logo)':'(usa o nome da empresa)'}</label>
+       ${mc.wm?`${rng('wm_tam','Tamanho da marca d\'água',30,100,'% da largura')}${rng('wm_op','Intensidade',3,20,'%')}`:''}
+       <span class="saved" id="pfMsg"></span>
+     </div>
+     <div class="ident-prev"><span class="lbl">Prévia do laudo</span><div class="a4" id="a4prev">${previewA4()}</div></div>
+   </section>`;
 }
+function previewA4(){
+  const p=state.perfil;const mc=marcaCfg();const F=FONTES[p.fonte||'moderna'];const acc=p.cor||'#1e2228';
+  const f=300/210,mm=v=>(v*f).toFixed(1)+'px',pt=v=>mm(v*.3528);
+  const tFam=(p.fonte||'moderna')==='elegante'?"'Bodoni Moda',Georgia,serif":`'${F.app}',sans-serif`;const bFam=`'${F.body}',sans-serif`;
+  const ar=mc.lw&&mc.lh?mc.lw/mc.lh:null;
+  let logo='',hx=16;
+  if(p.logo&&ar){const h=mc.logo_h;const w=Math.min(h*ar,90);logo=`<img src="${p.logo}" alt="" style="position:absolute;left:${mm(16)};top:${mm(12)};width:${mm(w)};height:${mm(w/ar)}">`;hx=16+w+5}
+  const nome=(!p.logo||mc.nome_ao_lado)?`<div style="position:absolute;left:${mm(hx)};top:${mm(p.logo?12+Math.max((p.logo&&ar?Math.min(mc.logo_h*ar,90)/ar:0)/2,5)-4:11)};font-family:${tFam};font-weight:${(p.fonte||'moderna')==='elegante'?400:600};font-size:${pt(p.logo?15:21)};color:#121419;white-space:nowrap">${esc(p.nome||'Nome da sua loja')}</div>`:'';
+  let wm='';if(mc.wm){if(p.logo&&ar){let w=210*mc.wm_tam/100,h=w/ar;if(h>200){h=200;w=h*ar}wm=`<img src="${p.logo}" alt="" style="position:absolute;left:${mm((210-w)/2)};top:${mm((297-h)/2)};width:${mm(w)};height:${mm(h)};opacity:${mc.wm_op/100}">`}
+    else if(p.nome)wm=`<div style="position:absolute;inset:0;display:grid;place-items:center;opacity:${mc.wm_op/100}"><span style="transform:rotate(-30deg);font-family:${tFam};font-size:${pt(Math.max(28,mc.wm_tam*.9))};color:${acc};white-space:nowrap">${esc(p.nome)}</span></div>`}
+  const bar=(x,yy,w,c='#dfe2e7',h=1.6)=>`<i style="position:absolute;left:${mm(x)};top:${mm(yy)};width:${mm(w)};height:${mm(h)};background:${c};border-radius:1px"></i>`;
+  let body='';const secs=[44,92,150,214];secs.forEach((sy,i)=>{body+=bar(16,sy,34,acc,1.4)+bar(16,sy+3,178,'#e6e8ec',.3);for(let j=0;j<[7,9,6,5][i];j++)body+=bar(16,sy+8+j*5.2,60+((j*37)%70))+bar(170,sy+8+j*5.2,24)});
+  return `${wm}${logo}${nome}
+   <div style="position:absolute;right:${mm(16)};top:${mm(9)};text-align:right;font-family:${bFam}"><div style="font-size:${pt(7.5)};letter-spacing:.06em;color:${acc}">LAUDO DE AVALIAÇÃO VEICULAR</div><div style="font-family:${tFam};font-size:${pt(15)};color:#121419">Nº 0001</div></div>
+   <i style="position:absolute;left:${mm(16)};right:${mm(16)};top:${mm(33)};height:${mm(.6)};background:${acc}"></i>
+   ${body}
+   <i style="position:absolute;left:${mm(16)};top:${mm(262)};width:${mm(75)};height:1px;background:#9aa0a8"></i><i style="position:absolute;right:${mm(16)};top:${mm(262)};width:${mm(75)};height:1px;background:#9aa0a8"></i>`;
+}
+async function processarLogo(file){
+  if(!/^image\//.test(file.type))throw new Error('Envie uma imagem PNG, JPG, WEBP ou SVG.');
+  if(file.size>8e6)throw new Error('Imagem muito grande. Use uma de até 8 MB.');
+  const url=URL.createObjectURL(file);
+  const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('Não consegui abrir essa imagem.'));i.src=url});
+  let w=img.naturalWidth||800,h=img.naturalHeight||400;const s=Math.min(1,1600/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);
+  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.drawImage(img,0,0,w,h);URL.revokeObjectURL(url);
+  const d=x.getImageData(0,0,w,h).data;
+  const box=(ignoreWhite)=>{let x0=w,y0=h,x1=-1,y1=-1;for(let yy=0;yy<h;yy++)for(let xx=0;xx<w;xx++){const i=(yy*w+xx)*4;const al=d[i+3];if(al<20)continue;if(ignoreWhite&&d[i]>238&&d[i+1]>238&&d[i+2]>238)continue;if(xx<x0)x0=xx;if(xx>x1)x1=xx;if(yy<y0)y0=yy;if(yy>y1)y1=yy}return x1<0?null:[x0,y0,x1,y1]};
+  let b=box(true)||box(false);if(!b)throw new Error('A imagem parece estar vazia.');
+  const pad=Math.round(Math.max(b[2]-b[0],b[3]-b[1])*.02);b=[Math.max(0,b[0]-pad),Math.max(0,b[1]-pad),Math.min(w-1,b[2]+pad),Math.min(h-1,b[3]+pad)];
+  let cw=b[2]-b[0]+1,ch=b[3]-b[1]+1;let lum=0,cnt=0;for(let yy=b[1];yy<=b[3];yy+=3)for(let xx=b[0];xx<=b[2];xx+=3){const i=(yy*w+xx)*4;if(d[i+3]>120){lum+=.299*d[i]+.587*d[i+1]+.114*d[i+2];cnt++}}
+  const claro=cnt&&lum/cnt>225;
+  const mk=max=>{const k=Math.min(1,max/Math.max(cw,ch));const o=document.createElement('canvas');o.width=Math.round(cw*k);o.height=Math.round(ch*k);o.getContext('2d').drawImage(c,b[0],b[1],cw,ch,0,0,o.width,o.height);return{src:o.toDataURL('image/png'),w:o.width,h:o.height}};
+  let r=mk(900);if(r.src.length>380000)r=mk(600);if(r.src.length>380000)r=mk(420);
+  return{...r,claro};
+}
+let pfT=null;
+function salvarPerfilDepois(){const m=$('#pfMsg');if(m)m.textContent='Salvando…';clearTimeout(pfT);pfT=setTimeout(async()=>{const p=state.perfil;
+  try{await api.savePerfil({nome:p.nome||'',responsavel:p.responsavel||'',telefone:p.telefone||'',documento:p.documento||'',endereco:p.endereco||'',lucro_padrao:num(p.lucro_padrao)||0,fonte:p.fonte||'moderna',cor:p.cor||'#1e2228',logo:p.logo||null,marca:marcaCfg()});const mm=$('#pfMsg');if(mm)mm.textContent='Salvo'}
+  catch(e){const mm=$('#pfMsg');if(mm)mm.textContent='Não salvou. Verifique a conexão.'}},700)}
+function refreshPreview(){const a4=$('#a4prev');if(a4)a4.innerHTML=previewA4()}
+function aplicarFonte(){document.documentElement.dataset.font=state.perfil.fonte||'moderna'}
 function authView(){
   const e=state.authMode==='entrar';
   return `<div class="auth"><form class="auth-card" id="formAuth">
@@ -883,62 +981,126 @@ function stepLaudo(a){
 }
 
 /* ===================== PDF ===================== */
-function gerarPDF(a){
+const FONTES={
+  moderna:{nome:'Moderna',app:'Inter',body:'Inter',title:'Inter',titleStyle:'bold',files:[['inter-400.ttf','Inter','normal'],['inter-600.ttf','Inter','bold']]},
+  automotiva:{nome:'Automotiva',app:'Barlow',body:'Barlow',title:'Barlow',titleStyle:'bold',files:[['barlow-400.ttf','Barlow','normal'],['barlow-600.ttf','Barlow','bold']]},
+  elegante:{nome:'Elegante',app:'Bodoni',body:'Inter',title:'BodoniModa',titleStyle:'normal',files:[['inter-400.ttf','Inter','normal'],['inter-600.ttf','Inter','bold'],['bodoni-500.ttf','BodoniModa','normal']]},
+};
+const fontCache={};
+async function carregarFontes(id){
+  const f=FONTES[id]||FONTES.moderna;
+  await Promise.all(f.files.map(async([file])=>{
+    if(fontCache[file]!==undefined)return;
+    try{const r=await fetch('fonts/'+file);if(!r.ok)throw 0;const b=new Uint8Array(await r.arrayBuffer());let s='';for(let i=0;i<b.length;i+=0x8000)s+=String.fromCharCode.apply(null,b.subarray(i,i+0x8000));fontCache[file]=btoa(s)}
+    catch(e){fontCache[file]=null}
+  }));
+}
+function registrarFontes(doc,id){
+  const f=FONTES[id]||FONTES.moderna;let ok=true;
+  f.files.forEach(([file,fam,style])=>{const b=fontCache[file];if(!b){ok=false;return}doc.addFileToVFS(file,b);doc.addFont(file,fam,style)});
+  return ok?{body:f.body,title:f.title,titleStyle:f.titleStyle}:{body:'helvetica',title:'times',titleStyle:'normal'};
+}
+const hexRgb=h=>{const m=/^#?([0-9a-f]{6})$/i.exec(h||'');if(!m)return[30,34,40];const n=parseInt(m[1],16);return[n>>16&255,n>>8&255,n&255]};
+const marcaCfg=()=>({logo_h:14,nome_ao_lado:true,wm:false,wm_tam:60,wm_op:7,...(state.perfil.marca||{})});
+
+function gerarPDF(a,k=1){
   const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4'});
-  const pf=state.perfil;const W=210,M=16;let y=18;
-  const ink=[18,20,25],gray=[110,116,124],line=[210,214,220],RED=[194,66,58],AMB=[168,116,26],GRN=[47,138,99],BLU=[58,110,165];
+  const pf=state.perfil;const mc=marcaCfg();const FT=registrarFontes(doc,pf.fonte||'moderna');
+  const W=210,M=16,BOTTOM=282;let y=16;
+  const ink=[18,20,25],gray=[105,111,120],line=[214,218,224],RED=[194,66,58],AMB=[168,116,26],GRN=[47,138,99],BLU=[58,110,165];
+  const ACC=hexRgb(pf.cor||'#1e2228');
+  const B=(st='normal')=>doc.setFont(FT.body,st==='bold'?'bold':'normal');
+  const T=()=>doc.setFont(FT.title,FT.titleStyle);
   const p=calcScore(a.answers);const c=categoria(p);const n=negocio(a);const r=reparos(a);
   const corCat=p==null?gray:p>=80?GRN:p>=65?BLU:p>=35?AMB:RED;
-  const need=h=>{if(y+h>280){doc.addPage();y=18}};
-  const sec=t=>{need(14);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...gray);doc.text(t.toUpperCase(),M,y);y+=2.5;doc.setDrawColor(...line);doc.setLineWidth(.3);doc.line(M,y,W-M,y);y+=6;doc.setFont('helvetica','normal');doc.setFontSize(9)};
-  doc.setFont('times','normal');doc.setFontSize(22);doc.setTextColor(...ink);doc.text(pf.nome||'DiagCheck Pro',M,y);
-  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...gray);const sub=[pf.endereco,pf.telefone,pf.documento].filter(Boolean).join('  ·  ');if(sub)doc.text(sub,M,y+6);
-  doc.setFontSize(8);doc.text('LAUDO DE AVALIAÇÃO VEICULAR',W-M,y-4,{align:'right'});doc.setFontSize(15);doc.setTextColor(...ink);doc.text(a.numero?'Nº '+String(a.numero).padStart(4,'0'):'Exemplo',W-M,y+3,{align:'right'});
-  y+=12;doc.setDrawColor(...line);doc.setLineWidth(.4);doc.line(M,y,W-M,y);y+=8;
-  const kv=[['Veículo',[a.marca,a.modelo,a.versao].filter(Boolean).join(' ')||'—'],['Ano',a.ano||'—'],['Placa',fmtPlaca(a.placa)||'—'],['Quilometragem',a.km?fmtN(a.km)+' km':'—'],['Conjunto',[a.combustivel,a.cambio,a.tracao].filter(Boolean).join(' · ')||'—'],['Cor',a.cor||'—'],['Vendedor',a.vendedor||'—'],['Data',dt(a.created_at||new Date())]];
-  doc.setFont('helvetica','normal');doc.setFontSize(9);
-  kv.forEach((rw,k)=>{const yy=y+k*5.6;doc.setTextColor(...gray);doc.text(rw[0],M,yy);doc.setTextColor(...ink);doc.text(String(rw[1]).slice(0,60),M+36,yy)});
-  // velocímetro
-  const cx=W-M-26,cy=y+22,R=20;doc.setLineWidth(2.6);doc.setDrawColor(...line);
-  const arcSeg=(v1,v2)=>{for(let v=v1;v<v2;v+=1){const a1=Math.PI*(1-v/100),a2=Math.PI*(1-Math.min(v+1,v2)/100);doc.line(cx+R*Math.cos(a1),cy-R*Math.sin(a1),cx+R*Math.cos(a2),cy-R*Math.sin(a2))}};
-  arcSeg(0,100);if(p){doc.setDrawColor(...corCat);arcSeg(0,p)}
-  doc.setFont('times','normal');doc.setFontSize(24);doc.setTextColor(...ink);doc.text(p==null?'—':String(p),cx,cy-2,{align:'center'});
-  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...corCat);doc.text(c.label.toUpperCase(),cx,cy+4,{align:'center'});
-  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...gray);doc.text(doc.splitTextToSize(c.rec,58),cx,cy+9,{align:'center'});
-  y+=kv.length*5.6+8;
+  const L=v=>v*k;
+  const logo=pf.logo&&mc.lw&&mc.lh?{src:pf.logo,ar:mc.lw/mc.lh}:null;
+  const marcaDagua=()=>{
+    if(!mc.wm)return;
+    doc.saveGraphicsState();doc.setGState(new doc.GState({opacity:Math.max(.02,Math.min(.3,mc.wm_op/100))}));
+    if(logo){let w=W*mc.wm_tam/100,h=w/logo.ar;if(h>200){h=200;w=h*logo.ar}doc.addImage(logo.src,'PNG',(W-w)/2,(297-h)/2,w,h,'wm','FAST')}
+    else if(pf.nome){T();doc.setFontSize(Math.max(28,mc.wm_tam*.9));doc.setTextColor(...ACC);doc.text(pf.nome,W/2,297/2,{align:'center',angle:30,baseline:'middle'})}
+    doc.restoreGraphicsState();
+  };
+  const need=h=>{if(y+h>BOTTOM){doc.addPage();marcaDagua();y=18}};
+  const sec=t=>{need(L(14));B('bold');doc.setFontSize(7.5);doc.setTextColor(...ACC);doc.text(t.toUpperCase(),M,y,{charSpace:.4});y+=L(2.4);doc.setDrawColor(...line);doc.setLineWidth(.3);doc.line(M,y,W-M,y);y+=L(5.6);B();doc.setFontSize(9)};
+  marcaDagua();
+
+  // cabeçalho
+  let hx=M,hTop=y-4,hH=0;
+  if(logo){const h=Math.max(8,Math.min(26,mc.logo_h));const w=Math.min(h*logo.ar,90);const hh=w/logo.ar;doc.addImage(logo.src,'PNG',M,hTop,w,hh,'logo','FAST');hH=hh;hx=M+w+5}
+  const showName=!logo||mc.nome_ao_lado;
+  if(showName){T();doc.setFontSize(logo?15:21);doc.setTextColor(...ink);const ny=logo?hTop+Math.max(hH/2,5)+1.5:y+2;doc.text(pf.nome||'DiagCheck Pro',hx,ny);
+    if(!logo)hH=8}
+  const sub=[pf.endereco,pf.telefone,pf.documento].filter(Boolean).join('   ·   ');
+  B();doc.setFontSize(7.5);doc.setTextColor(...ACC);doc.text('LAUDO DE AVALIAÇÃO VEICULAR',W-M,hTop+3,{align:'right',charSpace:.3});
+  T();doc.setFontSize(15);doc.setTextColor(...ink);doc.text(a.numero?'Nº '+String(a.numero).padStart(4,'0'):'Exemplo',W-M,hTop+10,{align:'right'});
+  B();doc.setFontSize(7.5);doc.setTextColor(...gray);doc.text(dt(a.created_at||new Date()),W-M,hTop+14.5,{align:'right'});
+  y=hTop+Math.max(hH,showName&&!logo?10:hH)+3;
+  if(sub){doc.setFontSize(7.8);doc.setTextColor(...gray);doc.text(sub,M,y+1.5);y+=4}
+  y=Math.max(y,hTop+17)+2;doc.setDrawColor(...ACC);doc.setLineWidth(.6);doc.line(M,y,W-M,y);y+=L(7);
+
+  // veículo + nota
+  B();doc.setFontSize(9);
+  const kv=[['Veículo',[a.marca,a.modelo].filter(Boolean).join(' ')||'—'],['Versão / motor',a.versao||'—'],['Ano',a.ano||'—'],['Placa',fmtPlaca(a.placa)||'—'],['Quilometragem',a.km?fmtN(a.km)+' km':'—'],['Conjunto',[a.combustivel,a.cambio,a.tracao].filter(Boolean).join(' · ')||'—'],['Cor',a.cor||'—'],['Vendedor',a.vendedor||'—']];
+  kv.forEach((rw,i)=>{const yy=y+i*L(5.4);doc.setTextColor(...gray);doc.text(rw[0],M,yy);doc.setTextColor(...ink);doc.text(doc.splitTextToSize(String(rw[1]),92)[0],M+30,yy)});
+  const cx=W-M-27,cy=y+L(20),R=19;doc.setLineWidth(2.6);doc.setDrawColor(...line);
+  const arc=(v1,v2)=>{for(let v=v1;v<v2;v+=1){const a1=Math.PI*(1-v/100),a2=Math.PI*(1-Math.min(v+1,v2)/100);doc.line(cx+R*Math.cos(a1),cy-R*Math.sin(a1),cx+R*Math.cos(a2),cy-R*Math.sin(a2))}};
+  arc(0,100);if(p){doc.setDrawColor(...corCat);arc(0,p)}
+  T();doc.setFontSize(24);doc.setTextColor(...ink);doc.text(p==null?'—':String(p),cx,cy-2,{align:'center'});
+  B('bold');doc.setFontSize(7.5);doc.setTextColor(...corCat);doc.text(c.label.toUpperCase(),cx,cy+4,{align:'center',charSpace:.3});
+  B();doc.setFontSize(7.3);doc.setTextColor(...gray);doc.text(doc.splitTextToSize(c.rec,56),cx,cy+8.5,{align:'center'});
+  y+=Math.max(kv.length*L(5.4),L(38))+L(4);
+
   sec('Resumo por sistema');
-  CATEGORIAS.forEach((ct,k)=>{const s=ct.itens.map(([id])=>(a.answers||{})[id]);const cr=s.filter(x=>x==='critico').length,at=s.filter(x=>x==='atencao').length,ok=s.filter(x=>x==='ok').length;
-    const colx=k%2?W/2+3:M;if(k%2===0&&k)y+=5.6;need(6);doc.setTextColor(...ink);doc.text(ct.label,colx,y);
+  CATEGORIAS.forEach((ct,i)=>{const s=ct.itens.map(([id])=>(a.answers||{})[id]);const cr=s.filter(x=>x==='critico').length,at=s.filter(x=>x==='atencao').length,ok=s.filter(x=>x==='ok').length;
+    const colx=i%2?W/2+3:M;if(i%2===0&&i)y+=L(5.2);need(6);doc.setTextColor(...ink);doc.text(ct.label,colx,y);
     const t=cr?[`${cr} crítico${at?' · '+at+' atenção':''}`,RED]:at?[`${at} atenção`,AMB]:ok?['OK',GRN]:['Não avaliado',gray];
     doc.setTextColor(...t[1]);doc.text(t[0],colx+(W/2-M-7),y,{align:'right'})});
-  y+=10;
+  y+=L(9);
+
   const flag=[...marcados(a,'critico').map(i=>[i,'critico']),...marcados(a,'atencao').map(i=>[i,'atencao'])];
   sec(`Pontos críticos e de atenção (${flag.length})`);
-  if(!flag.length){doc.setTextColor(...gray);doc.text('Nenhum item crítico ou de atenção.',M,y);y+=7}
-  flag.forEach(([i,st])=>{const nota=(a.notes||{})[i.id];const nl=nota?doc.splitTextToSize(nota,105):[];need(6+nl.length*4.3);const l=r.linhas.find(x=>x.id===i.id);
-    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...(st==='critico'?RED:AMB));doc.text(st==='critico'?'CRÍTICO':'ATENÇÃO',M,y);
-    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...ink);doc.text(i.label,M+20,y);doc.setTextColor(...gray);doc.text(i.cat.label,M+128,y);doc.setTextColor(...ink);doc.text(l?brl(l.valor):'',W-M,y,{align:'right'});
-    if(nl.length){doc.setFontSize(8.3);doc.setTextColor(...gray);doc.text(nl,M+20,y+4.3);doc.setFontSize(9);y+=nl.length*4.3}y+=6.2});
-  (a.extras||[]).forEach(e=>{need(7);doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...gray);doc.text('AVULSO',M,y);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...ink);doc.text(String(e.desc||'—').slice(0,80),M+20,y);doc.text(brl(e.valor),W-M,y,{align:'right'});y+=6.2});
-  need(10);doc.setDrawColor(...line);doc.line(W-M-60,y-2,W-M,y-2);y+=3;doc.setFont('helvetica','bold');doc.text('Reparos estimados',W-M-60,y);doc.text(brl(r.total),W-M,y,{align:'right'});doc.setFont('helvetica','normal');y+=9;
-  if((a.obd||[]).length){sec('Códigos de falha (OBD)');a.obd.forEach(o=>{const d=decodeOBD(o.code);const ds=doc.splitTextToSize(d.desc||o.ai?.descricao||'Código fora da base local',125);need(5+ds.length*4.3);
-    doc.setFont('courier','bold');doc.setTextColor(...ink);doc.text(d.code,M,y);doc.setFont('helvetica','normal');doc.text(ds,M+20,y);y+=ds.length*4.3;if(o.nota){doc.setTextColor(...gray);doc.setFontSize(8.3);doc.text(doc.splitTextToSize(o.nota,125),M+20,y);doc.setFontSize(9);y+=4.3}y+=2.5});y+=4}
+  if(!flag.length){doc.setTextColor(...gray);doc.text('Nenhum item crítico ou de atenção.',M,y);y+=L(6.5)}
+  flag.forEach(([i,st])=>{const nota=(a.notes||{})[i.id];const nl=nota?doc.splitTextToSize(nota,100):[];need(L(6)+nl.length*L(4));const l=r.linhas.find(x=>x.id===i.id);
+    B('bold');doc.setFontSize(7);doc.setTextColor(...(st==='critico'?RED:AMB));doc.text(st==='critico'?'CRÍTICO':'ATENÇÃO',M,y);
+    B();doc.setFontSize(9);doc.setTextColor(...ink);doc.text(i.label,M+19,y);doc.setTextColor(...gray);doc.text(i.cat.label,M+124,y);doc.setTextColor(...ink);doc.text(l?brl(l.valor):'',W-M,y,{align:'right'});
+    if(nl.length){doc.setFontSize(8);doc.setTextColor(...gray);doc.text(nl,M+19,y+L(4));doc.setFontSize(9);y+=nl.length*L(4)}y+=L(5.8)});
+  (a.extras||[]).forEach(e=>{need(7);B('bold');doc.setFontSize(7);doc.setTextColor(...gray);doc.text('AVULSO',M,y);B();doc.setFontSize(9);doc.setTextColor(...ink);doc.text(String(e.desc||'—').slice(0,80),M+19,y);doc.text(brl(e.valor),W-M,y,{align:'right'});y+=L(5.8)});
+  need(10);doc.setDrawColor(...line);doc.setLineWidth(.3);doc.line(W-M-62,y-L(2),W-M,y-L(2));y+=L(3);B('bold');doc.setTextColor(...ink);doc.text('Reparos estimados',W-M-62,y);doc.text(brl(r.total),W-M,y,{align:'right'});B();y+=L(8);
+
+  if((a.obd||[]).length){sec('Códigos de falha (OBD)');a.obd.forEach(o=>{const d=decodeOBD(o.code);const ds=doc.splitTextToSize(d.desc||o.ai?.descricao||'Código fora da base local',125);need(L(5)+ds.length*L(4));
+    doc.setFont('courier','bold');doc.setTextColor(...ink);doc.text(d.code,M,y);B();doc.text(ds,M+19,y);y+=ds.length*L(4);if(o.nota){doc.setTextColor(...gray);doc.setFontSize(8);doc.text(doc.splitTextToSize(o.nota,125),M+19,y);doc.setFontSize(9);y+=L(4)}y+=L(2.4)});y+=L(3)}
+
   sec('Análise do negócio');
-  const fin=[['Valor FIPE',a.fipe?brl(a.fipe)+(a.fipe_fonte==='estimativa'?' (estimativa)':''):'—']];
-  if(n.aj)fin.push(['Ajuste por quilometragem',`${n.aj.adj.label} (${n.aj.adj.pct>0?'+':''}${n.aj.adj.pct}%) · ${brl(n.aj.ajustado)}`]);
-  fin.push(['Valor de mercado considerado',n.mercado?brl(n.mercado)+(n.fonteMercado?' · '+n.fonteMercado:''):'—'],['Preço pedido',n.pedido?brl(n.pedido):'—'],['Reparos estimados',brl(n.reparo)],['Lucro desejado',brl(n.lucro)]);
+  const fin=[['Valor FIPE',a.fipe?brl(a.fipe)+(a.fipe_fonte==='estimativa'?' (est.)':''):'—']];
+  if(n.aj)fin.push([`Ajuste km (${n.aj.adj.label.toLowerCase()})`,`${n.aj.adj.pct>0?'+':''}${n.aj.adj.pct}% · ${brl(n.aj.ajustado)}`]);
+  fin.push(['Valor de mercado',n.mercado?brl(n.mercado):'—'],['Preço pedido',n.pedido?brl(n.pedido):'—'],['Reparos estimados',brl(n.reparo)],['Lucro desejado',brl(n.lucro)]);
   if(n.ok&&n.pedido)fin.push(['Custo total',brl(n.custo)],['Resultado líquido',`${n.liquido<0?'-':''}${brl(Math.abs(n.liquido))} (${n.margem.toFixed(1).replace('.',',')}%)`]);
-  fin.forEach(f=>{need(6);doc.setTextColor(...gray);doc.text(f[0],M,y);doc.setTextColor(...ink);doc.text(f[1],W-M,y,{align:'right'});y+=5.6});
-  if(n.ok){need(14);y+=2;doc.setDrawColor(...line);doc.line(M,y,W-M,y);y+=8;doc.setFont('times','normal');doc.setFontSize(15);doc.text('Oferta máxima sugerida',M,y);doc.text(brl(n.oferta),W-M,y,{align:'right'});doc.setFont('helvetica','normal');doc.setFontSize(9);y+=10}
-  if(a.observacoes){sec('Observações do avaliador');doc.setTextColor(...ink);const tx=doc.splitTextToSize(a.observacoes,W-2*M);need(tx.length*4.3);doc.text(tx,M,y);y+=tx.length*4.3+6}
-  need(24);y=Math.max(y+12,262);doc.setDrawColor(...gray);doc.setLineWidth(.2);doc.line(M,y,M+75,y);doc.line(W-M-75,y,W-M,y);doc.setFontSize(8);doc.setTextColor(...gray);
-  doc.text(pf.responsavel?'Avaliador: '+pf.responsavel:'Avaliador responsável',M,y+4.5);doc.text('Ciente',W-M-75,y+4.5);
-  const tp=doc.getNumberOfPages();for(let k=1;k<=tp;k++){doc.setPage(k);doc.setFontSize(7);doc.setTextColor(...gray);doc.text(`DiagCheck Pro · valores de reparo são estimativas de mercado · página ${k} de ${tp}`,W/2,291,{align:'center'})}
+  // duas colunas para economizar espaço
+  const half=Math.ceil(fin.length/2);
+  fin.forEach((f,i)=>{const col=i<half?0:1;const yy=y+(i%half)*L(5.4);const x0=col?W/2+3:M,x1=col?W-M:W/2-4;doc.setFontSize(8.6);doc.setTextColor(...gray);doc.text(f[0],x0,yy);doc.setTextColor(...ink);doc.text(f[1],x1,yy,{align:'right'})});
+  y+=half*L(5.4)+L(1);doc.setFontSize(9);
+  if(n.ok){need(14);doc.setDrawColor(...ACC);doc.setLineWidth(.4);doc.line(M,y,W-M,y);y+=L(7.5);T();doc.setFontSize(14);doc.setTextColor(...ink);doc.text('Oferta máxima sugerida',M,y);doc.setTextColor(...ACC);doc.text(brl(n.oferta),W-M,y,{align:'right'});B();doc.setFontSize(9);y+=L(10)}
+
+  if(a.observacoes){sec('Observações do avaliador');doc.setTextColor(...ink);const tx=doc.splitTextToSize(a.observacoes,W-2*M);need(tx.length*L(4.2));doc.text(tx,M,y);y+=tx.length*L(4.2)+L(3)}
+
+  // assinaturas logo após o conteúdo
+  need(L(22));y+=L(14);doc.setDrawColor(...gray);doc.setLineWidth(.2);doc.line(M,y,M+75,y);doc.line(W-M-75,y,W-M,y);B();doc.setFontSize(7.8);doc.setTextColor(...gray);
+  doc.text(pf.responsavel?'Avaliador: '+pf.responsavel:'Avaliador responsável',M,y+4.2);doc.text('Ciente',W-M-75,y+4.2);
+  const tp=doc.getNumberOfPages();for(let i=1;i<=tp;i++){doc.setPage(i);B();doc.setFontSize(6.8);doc.setTextColor(...gray);doc.text(`${pf.nome?pf.nome+' · ':''}valores de reparo são estimativas de mercado${tp>1?` · página ${i} de ${tp}`:''}`,W/2,291,{align:'center'})}
+  return doc;
+}
+async function montarPDF(a){
+  await carregarFontes(state.perfil.fonte||'moderna');
+  let doc=gerarPDF(a,1);
+  if(doc.getNumberOfPages()>1){for(const k of [.9,.82,.74]){const d2=gerarPDF(a,k);if(d2.getNumberOfPages()<doc.getNumberOfPages()){doc=d2;break}}}
   return doc;
 }
 async function baixarPDF(){
   const a=state.cur;if(!window.jspdf){toast('O gerador de PDF não carregou. Verifique a internet e tente de novo.');return}
-  const doc=gerarPDF(a);const nome=`laudo-${fmtPlaca(a.placa)||'veiculo'}-${String(a.numero||0).padStart(4,'0')}.pdf`;
+  toast('Gerando laudo…');
+  const doc=await montarPDF(a);const nome=`laudo-${fmtPlaca(a.placa)||'veiculo'}-${String(a.numero||0).padStart(4,'0')}.pdf`;
   if(inClaude()){if(!store.downloads){toast('Download indisponível nesta visualização.');return}
     try{await store.downloads.save({filename:nome,data:doc.output('blob')});toast('Laudo salvo')}catch(e){if(e&&e.code!=='declined')toast('Não foi possível salvar o PDF.')}}
   else{doc.save(nome);toast('Laudo baixado')}
@@ -1047,7 +1209,10 @@ document.addEventListener('click',async e=>{
   if(d.obdrep!=null){const o=a.obd[+d.obdrep];const dd=decodeOBD(o.code);a.extras=a.extras||[];a.extras.push({desc:`${dd.code} · ${dd.desc||o.ai?.descricao||'reparo'}`,valor:''});touch();renderEditor();toast('Adicionado aos reparos. Informe o valor na etapa Reparos.');return}
   if(d.ai!=null){consultarIA(+d.ai);return}
   if(d.opt!=null){aplicarPlaca(+d.opt);return}
+  if(d.fonte){state.perfil.fonte=d.fonte;aplicarFonte();document.querySelectorAll('.fontopt').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.fonte===d.fonte)));refreshPreview();salvarPerfilDepois();return}
+  if(d.cor){state.perfil.cor=d.cor;document.querySelectorAll('.sw[data-cor]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.cor===d.cor)));const ci=$('#pf_cor');if(ci)ci.value=d.cor;refreshPreview();salvarPerfilDepois();return}
   const act=d.act;if(!act)return;
+  if(act==='logoRemover'){state.perfil.logo=null;const m={...marcaCfg()};delete m.lw;delete m.lh;state.perfil.marca=m;render();salvarPerfilDepois();return}
   if(act==='pdf')baixarPDF();
   if(act==='fipeTabela')fipeAbrir();
   if(act==='placa')buscarPlaca(false);
@@ -1066,7 +1231,9 @@ document.addEventListener('toggle',e=>{const el=e.target;if(el.matches&&el.match
 document.addEventListener('input',e=>{
   const el=e.target;const a=state.cur;
   if(el.id==='busca'){state.q=el.value;const h=$('#histList');if(h)h.innerHTML=histLista();return}
-  if(el.dataset.pf){state.perfil[el.dataset.pf]=el.dataset.pf==='lucro_padrao'?num(el.value):el.value;return}
+  if(el.dataset.pf){state.perfil[el.dataset.pf]=el.dataset.pf==='lucro_padrao'?num(el.value):el.value;if(el.dataset.pf==='nome')refreshPreview();salvarPerfilDepois();return}
+  if(el.id==='pf_cor'){state.perfil.cor=el.value;document.querySelectorAll('.sw[data-cor]').forEach(b=>b.setAttribute('aria-pressed','false'));refreshPreview();salvarPerfilDepois();return}
+  if(el.dataset.mc&&el.type==='range'){const k=el.dataset.mc;state.perfil.marca={...marcaCfg(),[k]:Number(el.value)};const o=$('#out_'+k);if(o)o.textContent=el.value+(k==='logo_h'?' mm':k==='wm_tam'?'% da largura':'%');refreshPreview();salvarPerfilDepois();return}
   if(!a)return;
   if(el.dataset.f){const f=el.dataset.f;let v=el.value;
     if(f==='placa'){v=fmtPlaca(v);el.value=v;const bt=$('[data-act="placa"]');if(bt)bt.disabled=!/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(v)||!!(state.placa&&state.placa.busy)}
@@ -1078,8 +1245,13 @@ document.addEventListener('input',e=>{
   if(el.dataset.ex){const [k,f]=el.dataset.ex.split('|');a.extras[+k][f]=f==='valor'?num(el.value):el.value;refreshReparos();touch();return}
   if(el.dataset.fin){a.financeiro=a.financeiro||{};a.financeiro[el.dataset.fin]=el.value===''?'':num(el.value);refreshNegocio();touch();return}
 });
-document.addEventListener('change',e=>{
+document.addEventListener('change',async e=>{
   const el=e.target;const a=state.cur;
+  if(el.dataset.mc&&el.type==='checkbox'){state.perfil.marca={...marcaCfg(),[el.dataset.mc]:el.checked};render();salvarPerfilDepois();return}
+  if(el.id==='pf_logo'&&el.files&&el.files[0]){const m=$('#logoMsg');if(m)m.textContent='Preparando a imagem…';
+    try{const r=await processarLogo(el.files[0]);state.perfil.logo=r.src;state.perfil.marca={...marcaCfg(),lw:r.w,lh:r.h};render();salvarPerfilDepois();
+      const m2=$('#logoMsg');if(m2&&r.claro){m2.textContent='Atenção: seu logo é muito claro e pode sumir no papel branco. Se tiver a versão escura, envie ela.';m2.style.color='var(--warn)'}}
+    catch(err){const m3=$('#logoMsg');if(m3){m3.textContent=err.message;m3.style.color='var(--bad)'}}return}
   if(el.tagName==='SELECT'&&el.dataset.f){a[el.dataset.f]=el.value;refreshHead();touch();return}
   if(el.dataset.fp==='marca'&&el.value)fipeModelos(el.value);
   if(el.dataset.fp==='modelo'&&el.value)fipeAnos(el.value);
@@ -1092,7 +1264,7 @@ document.addEventListener('submit',async e=>{
     if(!/^[PBCU][0-3][0-9A-F]{3}$/.test(c)){m.textContent='Formato inválido. Use P, B, C ou U seguido de 4 caracteres, como P0300.';m.style.color='var(--bad)';return}
     const a=state.cur;if(a.obd.some(o=>o.code===c)){m.textContent=c+' já está na lista.';return}
     a.obd.push({code:c,nota:''});touch();renderEditor();const n=$('#obdIn');if(n)n.focus();return}
-  if(f.id==='formPerfil'){const p=state.perfil;try{await api.savePerfil({nome:p.nome||'',responsavel:p.responsavel||'',telefone:p.telefone||'',documento:p.documento||'',endereco:p.endereco||'',lucro_padrao:num(p.lucro_padrao)||0});$('#pfMsg').textContent='Perfil salvo.'}catch(err){$('#pfMsg').textContent='Não salvou. Verifique a conexão e tente de novo.'}return}
+  if(f.id==='formPerfil'){salvarPerfilDepois();return}
   if(f.id==='formAuth'){const email=$('#au_email').value.trim(),pass=$('#au_pass').value;
     try{if(state.authMode==='entrar'){const {data,error}=await store.sb.auth.signInWithPassword({email,password:pass});if(error)throw error;store.user=data.user;state.authMsg='';await carregar()}
       else{const {data,error}=await store.sb.auth.signUp({email,password:pass});if(error)throw error;if(data.session){store.user=data.user;await carregar()}else{state.authMode='entrar';state.authMsg='Conta criada. Confirme pelo link enviado ao seu e-mail e depois entre.';render()}}}
@@ -1100,9 +1272,10 @@ document.addEventListener('submit',async e=>{
 });
 async function carregar(){
   try{const [l,p]=await Promise.all([api.list(),api.getPerfil()]);state.list=l;state.perfil=p||{}}catch(e){toast('Não foi possível carregar os dados.')}
+  aplicarFonte();
   state.loaded=true;render();
 }
-(async()=>{render();await initStore();render();if(store.mode!=='supabase'||store.user)await carregar()})();
+(async()=>{aplicarFonte();render();await initStore();render();if(store.mode!=='supabase'||store.user)await carregar()})();
 </script>
 
 </body>
