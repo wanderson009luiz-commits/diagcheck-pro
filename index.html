@@ -232,6 +232,27 @@ textarea.input{height:auto;min-height:88px;padding:12px 14px;resize:vertical;lin
 .a4{position:relative;width:300px;max-width:100%;aspect-ratio:210/297;background:var(--paper);border-radius:4px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.2),0 12px 32px rgba(0,0,0,.18)}
 @media (max-width:860px){.ident{grid-template-columns:1fr}.ident-prev{position:static;align-items:center}}
 @media (max-width:560px){.fontes{grid-template-columns:1fr}}
+/* tela inicial */
+.start{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,520px);gap:28px;align-items:end}
+.start-form{display:flex;flex-direction:column;gap:8px;padding:20px;border-radius:16px;background:var(--surface);border:1px solid var(--line-soft)}
+.start-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:stretch}
+.start-row .btn{height:56px;padding:0 24px;font-size:15px}
+.stats4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.home-sec{display:flex;flex-direction:column;gap:14px}
+.cont{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.cont-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 16px;border:1px solid var(--line-soft);border-radius:12px;background:var(--surface);text-align:left;color:inherit}
+.cont-item:hover{border-color:var(--silver-lo)}
+.stks{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.stk{display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid var(--line-soft);border-radius:14px;background:var(--surface);text-align:left;color:inherit}
+.stk:hover{border-color:var(--silver-lo)}
+.stk-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.stk .kv{font-size:13.5px}
+.res-neg{display:flex;flex-direction:column;gap:12px}
+.seg-wide{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));width:100%}
+.seg-wide button{padding:0 6px;font-size:12.5px}
+.seg-wide button[aria-pressed="true"]{background:var(--silver-hi);color:var(--ink-on-silver)}
+@media (max-width:860px){.start{grid-template-columns:1fr}.stats4{grid-template-columns:repeat(2,minmax(0,1fr))}.stats4 .stat:nth-child(3){border-left:0;padding-left:4px}.stats4 .stat:nth-child(n+3){border-top:1px solid var(--line-soft)}}
+@media (max-width:560px){.cont-item{grid-template-columns:minmax(0,1fr) auto}.cont-item .plate{display:none}}
 /* preparação para revenda */
 .chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
 .chip{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg-2);text-align:left;font-size:14px}
@@ -501,8 +522,8 @@ async function initStore(){
   }
   store.ready=true;
 }
-const CAMPOS=['status','placa','marca','modelo','ano','versao','km','combustivel','cambio','tracao','cor','vendedor','fipe','fipe_fonte','fipe_ref','fipe_hist','historico','leilao','answers','notes','obd','repair_overrides','extras','preparo','financeiro','observacoes'];
-function serial(a){const o={};CAMPOS.forEach(k=>o[k]=a[k]??null);o.km=a.km?Math.round(num(a.km)):null;o.fipe=a.fipe?num(a.fipe):null;o.score=calcScore(a.answers);o.reparo_total=reparos(a).total;
+const CAMPOS=['status','placa','marca','modelo','ano','versao','km','combustivel','cambio','tracao','cor','vendedor','fipe','fipe_fonte','fipe_ref','fipe_hist','historico','leilao','answers','notes','obd','repair_overrides','extras','preparo','financeiro','observacoes','decisao','preco_pago','data_compra','preco_venda','data_venda'];
+function serial(a){const o={};CAMPOS.forEach(k=>o[k]=a[k]??null);o.km=a.km?Math.round(num(a.km)):null;o.decisao=a.decisao||null;o.preco_pago=a.preco_pago?num(a.preco_pago):null;o.preco_venda=a.preco_venda?num(a.preco_venda):null;o.data_compra=a.data_compra||null;o.data_venda=a.data_venda||null;o.fipe=a.fipe?num(a.fipe):null;o.score=calcScore(a.answers);o.reparo_total=reparos(a).total;
   ['answers','notes','repair_overrides','financeiro'].forEach(k=>o[k]=o[k]||{});['obd','extras'].forEach(k=>o[k]=o[k]||[]);o.status=o.status||'em_andamento';return o}
 const api={
   async list(){
@@ -660,34 +681,146 @@ function itemRow(a){
     <span style="min-width:0;display:flex;flex-direction:column;gap:3px">
       <span class="item-title">${titulo(a)} <span class="faint num">${esc(a.ano||'')}</span></span>
       <span class="item-sub">${a.exemplo?'Exemplo · ':''}${a.km?fmtN(a.km)+' km · ':''}${dt(a.created_at)}${a.vendedor?' · '+esc(a.vendedor):''}</span>
-      <span class="row" style="gap:6px">${p!=null?`<span class="pill ${cat.cls}">${cat.label}</span>`:''}${cr?`<span class="pill bad">${cr} crítico${cr>1?'s':''}</span>`:''}${a.status!=='concluido'?'<span class="pill">Em andamento</span>':''}</span>
+      <span class="row" style="gap:6px">${p!=null?`<span class="pill ${cat.cls}">${cat.label}</span>`:''}${cr?`<span class="pill bad">${cr} crítico${cr>1?'s':''}</span>`:''}${a.decisao?`<span class="pill ${DEC[a.decisao].cls}">${DEC[a.decisao].label}</span>`:a.status!=='concluido'?'<span class="pill">Em andamento</span>':''}</span>
     </span>
     ${plate(a.placa)}
     <span class="item-right">${n.ok?`<span>Oferta máx.</span><b class="num">${brl(n.oferta)}</b>`:a.fipe?`<span>FIPE</span><b class="num">${brl(a.fipe)}</b>`:''}</span>
   </button>`;
 }
+/* ===================== Resultado do negócio ===================== */
+const DEC={negociando:{label:'Negociando',cls:'good'},comprado:{label:'Comprado',cls:'ok'},nao_comprado:{label:'Não comprado',cls:''},vendido:{label:'Vendido',cls:'ok'}};
+const hojeISO=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)};
+const diasEntre=(a,b)=>Math.max(0,Math.round((new Date(b||hojeISO())-new Date(a))/864e5));
+function contaNegocio(a){
+  const n=negocio(a);const r=reparos(a);const pago=num(a.preco_pago);const venda=num(a.preco_venda);
+  return{n,r,pago,venda,margemPrev:pago&&n.mercado?n.mercado-pago-r.total:null,abaixo:pago&&n.pedido?n.pedido-pago:null,
+    lucro:venda&&pago?venda-pago-r.total:null,dias:a.data_compra?diasEntre(a.data_compra,a.decisao==='vendido'?a.data_venda:null):null};
+}
+function resultadoOut(a){
+  const c=contaNegocio(a);const d=a.decisao;
+  if(d!=='comprado'&&d!=='vendido')return '';
+  const linhas=[];
+  if(c.abaixo!=null)linhas.push(['Abaixo do pedido',c.abaixo>=0?brl(c.abaixo):'−'+brl(-c.abaixo)+' acima',c.abaixo>=0?'t-ok':'t-warn']);
+  if(c.margemPrev!=null)linhas.push(['Margem prevista',(c.margemPrev<0?'−':'')+brl(Math.abs(c.margemPrev)),c.margemPrev>=0?'t-ok':'t-bad']);
+  if(d==='vendido'&&c.lucro!=null)linhas.push(['Lucro na venda',(c.lucro<0?'−':'')+brl(Math.abs(c.lucro)),c.lucro>=0?'t-ok':'t-bad']);
+  if(c.dias!=null)linhas.push([d==='vendido'?'Tempo em estoque':'Em estoque há',c.dias+' dia'+(c.dias===1?'':'s'),'']);
+  return linhas.length?`<dl class="kv" style="margin-top:4px">${linhas.map(([k,v,cl])=>`<dt>${k}</dt><dd class="${cl}">${v}</dd>`).join('')}</dl><p class="hint" style="margin:6px 0 0">Margem e lucro já descontam reparos e preparação previstos.</p>`:'';
+}
+function resultadoPanel(a){
+  if(a.exemplo||!a.id)return '';
+  const d=a.decisao||'';const opts=d==='comprado'||d==='vendido'?['negociando','comprado','vendido','nao_comprado']:['negociando','comprado','nao_comprado'];
+  const n=negocio(a);
+  return `<div class="panel res-neg">
+    <span class="eyebrow">Resultado do negócio</span>
+    <div class="seg seg-wide" role="group" aria-label="Resultado do negócio">${opts.map(o=>`<button data-dec="${o}" data-v="${o}" aria-pressed="${d===o}">${o==='comprado'?'Comprei':o==='vendido'?'Vendi':o==='nao_comprado'?'Não comprei':'Negociando'}</button>`).join('')}</div>
+    ${d==='comprado'||d==='vendido'?`<div class="grid g2" style="gap:10px">
+      <div class="field"><label for="fd_pago">Preço pago</label><div class="money"><span>R$</span><input id="fd_pago" data-fd="preco_pago" class="input" inputmode="numeric" placeholder="${n.pedido?esc(fmtN(n.pedido)):'0'}" value="${esc(fmtN(a.preco_pago))}"></div></div>
+      <div class="field"><label for="fd_dc">Data da compra</label><input id="fd_dc" type="date" data-fd="data_compra" class="input" value="${esc(a.data_compra||'')}"></div>
+    </div>`:''}
+    ${d==='vendido'?`<div class="grid g2" style="gap:10px">
+      <div class="field"><label for="fd_venda">Preço de venda</label><div class="money"><span>R$</span><input id="fd_venda" data-fd="preco_venda" class="input" inputmode="numeric" placeholder="0" value="${esc(fmtN(a.preco_venda))}"></div></div>
+      <div class="field"><label for="fd_dv">Data da venda</label><input id="fd_dv" type="date" data-fd="data_venda" class="input" value="${esc(a.data_venda||'')}"></div>
+    </div>`:''}
+    <div id="resOut">${resultadoOut(a)}</div>
+  </div>`;
+}
+
+/* ===================== FIPE de hoje (grátis, tabela oficial pelo código) ===================== */
+const fipeHoje={};
+const codigoFipe=a=>{const m=/c[oó]digo\s+(\d{6}-\d)/i.exec(a.fipe_ref||'');return m?m[1]:null};
+function chaveFipe(a){const c=codigoFipe(a);return c&&a.ano?c+'|'+String(a.ano).slice(0,4):null}
+async function buscarFipeHoje(a){
+  const k=chaveFipe(a);if(!k||fipeHoje[k])return;
+  const ck='fipehoje:'+k+':'+hojeISO();
+  try{const c=localStorage.getItem(ck);if(c){fipeHoje[k]=JSON.parse(c);return}}catch(e){}
+  fipeHoje[k]={carregando:true};
+  try{
+    const [cod,ano]=k.split('|');const base='https://parallelum.com.br/fipe/api/v2/cars/'+cod;
+    const anos=await (await fetch(base+'/years')).json();const y=(Array.isArray(anos)?anos:[]).find(x=>String(x.code).startsWith(ano));
+    if(!y)throw 0;
+    const h=await (await fetch(base+'/years/'+y.code+'/history')).json();
+    const hist=(h.priceHistory||[]).map(p=>({mes:p.month,valor:num(p.price)}));
+    if(!hist.length)throw 0;
+    fipeHoje[k]={preco:hist[0].valor,mes:hist[0].mes,hist};
+    try{localStorage.setItem(ck,JSON.stringify(fipeHoje[k]))}catch(e){}
+  }catch(e){fipeHoje[k]={erro:true}}
+  if(state.view==='home')render();
+}
+
+/* ===================== Tela inicial ===================== */
+function saudacao(){const h=new Date().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}
+function falta(a){
+  if(!a.modelo&&!a.marca)return 'Falta identificar o veículo';
+  const c=completude(a.answers);if(c<100)return `Checklist em ${c}%`;
+  if(!num((a.financeiro||{}).pedido))return 'Falta o preço pedido';
+  return 'Pronta para concluir';
+}
+function cardEstoque(a){
+  const c=contaNegocio(a);const k=chaveFipe(a);const fh=k?fipeHoje[k]:null;
+  let fipeTxt='<span class="faint small">FIPE do dia indisponível</span>',varTxt='',tend=null,margemHoje=c.margemPrev;
+  if(fh&&fh.carregando)fipeTxt='<span class="faint small">Buscando FIPE de hoje…</span>';
+  if(fh&&fh.preco){
+    const base=num(a.fipe)||fh.preco;const dv=(fh.preco-base)/base*100;
+    fipeTxt=`<b class="num">${brl(fh.preco)}</b>`;
+    varTxt=Math.abs(dv)<.05?'<span class="faint small">igual à avaliação</span>':`<span class="small ${dv<0?'t-bad':'t-ok'}">${dv>0?'+':''}${dv.toFixed(1).replace('.',',')}% desde a avaliação</span>`;
+    if(fh.hist.length>=3){const t=(fh.hist[0].valor-fh.hist[2].valor)/fh.hist[2].valor*100;tend=t}
+    const f=num(a.financeiro&&a.financeiro.mercado)?fh.preco/(num(a.fipe)||fh.preco):1;
+    const merc=num(a.financeiro&&a.financeiro.mercado)?num(a.financeiro.mercado)*f:(c.n.aj?fh.preco*(1+c.n.aj.adj.pct/100):fh.preco);
+    if(c.pago)margemHoje=merc-c.pago-c.r.total;
+  }
+  const avisos=[];
+  if(tend!=null&&tend<=-2)avisos.push(`<span class="pill bad">FIPE caiu ${Math.abs(tend).toFixed(1).replace('.',',')}% em 3 meses: hora de girar</span>`);
+  else if(tend!=null&&tend>=1)avisos.push(`<span class="pill ok">FIPE subindo ${tend.toFixed(1).replace('.',',')}% em 3 meses</span>`);
+  if(c.dias!=null&&c.dias>=60)avisos.push(`<span class="pill warn">Parado há ${c.dias} dias</span>`);
+  return `<button class="stk" data-open="${esc(a.id)}">
+    <div class="stk-top">${plate(a.placa)}<span class="faint small">${c.dias!=null?(c.dias===0?'comprado hoje':'há '+c.dias+' dia'+(c.dias===1?'':'s')):''}</span></div>
+    <div class="item-title">${titulo(a)} <span class="faint num">${esc(a.ano||'')}</span></div>
+    <dl class="kv small">
+      <dt>Pago</dt><dd>${c.pago?brl(c.pago):'—'}</dd>
+      <dt>FIPE hoje</dt><dd>${fipeTxt}</dd>
+      ${varTxt?`<dt></dt><dd>${varTxt}</dd>`:''}
+      <dt>Margem prevista</dt><dd class="${margemHoje==null?'':margemHoje>=0?'t-ok':'t-bad'}">${margemHoje==null?'—':(margemHoje<0?'−':'')+brl(Math.abs(margemHoje))}</dd>
+    </dl>
+    ${avisos.length?`<div class="row" style="gap:6px">${avisos.join('')}</div>`:''}
+  </button>`;
+}
 function homeView(){
-  const l=state.list;const mes=new Date().toISOString().slice(0,7);
-  const mesL=l.filter(a=>String(a.created_at).slice(0,7)===mes);const doMes=mesL.length;
-  const base=mesL.length?mesL:l;
-  const scs=base.map(a=>calcScore(a.answers)).filter(x=>x!=null);const media=scs.length?Math.round(scs.reduce((a,b)=>a+b,0)/scs.length):null;
-  const reps=base.map(a=>reparos(a).total).filter(v=>v>0);const repMedio=reps.length?reps.reduce((a,b)=>a+b,0)/reps.length:0;
-  return `<section class="hero">
-     <div><div class="eyebrow">${esc(state.perfil.nome||'Avaliação técnica de seminovos')}</div>
-      <h1 style="margin-top:10px">Saiba o preço certo <em>antes de fechar negócio</em>.</h1>
-      <p>Checklist com pesos por sistema, estimativa de reparos, FIPE ajustada pela quilometragem e a oferta máxima para manter sua margem.</p></div>
-     <div class="row" style="justify-content:flex-end"><button class="btn primary" data-nav="nova">${ICON.plus}Nova avaliação</button></div>
+  const l=state.list;const mes=hojeISO().slice(0,7);
+  const doMes=a=>String(a.created_at||'').slice(0,7)===mes;
+  const avaliadosMes=l.filter(doMes);
+  const compradosMes=l.filter(a=>(a.decisao==='comprado'||a.decisao==='vendido')&&String(a.data_compra||a.created_at||'').slice(0,7)===mes);
+  const contas=compradosMes.map(contaNegocio);
+  const margem=contas.reduce((t,c)=>t+(c.margemPrev||0),0);
+  const abaixo=contas.reduce((t,c)=>t+Math.max(0,c.abaixo||0),0);
+  const taxa=avaliadosMes.length?Math.round(compradosMes.length/avaliadosMes.length*100):0;
+  const andamento=l.filter(a=>a.status!=='concluido'&&!a.decisao).sort((x,y)=>String(y.updated_at||y.created_at).localeCompare(String(x.updated_at||x.created_at))).slice(0,4);
+  const estoque=l.filter(a=>a.decisao==='comprado');
+  estoque.forEach(buscarFipeHoje);
+  const vendMes=l.filter(a=>a.decisao==='vendido'&&String(a.data_venda||'').slice(0,7)===mes);
+  const lucroMes=vendMes.map(contaNegocio).reduce((t,c)=>t+(c.lucro||0),0);
+  const recentes=l.filter(a=>!andamento.includes(a)).slice(0,5);
+  return `<section class="start">
+     <div><div class="eyebrow">${esc(state.perfil.nome||'DiagCheck Pro')}</div><h1 style="margin-top:8px">${saudacao()}${state.perfil.responsavel?', '+esc(state.perfil.responsavel.split(' ')[0]):''}.</h1></div>
+     <form id="formStart" class="start-form" autocomplete="off">
+       <label for="startPlaca" class="lbl">Placa do carro para avaliar</label>
+       <div class="start-row"><input id="startPlaca" class="input mono plate-in" placeholder="ABC1D23" maxlength="8" autocapitalize="characters" aria-describedby="startHint"><button class="btn primary" type="submit">${ICON.search}Avaliar</button></div>
+       <span class="hint" id="startHint">${store.mode==='supabase'?'Cria a avaliação e já busca marca, modelo e FIPE (R$ 0,06).':'Cria a avaliação com essa placa.'} <button type="button" class="linkbtn" data-nav="nova">Começar sem placa</button></span>
+     </form>
    </section>
-   <div class="stats">
-     <div class="stat"><b class="num">${doMes}</b><span>Avaliações no mês</span></div>
-     <div class="stat"><b class="num">${media??'—'}</b><span>Nota média ${mesL.length?'no mês':'geral'}</span></div>
-     <div class="stat"><b class="num">${repMedio?brlC(repMedio):'—'}</b><span>Reparo médio por carro</span></div>
+   <div class="stats stats4">
+     <div class="stat"><b class="num">${avaliadosMes.length}</b><span>Avaliados no mês</span></div>
+     <div class="stat"><b class="num">${compradosMes.length}</b><span>Comprados no mês${avaliadosMes.length?' · '+taxa+'%':''}</span></div>
+     <div class="stat"><b class="num ${margem<0?'t-bad':''}">${compradosMes.length?brlC(margem):'—'}</b><span>Margem prevista das compras</span></div>
+     <div class="stat"><b class="num">${compradosMes.length?brlC(abaixo):'—'}</b><span>Negociado abaixo do pedido</span></div>
    </div>
-   <section style="display:flex;flex-direction:column;gap:14px">
+   ${andamento.length?`<section class="home-sec"><div class="panel-head" style="margin:0"><h3>Continuar de onde parou</h3></div>
+     <div class="cont">${andamento.map(a=>`<button class="cont-item" data-open="${esc(a.id)}">${plate(a.placa)}<span style="min-width:0;display:flex;flex-direction:column;gap:2px"><span class="item-title">${a.marca||a.modelo?titulo(a):'Veículo sem identificação'}</span><span class="small t-warn">${esc(falta(a))}</span></span><span class="faint small">${dt(a.updated_at||a.created_at)}</span></button>`).join('')}</div></section>`:''}
+   ${estoque.length||vendMes.length?`<section class="home-sec"><div class="panel-head" style="margin:0"><h3>Estoque${estoque.length?' · '+estoque.length+' carro'+(estoque.length>1?'s':''):''}</h3>${vendMes.length?`<span class="small muted">Vendidos no mês: ${vendMes.length} · lucro <b class="${lucroMes>=0?'t-ok':'t-bad'}">${(lucroMes<0?'−':'')+brlC(Math.abs(lucroMes))}</b></span>`:''}</div>
+     ${estoque.length?`<div class="stks">${estoque.map(cardEstoque).join('')}</div><p class="hint">FIPE de hoje pela tabela oficial, sem custo. Marque "Vendi" no laudo do carro quando vender.</p>`:''}</section>`:''}
+   <section class="home-sec">
      <div class="panel-head" style="margin:0"><h3>Últimas avaliações</h3>${l.length?'<button class="btn ghost sm" data-nav="hist">Ver todas</button>':''}</div>
-     ${!state.loaded?'<p class="faint">Carregando avaliações…</p>':l.length?`<div class="list">${l.slice(0,5).map(itemRow).join('')}</div>`:
-      `<div class="empty"><h2>Nenhuma avaliação ainda</h2><p>Cada carro avaliado aparece aqui com a nota, a placa e a oferta máxima calculada. Abra o exemplo para ver um laudo completo.</p>
-       <div class="row" style="justify-content:center"><button class="btn primary" data-nav="nova">${ICON.plus}Começar avaliação</button><button class="btn" data-open="exemplo">Abrir exemplo</button></div></div>`}
+     ${!state.loaded?'<p class="faint">Carregando avaliações…</p>':recentes.length?`<div class="list">${recentes.map(itemRow).join('')}</div>`:l.length?'':
+      `<div class="empty"><h2>Nenhuma avaliação ainda</h2><p>Digite a placa acima para começar. Ou abra o exemplo para ver um laudo completo.</p><div class="row" style="justify-content:center"><button class="btn" data-open="exemplo">Abrir exemplo</button></div></div>`}
    </section>
    ${store.mode==='memoria'&&store.ready?'<div class="notice">Esta visualização não está salvando na nuvem. Abra o app logado na sua conta para guardar as avaliações.</div>':''}`;
 }
@@ -1133,6 +1266,7 @@ function stepLaudo(a){
         </dl>
         <div style="width:100%;display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:12px"><span class="eyebrow">Oferta máxima</span><span style="font-family:var(--f-display);font-size:28px" class="num">${n.ok?brl(n.oferta):'—'}</span></div>
       </div>
+      ${resultadoPanel(a)}
       <button class="btn primary" data-act="pdf">${ICON.dl}Baixar laudo em PDF</button>
       <a class="btn" href="https://wa.me/?text=${encodeURIComponent(textoResumo(a))}" target="_blank" rel="noopener">${ICON.wa}Enviar resumo no WhatsApp</a>
       ${a.exemplo?'':a.status!=='concluido'?'<button class="btn" data-act="concluir">Concluir avaliação</button>':'<button class="btn ghost" data-act="reabrir">Reabrir para edição</button>'}
@@ -1381,6 +1515,11 @@ document.addEventListener('click',async e=>{
   if(d.obdrep!=null){const o=a.obd[+d.obdrep];const dd=decodeOBD(o.code);a.extras=a.extras||[];a.extras.push({desc:`${dd.code} · ${dd.desc||o.ai?.descricao||'reparo'}`,valor:''});touch();renderEditor();toast('Adicionado aos reparos. Informe o valor na etapa Reparos.');return}
   if(d.ai!=null){consultarIA(+d.ai);return}
   if(d.opt!=null){aplicarPlaca(+d.opt);return}
+  if(d.dec){a.decisao=a.decisao===d.dec?null:d.dec;
+    if(a.decisao==='comprado'||a.decisao==='vendido'){if(!a.preco_pago&&num((a.financeiro||{}).pedido))a.preco_pago=num(a.financeiro.pedido);if(!a.data_compra)a.data_compra=hojeISO()}
+    if(a.decisao==='vendido'&&!a.data_venda)a.data_venda=hojeISO();
+    if(a.decisao&&a.decisao!=='negociando')a.status='concluido';
+    touch();renderEditor();if(a.decisao)toast(DEC[a.decisao].label);return}
   if(d.hask){state.hconf=d.hask;renderEditor();return}
   if(d.hno){state.hconf=null;renderEditor();return}
   if(d.hgo){consultarHist(d.hgo,false);return}
@@ -1408,6 +1547,7 @@ document.addEventListener('click',async e=>{
 document.addEventListener('toggle',e=>{const el=e.target;if(el.matches&&el.matches('details.sys'))state.open[el.dataset.sys]=el.open},true);
 document.addEventListener('input',e=>{
   const el=e.target;const a=state.cur;
+  if(el.id==='startPlaca'){el.value=fmtPlaca(el.value);return}
   if(el.id==='busca'){state.q=el.value;const h=$('#histList');if(h)h.innerHTML=histLista();return}
   if(el.dataset.pf){state.perfil[el.dataset.pf]=el.dataset.pf==='lucro_padrao'?num(el.value):el.value;if(el.dataset.pf==='nome')refreshPreview();salvarPerfilDepois();return}
   if(el.dataset.pp){const pp={...(state.perfil.prep||{})};if(el.value==='')delete pp[el.dataset.pp];else pp[el.dataset.pp]=num(el.value);state.perfil.prep=pp;salvarPerfilDepois();return}
@@ -1420,6 +1560,7 @@ document.addEventListener('input',e=>{
     a[f]=v;if(['placa','marca','modelo','ano'].includes(f))refreshHead();touch();return}
   if(el.dataset.note){a.notes[el.dataset.note]=el.value;touch();return}
   if(el.dataset.obdnote!=null){a.obd[+el.dataset.obdnote].nota=el.value;touch();return}
+  if(el.dataset.fd){const f=el.dataset.fd;a[f]=/^preco/.test(f)?(el.value===''?null:num(el.value)):(el.value||null);const o=$('#resOut');if(o)o.innerHTML=resultadoOut(a);touch();return}
   if(el.dataset.pov){a.preparo=a.preparo||{sel:{},ov:{}};a.preparo.ov=a.preparo.ov||{};if(el.value==='')delete a.preparo.ov[el.dataset.pov];else a.preparo.ov[el.dataset.pov]=num(el.value);refreshReparos();touch();return}
   if(el.dataset.ov){a.repair_overrides[el.dataset.ov]=el.value===''?null:num(el.value);if(el.value==='')delete a.repair_overrides[el.dataset.ov];refreshReparos();touch();return}
   if(el.dataset.ex){const [k,f]=el.dataset.ex.split('|');a.extras[+k][f]=f==='valor'?num(el.value):el.value;refreshReparos();touch();return}
@@ -1436,10 +1577,14 @@ document.addEventListener('change',async e=>{
   if(el.dataset.fp==='marca'&&el.value)fipeModelos(el.value);
   if(el.dataset.fp==='modelo'&&el.value)fipeAnos(el.value);
   if(el.dataset.fp==='ano'&&el.value)fipeValor(el.value);
-  if(el.dataset.f==='km'||el.dataset.f==='fipe'||el.dataset.fin||el.dataset.ov||el.dataset.pf==='lucro_padrao'||(el.dataset.ex&&el.dataset.ex.endsWith('valor'))){if(el.value)el.value=fmtN(el.value)}
+  if(el.dataset.f==='km'||el.dataset.f==='fipe'||el.dataset.fin||(el.dataset.fd&&/^preco/.test(el.dataset.fd))||el.dataset.ov||el.dataset.pf==='lucro_padrao'||(el.dataset.ex&&el.dataset.ex.endsWith('valor'))){if(el.value)el.value=fmtN(el.value)}
 });
 document.addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target;
+  if(f.id==='formStart'){const i=$('#startPlaca');const pl=fmtPlaca(i.value);
+    if(!/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(pl)){toast('Placa inválida. Use o formato ABC1D23 ou ABC1234.');i.focus();return}
+    state.cur=nova();state.cur.placa=pl;state.view='editor';state.step='veiculo';state.saving='';state.confirmDel=false;state.fipe=null;state.placa=null;state.hteste=null;state.hconf=null;state.herr=null;
+    render();window.scrollTo(0,0);if(store.mode==='supabase')buscarPlaca(false);else touch();return}
   if(f.id==='formOBD'){const i=$('#obdIn');const c=i.value.trim().toUpperCase();const m=$('#obdMsg');
     if(!/^[PBCU][0-3][0-9A-F]{3}$/.test(c)){m.textContent='Formato inválido. Use P, B, C ou U seguido de 4 caracteres, como P0300.';m.style.color='var(--bad)';return}
     const a=state.cur;if(a.obd.some(o=>o.code===c)){m.textContent=c+' já está na lista.';return}
