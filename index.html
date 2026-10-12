@@ -868,6 +868,18 @@ function statusHist(h){if(!h)return null;const f=h.flags||{};const al=h.alertas|
   if(f.roubo_furto||f.baixado||f.renajud)return{cls:'bad',label:'Restrição grave'};
   if(f.restricao_geral||(h.multas&&h.multas.total>0)||al.length||(h.recall&&h.recall.qtd)||(h.comunicado_venda&&h.comunicado_venda.qtd))return{cls:'warn',label:'Requer atenção'};
   return{cls:'ok',label:'Nada consta'}}
+function traduzRestricao(m){const t=String(m||'').toUpperCase().replace(/_/g,' ');
+  if(/ALIENA|FIDUCI|GRAVAME|FINANCI|ARRENDAMENTO|LEASING/.test(t))return['Financiamento ativo (alienação fiduciária): exige quitação e baixa do gravame para transferir','warn'];
+  if(/COMUNICA.*VENDA/.test(t))return['Comunicação de venda registrada pelo dono anterior','warn'];
+  if(/INTEN/.test(t))return['Intenção de venda registrada','warn'];
+  if(/RENAINF|MULTA/.test(t))return['Multas registradas (Renainf)','warn'];
+  if(/RENAJUD|JUDICI/.test(t))return['Restrição judicial','bad'];
+  if(/ROUBO|FURTO/.test(t))return['Alerta de roubo ou furto','bad'];
+  if(/TRIBUT|ISEN|IPI|ICMS/.test(t))return['Restrição tributária (isenção de imposto, ex.: PcD ou táxi)','warn'];
+  if(/BLOQUEIO|ADMINISTRAT/.test(t))return['Bloqueio administrativo do Detran','bad'];
+  if(/LICENCI|IPVA|DEBITO|DÉBITO/.test(t))return['Débitos ou licenciamento pendente','warn'];
+  if(/BAIXA|BAIXADO/.test(t))return['Veículo com registro de baixa','bad'];
+  return[frase(m),'warn']}
 const JUDICIAL=/vara|comarca|tribunal|justi[cç]a|juiz|f[oó]rum|autos:/i;
 const GRAVE=/sucata|grande monta|m[eé]dia monta|inserv|irrecuper|baixa definitiva/i;
 function statusLeilao(l){if(!l)return null;const regs=l.registros||[];
@@ -879,7 +891,11 @@ function linhasHistorico(a){
   if(h){const f=h.flags||{};const m=h.multas||{};
     L.push(['Roubo ou furto',f.roubo_furto?'CONSTA registro':'Nada consta',f.roubo_furto?'bad':'ok']);
     L.push(['Bloqueio judicial (Renajud)',f.renajud?`CONSTA (${(h.renajud||[]).length||1})`:'Nada consta',f.renajud?'bad':'ok']);
-    L.push(['Restrições administrativas',f.restricao_geral?'Consta restrição':'Nada consta',f.restricao_geral?'warn':'ok']);
+    const motivos=(h.mensagens||[]).map(traduzRestricao).filter(Boolean);
+    if(f.restricao_geral||motivos.length){
+      if(motivos.length)motivos.forEach(([t,c])=>L.push(['Restrição administrativa',t,c]));
+      else L.push(['Restrições administrativas','Consta restrição (sem detalhe do Detran)','warn']);
+    }else L.push(['Restrições administrativas','Nada consta','ok']);
     if(f.baixado)L.push(['Veículo baixado','CONSTA','bad']);
     L.push(['Multas (Renainf)',m.qtd?`${m.qtd} registro${m.qtd>1?'s':''}${m.total?' · '+brl(m.total)+' em aberto':''}`:'Nada consta',m.total>0?'warn':'ok']);
     L.push(['Recall',h.recall&&h.recall.qtd?`${h.recall.qtd} campanha${h.recall.qtd>1?'s':''}`:'Nada consta',h.recall&&h.recall.qtd?'warn':'ok']);
