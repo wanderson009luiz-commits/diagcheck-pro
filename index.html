@@ -232,6 +232,20 @@ textarea.input{height:auto;min-height:88px;padding:12px 14px;resize:vertical;lin
 .a4{position:relative;width:300px;max-width:100%;aspect-ratio:210/297;background:var(--paper);border-radius:4px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.2),0 12px 32px rgba(0,0,0,.18)}
 @media (max-width:860px){.ident{grid-template-columns:1fr}.ident-prev{position:static;align-items:center}}
 @media (max-width:560px){.fontes{grid-template-columns:1fr}}
+/* histórico */
+.svcs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.svc{display:flex;flex-direction:column;gap:12px;padding:20px;border:1px solid var(--line-soft);border-radius:14px;background:var(--surface)}
+.svc .btn{align-self:flex-start}
+.dotst{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--line);flex:none}
+.dotst.ok{background:var(--ok)}.dotst.warn{background:var(--warn)}.dotst.bad{background:var(--bad)}
+.hlist{display:flex;flex-direction:column}
+.hrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line-soft);font-size:14px}
+.hrow:first-child{border-top:0}
+.hrow>span:last-child{text-align:right;max-width:60%}
+.t-bad{color:var(--bad);font-weight:600}.t-warn{color:var(--warn)}.t-ok{color:var(--ok)}
+.fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.fotos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;display:block}
+@media (max-width:640px){.svcs{grid-template-columns:1fr}.hrow{grid-template-columns:auto minmax(0,1fr)}.hrow>span:last-child{grid-column:2;text-align:left;max-width:none}}
 /* consulta por placa */
 .lookup{display:flex;flex-direction:column;gap:14px;background:var(--surface-2);border-color:var(--line)}
 .lookup-row{display:grid;grid-template-columns:minmax(0,320px) auto;gap:12px;align-items:end}
@@ -478,7 +492,7 @@ async function initStore(){
   }
   store.ready=true;
 }
-const CAMPOS=['status','placa','marca','modelo','ano','versao','km','combustivel','cambio','tracao','cor','vendedor','fipe','fipe_fonte','fipe_ref','fipe_hist','answers','notes','obd','repair_overrides','extras','financeiro','observacoes'];
+const CAMPOS=['status','placa','marca','modelo','ano','versao','km','combustivel','cambio','tracao','cor','vendedor','fipe','fipe_fonte','fipe_ref','fipe_hist','historico','leilao','answers','notes','obd','repair_overrides','extras','financeiro','observacoes'];
 function serial(a){const o={};CAMPOS.forEach(k=>o[k]=a[k]??null);o.km=a.km?Math.round(num(a.km)):null;o.fipe=a.fipe?num(a.fipe):null;o.score=calcScore(a.answers);o.reparo_total=reparos(a).total;
   ['answers','notes','repair_overrides','financeiro'].forEach(k=>o[k]=o[k]||{});['obd','extras'].forEach(k=>o[k]=o[k]||[]);o.status=o.status||'em_andamento';return o}
 const api={
@@ -559,7 +573,7 @@ function decodeOBD(code){
 
 /* ===================== Estado ===================== */
 const state={view:'home',list:[],perfil:{},cur:null,step:'veiculo',open:{motor:true},q:'',saving:'',confirmDel:false,busy:null,loaded:false,authMode:'entrar',authMsg:'',fipe:null};
-const STEPS=[['veiculo','Veículo'],['checklist','Checklist'],['obd','Códigos OBD'],['reparos','Reparos'],['negocio','Negócio'],['laudo','Laudo']];
+const STEPS=[['veiculo','Veículo'],['historico','Histórico'],['checklist','Checklist'],['obd','Códigos OBD'],['reparos','Reparos'],['negocio','Negócio'],['laudo','Laudo']];
 function nova(){return{id:null,status:'em_andamento',placa:'',marca:'',modelo:'',ano:'',versao:'',km:'',combustivel:'',cambio:'',tracao:'',cor:'',vendedor:'',fipe:'',fipe_fonte:'',fipe_ref:'',answers:{},notes:{},obd:[],repair_overrides:{},extras:[],financeiro:{pedido:'',mercado:'',lucro:''},observacoes:''}}
 function exemplo(){
   const ans={};Object.keys(ITENS).forEach(id=>ans[id]='ok');
@@ -764,8 +778,8 @@ function renderEditor(){
       <h2 style="margin-top:6px" id="edTitle">${titulo(a)} <span class="faint">${esc(a.ano||'')}</span></h2></div>
     <div class="progress"><span class="bar"><i style="width:${comp}%"></i></span><span class="num">${comp}%</span>${ring(p)}</div>
   </div>
-  <nav class="steps">${STEPS.map(([k,l],n)=>`<button data-step="${k}" aria-current="${state.step===k}"><span class="n">0${n+1}</span>${l}${k==='checklist'&&cr?` <span class="badge">${cr}</span>`:''}${k==='obd'&&(a.obd||[]).length?` <span class="badge">${a.obd.length}</span>`:''}${k==='reparos'&&rp.total?` <span class="faint small num">${brl(rp.total)}</span>`:''}</button>`).join('')}</nav>`;
-  const body={veiculo:stepVeiculo,checklist:stepChecklist,obd:stepOBD,reparos:stepReparos,negocio:stepNegocio,laudo:stepLaudo}[state.step](a);
+  <nav class="steps">${STEPS.map(([k,l],n)=>`<button data-step="${k}" aria-current="${state.step===k}"><span class="n">0${n+1}</span>${l}${k==='checklist'&&cr?` <span class="badge">${cr}</span>`:''}${k==='historico'?histBadge(a):''}${k==='obd'&&(a.obd||[]).length?` <span class="badge">${a.obd.length}</span>`:''}${k==='reparos'&&rp.total?` <span class="faint small num">${brl(rp.total)}</span>`:''}</button>`).join('')}</nav>`;
+  const body={veiculo:stepVeiculo,historico:stepHistorico,checklist:stepChecklist,obd:stepOBD,reparos:stepReparos,negocio:stepNegocio,laudo:stepLaudo}[state.step](a);
   const idx=STEPS.findIndex(s=>s[0]===state.step);
   const foot=state.step!=='laudo'?`<div class="row"><div class="spacer"></div>${idx>0?`<button class="btn" data-step="${STEPS[idx-1][0]}">Anterior</button>`:''}<button class="btn primary" data-step="${STEPS[idx+1][0]}">Próximo: ${STEPS[idx+1][1]}</button></div>`:'';
   const y=window.scrollY;root.innerHTML=shell(head+body+foot);window.scrollTo(0,y);
@@ -841,6 +855,89 @@ function fipePanel(){
     <div class="row"><span class="hint">Dados da tabela FIPE pela API pública parallelum.com.br.</span><div class="spacer"></div><button class="btn ghost sm" data-act="fipeFechar">Fechar</button></div>
   </div>`;
 }
+/* ---------- Histórico do veículo (roubo, Renajud, multas, leilão) ---------- */
+const SIGLAS=['CSV','HDI','S/A','SA','LTDA','RENAINF','RENAJUD','CRLV','CRV','DETRAN','DPVAT','IPVA','VW','GM','BMW','PR','SP','PE','RJ','MG','TJSP','TJPE','UF'];
+const frase=t=>{t=String(t||'').trim();if(!t)return '';let r=t.toLowerCase().replace(/(^|[.!?]\s+)(\S)/g,(m,a,b)=>a+b.toUpperCase());
+  r=r.replace(/\b[\wÀ-ú\/]+\b/g,w=>SIGLAS.includes(w.toUpperCase())?w.toUpperCase():w);
+  return r.replace(/\bnao\b/gi,m=>m[0]==='N'?'Não':'não').replace(/\bveiculo\b/gi,'veículo').replace(/\binservivel\b/gi,'inservível').replace(/\bleilao\b/gi,'leilão')};
+function recFinal(a,c){const b=[statusHist(a.historico),statusLeilao(a.leilao)].find(x=>x&&x.cls==='bad');return b?`Atenção ao histórico: ${b.label.toLowerCase()}. Confira antes de fechar negócio.`:c.rec}
+const HSERV={historico:{nome:'Histórico do veículo',preco:4,desc:'Roubo e furto, bloqueio judicial (Renajud), restrições, veículo baixado, multas, recall e comunicado de venda.'},
+  leilao:{nome:'Leilão e sinistro',preco:11.5,desc:'Se o carro passou por leilão, quem leiloou (seguradora indica sinistro indenizado), a condição do carro e a classificação.'}};
+function statusHist(h){if(!h)return null;const f=h.flags||{};const al=h.alertas||[];
+  if(f.roubo_furto||f.baixado||f.renajud)return{cls:'bad',label:'Restrição grave'};
+  if(f.restricao_geral||(h.multas&&h.multas.total>0)||al.length||(h.recall&&h.recall.qtd)||(h.comunicado_venda&&h.comunicado_venda.qtd))return{cls:'warn',label:'Requer atenção'};
+  return{cls:'ok',label:'Nada consta'}}
+const GRAVE=/sucata|grande monta|m[eé]dia monta|inserv|irrecuper|baixa definitiva/i;
+function statusLeilao(l){if(!l)return null;const regs=l.registros||[];
+  if(regs.some(r=>r.seguradora||GRAVE.test(r.condicao+' '+r.classificacao)))return{cls:'bad',label:'Leilão de sinistro'};
+  if((l.qtd||regs.length)>0)return{cls:'warn',label:'Passou por leilão'};return{cls:'ok',label:'Nada consta'}}
+function histBadge(a){const s=[statusHist(a.historico),statusLeilao(a.leilao)].filter(Boolean);if(!s.length)return '';const pior=s.find(x=>x.cls==='bad')||s.find(x=>x.cls==='warn')||s[0];return ` <span class="dotst ${pior.cls}" aria-label="${esc(pior.label)}"></span>`}
+function linhasHistorico(a){
+  const h=a.historico,l=a.leilao;const L=[];
+  if(h){const f=h.flags||{};const m=h.multas||{};
+    L.push(['Roubo ou furto',f.roubo_furto?'CONSTA registro':'Nada consta',f.roubo_furto?'bad':'ok']);
+    L.push(['Bloqueio judicial (Renajud)',f.renajud?`CONSTA (${(h.renajud||[]).length||1})`:'Nada consta',f.renajud?'bad':'ok']);
+    L.push(['Restrições administrativas',f.restricao_geral?'Consta restrição':'Nada consta',f.restricao_geral?'warn':'ok']);
+    if(f.baixado)L.push(['Veículo baixado','CONSTA','bad']);
+    L.push(['Multas (Renainf)',m.qtd?`${m.qtd} registro${m.qtd>1?'s':''}${m.total?' · '+brl(m.total)+' em aberto':''}`:'Nada consta',m.total>0?'warn':'ok']);
+    L.push(['Recall',h.recall&&h.recall.qtd?`${h.recall.qtd} campanha${h.recall.qtd>1?'s':''}`:'Nada consta',h.recall&&h.recall.qtd?'warn':'ok']);
+    if(h.comunicado_venda&&h.comunicado_venda.qtd)L.push(['Comunicado de venda',`${h.comunicado_venda.qtd} registro(s)`,'warn']);
+    (h.alertas||[]).forEach(x=>L.push([frase(x.descricao)||'Alerta',frase(x.mensagem),x.severidade>=3?'bad':'warn']));
+  }else L.push(['Roubo, Renajud, restrições e multas','Não consultado','']);
+  if(l){const regs=l.registros||[];const n=l.qtd||regs.length;const st=statusLeilao(l);
+    L.push(['Leilão',n?`${n} registro${n>1?'s':''}`:'Nada consta',st.cls]);
+    regs.slice(0,4).forEach(r=>L.push([`Leilão em ${r.data||'data não informada'}`,[r.seguradora?'Seguradora: '+frase(r.comitente):frase(r.comitente),frase(r.condicao),r.classificacao&&!/nao foi possivel|não foi possível/i.test(r.classificacao)?frase(r.classificacao):''].filter(x=>x&&!/^n[aã]o (informado|divulgado)$/i.test(x)).join(' · ')||'Sem detalhes',r.seguradora||GRAVE.test(r.condicao+' '+r.classificacao)?'bad':'warn']));
+    if(l.parecer)L.push(['Parecer da consulta de leilão',frase(l.parecer),/nao foi encontrado|não foi encontrado|sem risco/i.test(l.parecer)?'ok':'warn']);
+  }else L.push(['Leilão e sinistro','Não consultado','']);
+  return L;
+}
+function cardServico(a,k){
+  const S=HSERV[k];const res=a[k];const st=k==='historico'?statusHist(res):statusLeilao(res);const busy=state.hbusy===k;const conf=state.hconf===k;
+  const pl=fmtPlaca(a.placa);const ok=/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(pl);
+  return `<div class="svc">
+    <div class="row" style="justify-content:space-between;align-items:baseline"><b>${S.nome}</b><span class="num muted small">${brl2(S.preco)}</span></div>
+    <p class="small muted" style="margin:0">${S.desc}</p>
+    ${res?`<div class="row" style="gap:8px"><span class="pill ${st.cls}">${st.label}</span><span class="faint small">consultado em ${dt(res.consultado_em||res.data_consulta||new Date())}</span></div>`:''}
+    ${conf?`<div class="confirm" style="background:var(--warn-bg)"><span>Confirmar consulta de ${brl2(S.preco)}${res?' de novo (sai grátis se tiver menos de 30 dias)':''}?</span><button class="btn sm primary" data-hgo="${k}">Consultar</button><button class="btn ghost sm" data-hno="1">Cancelar</button></div>`
+      :`<button class="btn ${res?'':'primary'}" data-hask="${k}" ${!ok||busy?'disabled':''}>${ICON.search}${busy?'Consultando…':res?'Consultar de novo':'Consultar '+S.nome.toLowerCase().split(' ')[0]}</button>`}
+  </div>`;
+}
+function stepHistorico(a){
+  if(store.mode!=='supabase')return `<div class="notice">As consultas de histórico e leilão funcionam na versão do app hospedada no seu endereço, com login.</div>`;
+  const pl=fmtPlaca(a.placa);const ok=/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(pl);
+  const t=state.hteste;
+  const lin=linhasHistorico(a);const h=a.historico,l=a.leilao;
+  return `${!ok?'<div class="notice">Informe a placa na etapa Veículo para consultar o histórico.</div>':''}
+  <div class="svcs">${cardServico(a,'historico')}${cardServico(a,'leilao')}</div>
+  <p class="hint">As duas juntas custam ${brl2(15.5)}. Consultar a mesma placa de novo em até 30 dias não cobra. <button class="linkbtn" data-htest="historico" ${state.hbusy?'disabled':''}>Testar histórico grátis</button> · <button class="linkbtn" data-htest="leilao" ${state.hbusy?'disabled':''}>Testar leilão grátis</button></p>
+  ${state.herr?`<div class="notice" style="background:var(--bad-bg)">${esc(state.herr)}</div>`:''}
+  ${t?`<div class="panel"><div class="notice" style="margin-bottom:14px">Teste grátis com dados fictícios da APIBrasil: nada foi salvo nesta avaliação. <button class="linkbtn" data-hlimpa="1">Fechar teste</button></div>${quadroHist({[t.servico]:t},true)}</div>`:''}
+  ${h||l?`<div class="panel">${quadroHist(a)}</div>`:''}
+  ${h&&(h.renajud||[]).length?`<div class="panel"><div class="panel-head"><h3>Bloqueios judiciais</h3></div>${h.renajud.map(r=>`<div class="find"><span class="pill bad">Renajud</span><span>${esc(frase(r.restricao)||'Restrição')}</span><span class="faint small">${esc(r.data.slice(0,10))}</span><span class="k">${esc([r.tribunal,r.orgao,r.processo?'processo '+r.processo:''].filter(Boolean).join(' · '))}</span></div>`).join('')}</div>`:''}
+  ${h&&h.multas&&h.multas.qtd?`<div class="panel"><div class="panel-head"><h3>Multas</h3><span class="faint small">${brl(h.multas.total)} em aberto</span></div>${h.multas.itens.slice(0,10).map(m=>`<div class="find"><span class="pill ${m.pago?'ok':'warn'}">${m.pago?'Paga':'Em aberto'}</span><span>${esc(frase(m.infracao)||'Infração '+m.codigo)}</span><span class="num small">${m.valor?brl(m.valor):''}</span><span class="k">${esc([m.data,frase(m.orgao)].filter(Boolean).join(' · '))}</span></div>`).join('')}</div>`:''}
+  ${l&&(l.registros||[]).some(r=>r.fotos&&r.fotos.length)?`<div class="panel"><div class="panel-head"><h3>Fotos do leilão</h3></div><div class="fotos">${l.registros.flatMap(r=>r.fotos||[]).slice(0,8).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="Foto do lote" loading="lazy"></a>`).join('')}</div></div>`:''}
+  ${h&&h.pdf?`<p class="hint">Relatório oficial completo: <a href="${esc(h.pdf)}" target="_blank" rel="noopener" style="color:inherit">abrir PDF</a>. Ele contém dados do proprietário; use só para a sua conferência e não envie ao cliente.</p>`:''}`;
+}
+function quadroHist(a,teste){
+  const lin=linhasHistorico(a).filter(x=>!teste||x[2]!=='');
+  const st=[statusHist(a.historico),statusLeilao(a.leilao)].filter(Boolean);const pior=st.find(x=>x.cls==='bad')||st.find(x=>x.cls==='warn')||st[0];
+  return `<div class="panel-head"><h3>Resumo do histórico</h3>${pior?`<span class="pill ${pior.cls}">${pior.label}</span>`:''}</div>
+   <div class="hlist">${lin.map(([k,v,c])=>`<div class="hrow"><span class="dotst ${c||'none'}"></span><span>${esc(k)}</span><span class="${c==='bad'?'t-bad':c==='warn'?'t-warn':c==='ok'?'t-ok':'faint'}">${esc(v)}</span></div>`).join('')}</div>`;
+}
+async function consultarHist(servico,teste){
+  const a=state.cur;if(!store.sb)return;state.hbusy=servico;state.hconf=null;state.herr=null;renderEditor();
+  try{
+    const {data,error}=await store.sb.functions.invoke('consulta-veicular',{body:{servico,placa:fmtPlaca(a.placa),teste:!!teste}});
+    if(error){let msg='Falha na consulta. Tente de novo.';try{const j=await error.context.json();if(j&&j.erro)msg=j.erro}catch(e){}throw new Error(msg)}
+    if(teste){state.hteste=data}
+    else{a[servico]=data;
+      if(servico==='leilao'&&!a.answers.doc_sinistro){const st=statusLeilao(data);a.answers.doc_sinistro=st.cls==='bad'?'critico':st.cls==='warn'?'atencao':'ok';
+        if(st.cls!=='ok')a.notes.doc_sinistro=(a.notes.doc_sinistro?a.notes.doc_sinistro+' · ':'')+'Consulta de leilão: '+st.label.toLowerCase();}
+      touch();toast(data.cache?'Consulta salva reaproveitada, sem custo':'Consulta concluída')}
+  }catch(e){state.herr=e.message||'Falha na consulta.'}
+  state.hbusy=null;renderEditor();
+}
+const brl2=n=>(Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 function stepChecklist(a){
   const comp=completude(a.answers);
   const cont=st=>marcados(a,st).length;
@@ -944,7 +1041,7 @@ function stepNegocio(a){
 function textoResumo(a){
   const p=calcScore(a.answers);const c=categoria(p);const n=negocio(a);const r=reparos(a);
   const it=[...marcados(a,'critico').map(i=>'❌ '+i.label),...marcados(a,'atencao').map(i=>'⚠️ '+i.label)];
-  return `*Laudo de avaliação ${a.numero?'nº '+String(a.numero).padStart(4,'0'):''}*${state.perfil.nome?'\n'+state.perfil.nome:''}\n\n🚗 ${[a.marca,a.modelo,a.versao,a.ano].filter(Boolean).join(' ')}${a.placa?' · '+fmtPlaca(a.placa):''}${a.km?' · '+fmtN(a.km)+' km':''}\nNota: ${p??'—'}/100 (${c.label})\n${c.rec}\n\n${it.length?it.join('\n'):'Nenhum item com problema.'}${(a.obd||[]).length?'\n\nCódigos OBD: '+a.obd.map(o=>o.code).join(', '):''}\n\nReparos estimados: ${brl(r.total)}${a.fipe?'\nFIPE: '+brl(a.fipe):''}${n.ok?'\nOferta máxima: '+brl(n.oferta):''}`;
+  return `*Laudo de avaliação ${a.numero?'nº '+String(a.numero).padStart(4,'0'):''}*${state.perfil.nome?'\n'+state.perfil.nome:''}\n\n🚗 ${[a.marca,a.modelo,a.versao,a.ano].filter(Boolean).join(' ')}${a.placa?' · '+fmtPlaca(a.placa):''}${a.km?' · '+fmtN(a.km)+' km':''}\nNota: ${p??'—'}/100 (${c.label})\n${recFinal(a,c)}\n\n${it.length?it.join('\n'):'Nenhum item com problema.'}${(a.obd||[]).length?'\n\nCódigos OBD: '+a.obd.map(o=>o.code).join(', '):''}${a.historico||a.leilao?'\n\n*Histórico do veículo*\n'+linhasHistorico(a).filter(x=>x[2]!=='').map(([k,v,c])=>(c==='bad'?'🔴 ':c==='warn'?'🟡 ':'🟢 ')+k+': '+v).join('\n'):''}\n\nReparos estimados: ${brl(r.total)}${a.fipe?'\nFIPE: '+brl(a.fipe):''}${n.ok?'\nOferta máxima: '+brl(n.oferta):''}`;
 }
 function stepLaudo(a){
   const p=calcScore(a.answers);const c=categoria(p);const n=negocio(a);const r=reparos(a);
@@ -954,6 +1051,7 @@ function stepLaudo(a){
     <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
       <div class="panel"><div class="panel-head"><h3>Pontos críticos e de atenção</h3><span class="faint small num">${marcados(a,'ok').length} itens OK</span></div>
         ${crit.length+aten.length?crit.map(i=>linha(i,'critico')).join('')+aten.map(i=>linha(i,'atencao')).join(''):'<p class="muted" style="margin:0">Nenhum item crítico ou de atenção.</p>'}</div>
+      ${a.historico||a.leilao?`<div class="panel">${quadroHist(a)}</div>`:''}
       ${(a.obd||[]).length?`<div class="panel"><div class="panel-head"><h3>Códigos OBD</h3></div>${a.obd.map(o=>{const d=decodeOBD(o.code);return `<div class="find"><span class="mono">${esc(d.code)}</span><span>${esc(d.desc||o.ai?.descricao||'Código fora da base local')}</span><span></span>${o.nota?`<span class="k">${esc(o.nota)}</span>`:''}</div>`}).join('')}</div>`:''}
       <div class="panel"><div class="panel-head"><h3>Resumo por sistema</h3></div><div class="cats">${CATEGORIAS.map(ct=>{const s=ct.itens.map(([id])=>(a.answers||{})[id]);const ok=s.filter(x=>x==='ok').length,at=s.filter(x=>x==='atencao').length,cr=s.filter(x=>x==='critico').length;
         return `<div class="cat"><span>${ct.label}</span><span class="row" style="gap:6px">${cr?`<span class="pill bad">${cr} crítico</span>`:''}${at?`<span class="pill warn">${at} atenção</span>`:''}${ok?`<span class="pill ok">${ok} OK</span>`:''}${!ok&&!at&&!cr?'<span class="faint small">Não avaliado</span>':''}</span></div>`}).join('')}</div></div>
@@ -962,7 +1060,7 @@ function stepLaudo(a){
     <aside class="report-side">
       <div class="panel" style="display:flex;flex-direction:column;align-items:center;gap:14px">
         ${gauge(p)}
-        <p class="small" style="margin:0;text-align:center;color:var(--fg-2)">${esc(c.rec)}</p>
+        <p class="small" style="margin:0;text-align:center;color:${recFinal(a,c)!==c.rec?'var(--bad)':'var(--fg-2)'}">${esc(recFinal(a,c))}</p>
         <hr class="hairline" style="width:100%">
         <dl class="kv">
           <dt>FIPE</dt><dd>${a.fipe?brl(a.fipe):'—'}</dd>
@@ -1049,9 +1147,17 @@ function gerarPDF(a,k=1){
   arc(0,100);if(p){doc.setDrawColor(...corCat);arc(0,p)}
   T();doc.setFontSize(24);doc.setTextColor(...ink);doc.text(p==null?'—':String(p),cx,cy-2,{align:'center'});
   B('bold');doc.setFontSize(7.5);doc.setTextColor(...corCat);doc.text(c.label.toUpperCase(),cx,cy+4,{align:'center',charSpace:.3});
-  B();doc.setFontSize(7.3);doc.setTextColor(...gray);doc.text(doc.splitTextToSize(c.rec,56),cx,cy+8.5,{align:'center'});
+  B();doc.setFontSize(7.3);doc.setTextColor(...gray);doc.text(doc.splitTextToSize(recFinal(a,c),56),cx,cy+8.5,{align:'center'});
   y+=Math.max(kv.length*L(5.4),L(38))+L(4);
 
+  if(a.historico||a.leilao){
+    sec('Histórico do veículo'+(a.historico&&a.historico.teste||a.leilao&&a.leilao.teste?' (dados de teste)':''));
+    const COR={bad:RED,warn:AMB,ok:GRN,'':gray};
+    linhasHistorico(a).forEach(([k,v,c])=>{const vl=doc.splitTextToSize(String(v),112);need(L(5)+(vl.length-1)*L(3.9));
+      doc.setFillColor(...COR[c||'']);doc.circle(M+1,y-1.1,1,'F');doc.setFontSize(8.8);doc.setTextColor(...ink);doc.text(String(k),M+4,y);
+      if(c==='bad')B('bold');doc.setTextColor(...COR[c||'']);doc.text(vl,M+66,y);B();y+=L(4.9)+(vl.length-1)*L(3.9)});
+    doc.setFontSize(9);y+=L(4);
+  }
   sec('Resumo por sistema');
   CATEGORIAS.forEach((ct,i)=>{const s=ct.itens.map(([id])=>(a.answers||{})[id]);const cr=s.filter(x=>x==='critico').length,at=s.filter(x=>x==='atencao').length,ok=s.filter(x=>x==='ok').length;
     const colx=i%2?W/2+3:M;if(i%2===0&&i)y+=L(5.2);need(6);doc.setTextColor(...ink);doc.text(ct.label,colx,y);
@@ -1192,11 +1298,11 @@ function refreshHead(){const a=state.cur;const t=$('#edTitle');if(t)t.innerHTML=
 function abrir(id){
   if(id==='exemplo'){state.cur=exemplo();state.step='laudo'}
   else{const x=state.list.find(i=>i.id===id);if(!x)return;state.cur=JSON.parse(JSON.stringify(x));state.step=x.status==='concluido'?'laudo':'veiculo'}
-  state.view='editor';state.saving=state.cur.exemplo?'':'Salvo';state.confirmDel=false;state.fipe=null;state.placa=null;render();window.scrollTo(0,0);
+  state.view='editor';state.saving=state.cur.exemplo?'':'Salvo';state.confirmDel=false;state.fipe=null;state.placa=null;state.hteste=null;state.hconf=null;state.herr=null;render();window.scrollTo(0,0);
 }
 document.addEventListener('click',async e=>{
   const b=e.target.closest('button,[data-open]');if(!b)return;const d=b.dataset;const a=state.cur;
-  if(d.nav){e.preventDefault();if(d.nav==='nova'){state.cur=nova();state.view='editor';state.step='veiculo';state.saving='';state.confirmDel=false;state.fipe=null;state.placa=null}else state.view=d.nav;render();window.scrollTo(0,0);return}
+  if(d.nav){e.preventDefault();if(d.nav==='nova'){state.cur=nova();state.view='editor';state.step='veiculo';state.saving='';state.confirmDel=false;state.fipe=null;state.placa=null;state.hteste=null;state.hconf=null;state.herr=null}else state.view=d.nav;render();window.scrollTo(0,0);return}
   if(d.open){abrir(d.open);return}
   if(d.step){state.step=d.step;state.confirmDel=false;render();window.scrollTo(0,0);return}
   if(d.ans){const cur=a.answers[d.ans];if(cur===d.v)delete a.answers[d.ans];else a.answers[d.ans]=d.v;touch();renderEditor();
@@ -1209,6 +1315,11 @@ document.addEventListener('click',async e=>{
   if(d.obdrep!=null){const o=a.obd[+d.obdrep];const dd=decodeOBD(o.code);a.extras=a.extras||[];a.extras.push({desc:`${dd.code} · ${dd.desc||o.ai?.descricao||'reparo'}`,valor:''});touch();renderEditor();toast('Adicionado aos reparos. Informe o valor na etapa Reparos.');return}
   if(d.ai!=null){consultarIA(+d.ai);return}
   if(d.opt!=null){aplicarPlaca(+d.opt);return}
+  if(d.hask){state.hconf=d.hask;renderEditor();return}
+  if(d.hno){state.hconf=null;renderEditor();return}
+  if(d.hgo){consultarHist(d.hgo,false);return}
+  if(d.htest){consultarHist(d.htest,true);return}
+  if(d.hlimpa){state.hteste=null;renderEditor();return}
   if(d.fonte){state.perfil.fonte=d.fonte;aplicarFonte();document.querySelectorAll('.fontopt').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.fonte===d.fonte)));refreshPreview();salvarPerfilDepois();return}
   if(d.cor){state.perfil.cor=d.cor;document.querySelectorAll('.sw[data-cor]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.cor===d.cor)));const ci=$('#pf_cor');if(ci)ci.value=d.cor;refreshPreview();salvarPerfilDepois();return}
   const act=d.act;if(!act)return;
