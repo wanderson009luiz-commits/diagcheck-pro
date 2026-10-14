@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vistoria Cruze LTZ</title>
+<meta name="theme-color" content="#1b1a17">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f1ede4;--paper:#fbf9f4;--ink:#1b1a17;--ink2:#5c5850;--ink3:#8d887d;--line:#dcd5c6;--line2:#e9e3d6;
+  --acc:#d9480f;--acc-ink:#fff;
+  --ok:#2d7a4b;--ok-bg:#e3f1e8;--warn:#a86a10;--warn-bg:#f8ecd3;--bad:#b3261e;--bad-bg:#f8e1df;--na:#7b776e;--na-bg:#ebe7de;
+  --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12110f;--paper:#1c1a17;--ink:#eee8dc;--ink2:#b3ac9e;--ink3:#7f796d;--line:#34302a;--line2:#2a2722;
+  --acc:#f2763a;--acc-ink:#1b1209;
+  --ok:#6fcf97;--ok-bg:#183323;--warn:#f0b450;--warn-bg:#3a2c12;--bad:#ff8a80;--bad-bg:#3d1916;--na:#a9a397;--na-bg:#2a2722;
+}}
+:root[data-theme="dark"]{
+  --bg:#12110f;--paper:#1c1a17;--ink:#eee8dc;--ink2:#b3ac9e;--ink3:#7f796d;--line:#34302a;--line2:#2a2722;
+  --acc:#f2763a;--acc-ink:#1b1209;
+  --ok:#6fcf97;--ok-bg:#183323;--warn:#f0b450;--warn-bg:#3a2c12;--bad:#ff8a80;--bad-bg:#3d1916;--na:#a9a397;--na-bg:#2a2722;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:128px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Archivo,system-ui,sans-serif}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:10;background:#1b1a17;color:#f1ede4;border-bottom:1px solid #000;padding:12px 0 0;box-shadow:0 2px 0 var(--acc)}
+.toprow{display:flex;align-items:center;gap:12px}
+.brand{font-weight:800;letter-spacing:-.01em;font-size:17px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{display:block;font:500 11px "JetBrains Mono",monospace;letter-spacing:.08em;opacity:.65;text-transform:uppercase}
+.pct{font:500 22px "JetBrains Mono",monospace}
+.bar{height:5px;background:rgba(255,255,255,.14);border-radius:3px;margin:10px 0 0;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--acc);width:0;transition:width .3s}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 0 12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid rgba(255,255,255,.22);color:inherit;background:none;border-radius:999px;padding:5px 10px;font:500 12px "JetBrains Mono",monospace;cursor:pointer;display:flex;gap:6px;align-items:center}
+.chip b{font-weight:500;opacity:.6}
+.chip.done{background:rgba(255,255,255,.12)}
+.chip.flag{border-color:var(--acc)}
+.chip .d{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3)}
+.chip.done .d{background:#6fcf97}.chip.flag .d{background:var(--acc)}
+
+.intro{padding:22px 0 6px}
+.intro h1{font-size:28px;line-height:1.1;margin:0 0 8px;letter-spacing:-.02em}
+.intro p{margin:0;color:var(--ink2)}
+.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0 0}
+.meta label{display:block;font:500 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+.meta .full{grid-column:1/-1}
+input,textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+input:focus,textarea:focus{outline:2px solid var(--acc);outline-offset:0;border-color:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:14px 0 0;font-size:13px;color:var(--ink2)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+section.sec{margin:30px 0 0}
+.sh{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:end;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:12px}
+.sh .n{font:500 40px/0.9 "JetBrains Mono",monospace;color:var(--acc);grid-row:span 2}
+.sh h2{margin:0;font-size:21px;letter-spacing:-.01em;line-height:1.15}
+.sh p{margin:0;color:var(--ink2);font-size:14px}
+.sec-note{background:var(--paper);border:1px dashed var(--line);border-left:4px solid var(--acc);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--ink2);margin-bottom:12px}
+
+.item{background:var(--paper);border:1px solid var(--line2);border-radius:var(--r);padding:14px;margin:0 0 10px;transition:border-color .2s,background .2s}
+.item[data-s="ok"]{border-color:color-mix(in srgb,var(--ok) 45%,transparent)}
+.item[data-s="warn"]{border-color:var(--warn);background:color-mix(in srgb,var(--warn-bg) 55%,var(--paper))}
+.item[data-s="bad"]{border-color:var(--bad);background:color-mix(in srgb,var(--bad-bg) 60%,var(--paper))}
+.item[data-s="na"]{opacity:.62}
+.it{font-weight:600;display:flex;gap:8px;align-items:flex-start}
+.it .crit{flex:none;font:500 10px "JetBrains Mono",monospace;letter-spacing:.06em;color:var(--acc);border:1px solid var(--acc);border-radius:4px;padding:1px 5px;margin-top:3px}
+.hint{color:var(--ink2);font-size:14px;margin:4px 0 0}
+.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0 0}
+.seg button{font:600 13px Archivo,sans-serif;padding:10px 4px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink2);cursor:pointer;min-height:44px}
+.seg button[aria-pressed="true"][data-v="ok"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.seg button[aria-pressed="true"][data-v="warn"]{background:var(--warn);border-color:var(--warn);color:#fff}
+.seg button[aria-pressed="true"][data-v="bad"]{background:var(--bad);border-color:var(--bad);color:#fff}
+.seg button[aria-pressed="true"][data-v="na"]{background:var(--na);border-color:var(--na);color:#fff}
+.more{margin-top:10px;display:none;gap:8px;grid-template-columns:minmax(0,1fr) 130px}
+.item.open .more,.item[data-s="warn"] .more,.item[data-s="bad"] .more{display:grid}
+.more textarea{min-height:44px;resize:vertical}
+.more .money{position:relative}
+.more .money span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ink3);font-size:14px}
+.more .money input{padding-left:32px}
+.notebtn{margin-top:8px;background:none;border:0;color:var(--ink3);font:500 12px "JetBrains Mono",monospace;cursor:pointer;padding:4px 0}
+.item.open .notebtn,.item[data-s="warn"] .notebtn,.item[data-s="bad"] .notebtn{display:none}
+
+.result{margin:34px 0 0;background:#1b1a17;color:#f1ede4;border:1px solid var(--line);border-radius:18px;padding:20px}
+.result h2{margin:0 0 4px;font-size:22px}
+.verdict{font-size:26px;font-weight:800;line-height:1.15;margin:12px 0 6px}
+.verdict.ok{color:#6fcf97}.verdict.warn{color:#f0b450}.verdict.bad{color:#ff8a80}
+.result p{margin:0;opacity:.8}
+.counts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:16px 0}
+.counts div{background:rgba(255,255,255,.07);border-radius:10px;padding:10px;text-align:center}
+.counts b{display:block;font:500 22px "JetBrains Mono",monospace}
+.counts span{font-size:12px;opacity:.7}
+.flags{list-style:none;margin:0;padding:0}
+.flags li{border-top:1px solid rgba(255,255,255,.12);padding:10px 0;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;font-size:15px}
+.flags .dot{width:10px;height:10px;border-radius:50%;margin-top:6px}
+.flags small{display:block;opacity:.65}
+.neg{margin-top:18px;border-top:2px solid var(--acc);padding-top:14px}
+.neg h3{margin:0 0 10px;font-size:17px}
+.neg .ins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.neg label{font:500 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;opacity:.65;display:block;margin-bottom:4px}
+.neg input{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:#f1ede4}
+.rows{margin-top:12px}
+.rows div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,.15)}
+.rows div b{font-family:"JetBrains Mono",monospace;font-weight:500;white-space:nowrap}
+.rows .hl{color:var(--acc);font-weight:700}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.btn{flex:1 1 140px;min-height:46px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:none;color:inherit;font:600 15px Archivo,sans-serif;cursor:pointer;padding:0 14px}
+.btn.pri{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+footer{color:var(--ink3);font-size:13px;padding:24px 0 60px;text-align:center}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--acc);color:var(--acc-ink);padding:10px 16px;border-radius:999px;font-weight:600;opacity:0;transition:.25s;pointer-events:none;z-index:20}
+.toast.on{opacity:1;transform:translateX(-50%)}
+@media (max-width:420px){.sh .n{font-size:32px}.intro h1{font-size:24px}.more{grid-template-columns:1fr}.counts b{font-size:19px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="toprow">
+      <div class="brand"><small>Vistoria de compra</small><span id="hdrCarro">Chevrolet Cruze LTZ 1.4 Turbo</span></div>
+      <div class="pct" id="pct">0%</div>
+    </div>
+    <div class="bar"><i id="barFill"></i></div>
+    <nav class="chips" id="chips"></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="intro">
+    <h1>Checklist do Cruze, na ordem da visita</h1>
+    <p>Siga as etapas de cima para baixo. Marque cada item; se algo não estiver certo, anote e coloque quanto custa resolver. No fim sai o veredito e o preço para negociar. Tudo fica salvo neste celular.</p>
+    <div class="meta">
+      <div class="full"><label for="mCarro">Carro / anúncio</label><input id="mCarro" data-m="carro" value="Chevrolet Cruze LTZ 1.4 Turbo 2018 · 58.007 km · Recife"></div>
+      <div><label for="mPlaca">Placa</label><input id="mPlaca" data-m="placa" placeholder="ABC1D23" autocapitalize="characters"></div>
+      <div><label for="mData">Data da visita</label><input id="mData" data-m="data" type="date"></div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--ok)"></i>OK</span>
+      <span><i style="background:var(--warn)"></i>Atenção (dá pra negociar)</span>
+      <span><i style="background:var(--bad)"></i>Problema</span>
+      <span><i style="background:var(--na)"></i>Não se aplica</span>
+      <span><b style="color:var(--acc);font:500 11px 'JetBrains Mono',monospace">CRÍTICO</b> = problema aqui é motivo para desistir</span>
+    </div>
+  </div>
+  <div id="secs"></div>
+
+  <section class="result" id="resultado">
+    <div class="mono" style="font-size:11px;letter-spacing:.08em;opacity:.6;text-transform:uppercase">Etapa final</div>
+    <h2>Resultado e negociação</h2>
+    <div class="verdict" id="verdict">—</div>
+    <p id="verdictTxt"></p>
+    <div class="counts">
+      <div><b id="cOk">0</b><span>OK</span></div>
+      <div><b id="cWarn">0</b><span>Atenção</span></div>
+      <div><b id="cBad">0</b><span>Problema</span></div>
+      <div><b id="cLeft">0</b><span>Faltam</span></div>
+    </div>
+    <ul class="flags" id="flags"></ul>
+    <div class="neg">
+      <h3>Quanto oferecer</h3>
+      <div class="ins">
+        <div><label for="nPedido">Preço pedido</label><input id="nPedido" data-n="pedido" inputmode="numeric"></div>
+        <div><label for="nMedia">Média OLX</label><input id="nMedia" data-n="media" inputmode="numeric"></div>
+        <div><label for="nFipe">FIPE</label><input id="nFipe" data-n="fipe" inputmode="numeric"></div>
+        <div><label for="nBonus">Bônus km baixa</label><input id="nBonus" data-n="bonus" inputmode="numeric"></div>
+      </div>
+      <div class="rows" id="negRows"></div>
+    </div>
+    <div class="actions">
+      <button class="btn pri" id="btnShare">Enviar resumo (WhatsApp)</button>
+      <button class="btn" id="btnCopy">Copiar resumo</button>
+      <button class="btn" id="btnReset">Nova vistoria</button>
+    </div>
+  </section>
+  <footer>Feito para o DiagCheck Pro · Depois de fechar, faça o laudo completo no app.</footer>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const S=[
+ {id:'antes',t:'Antes de sair de casa',q:'Pelo WhatsApp, no dia anterior',note:'Peça para NÃO ligarem o carro antes de você chegar. Motor frio é onde aparecem os defeitos de corrente, partida e vazamento.',items:[
+  ['placa','Pedir a placa e consultar no DiagCheck (histórico + leilão)','Roubo/furto, Renajud, restrições, multas, recall e leilão/sinistro. Abaixo da FIPE + leilão = desistir.',1],
+  ['crlvfoto','Pedir foto do CRLV','Confira: cor (tem que dizer VERDE), ano fabricação/modelo (2017/18, 2018/18 ou 2018/19), em nome de quem está.',1],
+  ['manualfoto','Pedir foto dos carimbos de revisão do manual','Datas e km em sequência, ~1 por ano ou a cada 10 mil km.'],
+  ['naoligar','Combinar: carro frio, sem ligar antes de você chegar','Se chegar e o motor estiver quente, desconfie.'],
+  ['kit','Separar o kit','Scanner OBD, lanterna, medidor de espessura de pintura, papel-toalha, luva, ímã, calibrador e o app DiagCheck.']
+ ]},
+ {id:'perguntas',t:'Perguntas ao chegar',q:'Antes de tocar no carro, olho no olho',note:'Anote as respostas. Depois compare com o que o carro e o scanner mostrarem: resposta que não bate é o maior sinal de alerta.',items:[
+  ['dono','O carro está no nome da loja ou do dono? Posso falar com o dono?','O anúncio diz "único dono". Se for revenda, peça o contato do antigo proprietário.'],
+  ['porque','Por que está sendo vendido? Há quanto tempo está à venda?',''],
+  ['batida','Já bateu? Tem peça repintada? A cor verde é original?','Não lembro de verde no catálogo do Cruze 2018: pode ser cor rara, envelopamento ou repintura.',1],
+  ['revisoes','Onde fez as revisões e qual óleo foi usado?','Tem que ser 5W-30 dexos1 (Gen2/Gen3). Óleo genérico em turbo de injeção direta é risco de pré-ignição.',1],
+  ['ultimatroca','Quando foi a última troca de óleo (data e km)?','Mais de 1 ano sem trocar, mesmo rodando pouco, é ruim.'],
+  ['trocas','Já trocou bomba d\'água, válvula termostática, tampa de válvulas ou turbo?','São os defeitos clássicos. Troca com nota fiscal é ponto a favor.'],
+  ['cambio','O óleo do câmbio já foi trocado?','Não é obrigatório, mas perto dos 60 mil km é recomendado.'],
+  ['bateria','Quando trocou a bateria? É do tipo EFB/AGM?','O start-stop exige bateria específica.'],
+  ['debitos','Tem IPVA, multa ou financiamento em aberto?','Carro alienado só com quitação feita junto com o pagamento.',1],
+  ['garantia','A loja dá garantia de motor e câmbio? Quem paga a transferência?','Garantia de 90 dias é o mínimo legal em revenda (CDC).']
+ ]},
+ {id:'docs',t:'Documentos e procedência',q:'Com o carro parado, antes de ligar',items:[
+  ['crlv','CRLV confere: placa, chassi, cor e ano','Tudo tem que bater com o carro e com a consulta.',1],
+  ['chassi','Chassi gravado nos vidros, etiquetas e plaqueta igual ao documento','Vidro sem gravação ou com número diferente = vidro trocado (batida ou roubo).',1],
+  ['manual','Manual com carimbos em sequência e km coerente','58 mil km em ~8 anos = uns 7 mil por ano. Carimbo pulando anos é ponto de atenção.'],
+  ['notas','Notas fiscais das revisões','Confirme o óleo usado nas notas.'],
+  ['chave','Chave reserva abre e dá partida','A chave do Cruze é cara de fazer.'],
+  ['gm','Consulta na concessionária GM pelo chassi','Mostra as revisões feitas na rede e recalls pendentes. Pode ser feita por telefone.']
+ ]},
+ {id:'frio',t:'Motor frio, antes de ligar e na partida',q:'Capô aberto, motor frio',note:'Ordem: olhar tudo desligado → ligar → escutar os primeiros segundos → testar a PCV.',items:[
+  ['temp','Motor está frio ao tocar?','Se estiver quente, alguém ligou antes, talvez para esconder barulho de partida.',1],
+  ['oleo','Óleo na vareta: nível certo, cor âmbar a marrom','Preto grosso = troca vencida. Aspecto leitoso = mistura com água (junta de cabeçote).',1],
+  ['tampaoleo','Tampa do óleo sem borra e sem espuma branca','Borra = óleo vencido por muito tempo.'],
+  ['arref','Reservatório de arrefecimento no nível e líquido rosa limpo','Nível baixo ou só água = vazamento escondido. Óleo no reservatório = problema grave.',1],
+  ['termostatica','Sem crosta rosada na carcaça da válvula termostática e nas mangueiras','Defeito nº 1 do Cruze. Olhe com lanterna a carcaça na lateral do motor e as conexões das mangueiras.',1],
+  ['tampavalv','Tampa de válvulas sem óleo escorrendo','Vazamento aqui costuma ser a PCV com problema.'],
+  ['bat','Bateria EFB/AGM, terminais limpos, data recente',''],
+  ['partida','Partida pega de primeira, sem chocalho nos primeiros segundos','Barulho metálico rápido ao ligar frio = corrente de comando esticada.',1],
+  ['lenta','Marcha lenta estável, sem fumaça azul ou branca','Fumaça azul = queima óleo (turbo ou anéis). Branca persistente com cheiro doce = líquido.',1],
+  ['pcv','Teste da PCV: motor ligado, tirar a tampa do óleo','Se puxar forte ou assobiar, a membrana da tampa de válvulas está rasgada (a troca é da tampa inteira).']
+ ]},
+ {id:'lataria',t:'Lataria, pintura e vidros',q:'De preferência no sol, volta completa no carro',items:[
+  ['espessura','Medidor de espessura em todas as peças','Compare as peças entre si: uma bem mais grossa que as outras (ex.: acima de ~200 µm) indica repintura ou massa.',1],
+  ['tom','Mesmo tom de cor em todas as peças','Olhe de lado, contra a luz. Envelopamento aparece nas bordas e dentro das portas.'],
+  ['vaos','Vãos iguais entre portas, capô e porta-malas',''],
+  ['parafusos','Parafusos de para-lamas, capô e dobradiças sem marca de chave','Marca de chave = peça removida (batida).'],
+  ['borrachas','Borrachas e frisos sem respingo de tinta',''],
+  ['longarinas','Longarinas e assoalho do porta-malas sem solda ou massa','Levante o carpete do porta-malas. Solda aqui = batida forte.',1],
+  ['vidros','Vidros da mesma marca e com datas próximas',''],
+  ['farois','Faróis e lanternas originais, sem embaçado',''],
+  ['brakelight','Terceira luz de freio sem trinca','Defeito comum do Cruze. Trinca deixa entrar água.'],
+  ['porta-malas','Porta-malas e poço do estepe secos, sem ferrugem','Água ali = terceira luz trincada ou borracha ruim.'],
+  ['parabrisa','Para-brisa sem trinca','']
+ ]},
+ {id:'rodas',t:'Rodas, pneus e freios',q:'Agachado, com lanterna',items:[
+  ['dot','Data (DOT) dos 4 pneus e do estepe','Os 4 dígitos: semana/ano. Com mais de 5 anos, conte a troca (uns R$ 2.400 o jogo 215/50 R17).'],
+  ['desgaste','Desgaste uniforme nos pneus','Gasto só na borda = alinhamento ou suspensão.'],
+  ['rodas','Rodas sem amassado ou trinca (olhe por dentro)',''],
+  ['discos','Discos de freio sem degrau grande na borda','']
+ ]},
+ {id:'interior',t:'Interior e eletrônica',q:'Com o motor ligado',note:'Ligue tudo de uma vez: ar, rádio, faróis. Falha do módulo de carroceria (BCM) aparece como luz piscando, trava falhando ou ar desligando sozinho.',items:[
+  ['usodesgaste','Desgaste de banco, pedais e manopla combina com 58 mil km','O volante do Cruze descasca cedo, então ele sozinho não prova nada.'],
+  ['enchente','Sem cheiro de mofo; carpete seco; cinto limpo puxado até o fim','Barro no cinto ou ferrugem nos trilhos do banco = enchente.',1],
+  ['luzes','Nenhuma luz de alerta no painel depois da partida','',1],
+  ['ar','Ar gela bem e o painel digital funciona','Na saída central, tem que ficar bem frio em poucos minutos.'],
+  ['mylink','MyLink: tela, bluetooth, Android Auto/CarPlay, GPS',''],
+  ['camera','Câmera de ré e sensores de estacionamento',''],
+  ['inducao','Carregador por indução',''],
+  ['vidrostravas','Vidros, travas e retrovisores elétricos (incluindo rebatimento)',''],
+  ['automaticos','Faróis automáticos, limpador automático e faróis de neblina',''],
+  ['keyless','Entrada e partida sem chave',''],
+  ['pacote','Tem o pacote opcional? (alerta de ponto cego no retrovisor, teto solar)','Só para saber o que está levando. Se tiver, teste cada função.'],
+  ['lampadas','Todas as lâmpadas externas e a buzina','']
+ ]},
+ {id:'embaixo',t:'Embaixo do carro',q:'Lanterna, de preferência num elevador ou rampa',items:[
+  ['vazoleo','Sem vazamento de óleo do motor (cárter, retentores)','',1],
+  ['vazcambio','Sem vazamento de óleo do câmbio','',1],
+  ['vazagua','Sem vazamento de líquido de arrefecimento','Cristal rosa seco nas mangueiras e na bomba d\'água.'],
+  ['coifas','Coifas das homocinéticas inteiras',''],
+  ['escape','Escapamento sem furo e com catalisador',''],
+  ['amort','Amortecedores sem óleo escorrendo; buchas inteiras',''],
+  ['assoalho','Assoalho sem amassado forte, sem solda e sem ferrugem','']
+ ]},
+ {id:'scanner',t:'Scanner OBD',q:'Motor ligado, antes do test drive',note:'Leia os códigos ATIVOS e os MEMORIZADOS de todos os módulos. Monitores de prontidão (readiness) zerados indicam que alguém apagou os códigos há pouco tempo.',items:[
+  ['codmotor','Motor sem códigos (ativos ou memorizados)','',1],
+  ['p1101','Sem P1101 (PCV / pressão do cárter)','Clássico do Cruze 1.4: tampa de válvulas.'],
+  ['p0299','Sem P0299 (turbo com pouca pressão / wastegate)','Turbo completo na concessionária passa de R$ 19 mil.',1],
+  ['misfire','Sem P0300–P0304 (falha de ignição)','Vela, bobina ou carbonização.'],
+  ['p0128','Sem P0128 (válvula termostática)',''],
+  ['modulos','Câmbio, airbag, ABS e BCM sem códigos','Airbag com código memorizado pode ser batida.',1],
+  ['readiness','Monitores de prontidão completos','Todos incompletos = códigos apagados recentemente.',1],
+  ['trims','Ajustes de combustível (fuel trim) entre −10% e +10%','Fora disso: entrada falsa de ar, bico ou sensor.'],
+  ['tempmotor','Temperatura do motor sobe e estabiliza (~90–105 °C)','']
+ ]},
+ {id:'rodagem',t:'Teste de rodagem',q:'No mínimo 20 minutos: trânsito, retomada e lombada',note:'Rádio desligado e vidros fechados na primeira parte, para ouvir o carro.',items:[
+  ['saidaleve','Saída leve sem trepidar e sem tranco da 1ª para a 2ª','Trepidação na saída = conversor ou câmbio.',1],
+  ['turbo','Acelerada forte: o turbo empurra firme a partir de ~2.000 rpm','Demora, falha ou chiado metálico = wastegate/turbo.',1],
+  ['retomada','Retomada de 40 a 80 km/h em D, sem hesitar',''],
+  ['trocas','Trocas e reduções suaves nas 6 marchas','',1],
+  ['re','Ré engata rápido, sem pancada',''],
+  ['park','Ao colocar em P, não aparece "Mude marcha para estacionar"','Defeito conhecido do sensor da alavanca.'],
+  ['startstop','Start-stop desliga e religa normalmente no sinal',''],
+  ['direcao','Direção reta, sem puxar e sem barulho ao esterçar',''],
+  ['suspensao','Lombada e calçamento sem estalos ou batidas',''],
+  ['freio','Frenagem reta, sem pedal trepidando',''],
+  ['ponteiro','Temperatura estável o tempo todo e a ventoinha liga','Qualquer subida no ponteiro = desistir.',1]
+ ]},
+ {id:'quente',t:'Depois do test drive (motor quente)',q:'Parado, motor ligado e depois desligado',items:[
+  ['gotejo','Olhar embaixo de novo: nada pingando','Vazamento pequeno aparece com o motor quente.',1],
+  ['cheiro','Sem cheiro doce (líquido) ou de óleo queimado',''],
+  ['nivel','Nível do reservatório de arrefecimento não baixou','',1],
+  ['lentaquente','Marcha lenta quente estável com o ar ligado',''],
+  ['scan2','Scanner de novo: nenhum código novo','',1]
+ ]}
+];
+const KEY='vistoria-cruze-v1';
+let st={i:{},m:{},n:{}};
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.i)st=s}catch(e){}
+const DEF_N={pedido:84990,media:77000,fipe:85030,bonus:4500};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const n=parseFloat(String(v??'').replace(/[^\d,]/g,'').replace(',','.'));return isNaN(n)?0:n};
+const brl=n=>'R$ '+Math.round(n).toLocaleString('pt-BR');
+const ALL=[];S.forEach(s=>s.items.forEach(it=>ALL.push({sec:s,id:s.id+'.'+it[0],t:it[1],h:it[2],c:!!it[3]})));
+const LBL={ok:'OK',warn:'Atenção',bad:'Problema',na:'N/A'};
+
+function render(){
+  $('#secs').innerHTML=S.map((s,k)=>`<section class="sec" id="s-${s.id}">
+    <div class="sh"><div class="n">${String(k+1).padStart(2,'0')}</div><h2>${esc(s.t)}</h2><p>${esc(s.q)}</p></div>
+    ${s.note?`<div class="sec-note">${esc(s.note)}</div>`:''}
+    ${s.items.map(it=>{const id=s.id+'.'+it[0];const v=st.i[id]||{};return `<div class="item" data-id="${id}" data-s="${v.s||''}">
+      <div class="it">${it[3]?'<span class="crit">CRÍTICO</span>':''}<span>${esc(it[1])}</span></div>
+      ${it[2]?`<p class="hint">${esc(it[2])}</p>`:''}
+      <div class="seg">${['ok','warn','bad','na'].map(x=>`<button type="button" data-v="${x}" aria-pressed="${v.s===x}">${LBL[x]}</button>`).join('')}</div>
+      <button type="button" class="notebtn">+ anotação</button>
+      <div class="more"><textarea rows="1" data-k="n" placeholder="O que viu?">${esc(v.n||'')}</textarea><div class="money"><span>R$</span><input data-k="c" inputmode="numeric" placeholder="custo" value="${v.c?esc(Math.round(v.c).toLocaleString('pt-BR')):''}"></div></div>
+    </div>`}).join('')}
+  </section>`).join('');
+  $('#chips').innerHTML=S.map((s,k)=>`<button class="chip" data-go="${s.id}"><span class="d"></span><b>${k+1}</b>${esc(s.t.split(' ')[0]==='Antes'&&k===0?'Antes':s.t.replace(/\s*\(.*\)/,'').split(',')[0])}</button>`).join('')+'<button class="chip" data-go="resultado"><b>✓</b>Resultado</button>';
+  document.querySelectorAll('[data-m]').forEach(el=>{if(st.m[el.dataset.m]!=null)el.value=st.m[el.dataset.m]});
+  if(!st.m.data){$('#mData').valueAsDate=new Date()}
+  document.querySelectorAll('[data-n]').forEach(el=>{const v=st.n[el.dataset.n]??DEF_N[el.dataset.n];el.value=Math.round(v).toLocaleString('pt-BR')});
+  update();
+}
+function update(){
+  let ok=0,warn=0,bad=0,na=0,custo=0;const flags=[];let critBad=0;
+  ALL.forEach(a=>{const v=st.i[a.id]||{};if(v.s==='ok')ok++;else if(v.s==='warn')warn++;else if(v.s==='bad')bad++;else if(v.s==='na')na++;
+    if(v.s==='warn'||v.s==='bad'){custo+=num(v.c);flags.push({a,v});if(v.s==='bad'&&a.c)critBad++}});
+  const done=ok+warn+bad+na,tot=ALL.length,left=tot-done,p=Math.round(done/tot*100);
+  $('#pct').textContent=p+'%';$('#barFill').style.width=p+'%';
+  $('#cOk').textContent=ok;$('#cWarn').textContent=warn;$('#cBad').textContent=bad;$('#cLeft').textContent=left;
+  $('#hdrCarro').textContent=(st.m.carro||'Chevrolet Cruze LTZ').split('·')[0].trim();
+  S.forEach(s=>{const ch=document.querySelector(`.chip[data-go="${s.id}"]`);if(!ch)return;const ids=s.items.map(it=>s.id+'.'+it[0]);
+    const all=ids.every(id=>st.i[id]&&st.i[id].s);const fl=ids.some(id=>st.i[id]&&(st.i[id].s==='bad'||st.i[id].s==='warn'));
+    ch.classList.toggle('done',all&&!fl);ch.classList.toggle('flag',fl)});
+  const V=$('#verdict'),T=$('#verdictTxt');
+  if(critBad){V.className='verdict bad';V.textContent='Não compre';T.textContent=`${critBad} problema(s) em item crítico. Só volte a considerar com conserto feito pelo vendedor e garantia por escrito.`}
+  else if(bad||warn){V.className='verdict warn';V.textContent='Negocie';T.textContent=`Nada eliminatório, mas há ${warn+bad} ponto(s) para usar na negociação${custo?` (≈ ${brl(custo)} em custos)`:''}.`}
+  else if(left>tot*.4){V.className='verdict';V.textContent='Vistoria em andamento';T.textContent='Siga as etapas; o veredito aparece conforme você marca.'}
+  else{V.className='verdict ok';V.textContent='Compra recomendada';T.textContent=left?`Tudo certo até aqui. Faltam ${left} item(ns).`:'Tudo certo em todas as etapas. Feche no preço-alvo.'}
+  $('#flags').innerHTML=flags.sort((x,y)=>(y.v.s==='bad')-(x.v.s==='bad')).map(({a,v})=>`<li><span class="dot" style="background:${v.s==='bad'?'#ff8a80':'#f0b450'}"></span><span>${esc(a.t)}${v.n?`<small>${esc(v.n)}</small>`:''}<small>${esc(a.sec.t)}</small></span><span class="mono">${num(v.c)?brl(num(v.c)):''}</span></li>`).join('');
+  const N=k=>st.n[k]??DEF_N[k];const pedido=N('pedido'),media=N('media'),fipe=N('fipe'),bonus=N('bonus');
+  const justo=Math.min(media+bonus,fipe);const abertura=Math.max(0,media-custo);const alvo=Math.max(0,justo-custo);const teto=Math.min(pedido,alvo+1000);
+  $('#negRows').innerHTML=`<div><span>Preço justo (média + km baixa)</span><b>${brl(justo)}</b></div>
+   ${custo?`<div><span>Custos encontrados na vistoria</span><b>− ${brl(custo)}</b></div>`:''}
+   <div><span>Primeira oferta</span><b>${brl(abertura)}</b></div>
+   <div class="hl"><span>Fechar até</span><b>${brl(alvo)}</b></div>
+   <div><span>Teto (só com garantia, pneus ou transferência inclusos)</span><b>${brl(teto)}</b></div>
+   <div><span>Desconto sobre o pedido</span><b>${pedido?Math.round((1-alvo/pedido)*100):0}%</b></div>`;
+  save();
+}
+function resumo(){
+  const N=k=>st.n[k]??DEF_N[k];let custo=0;const L=[];
+  ALL.forEach(a=>{const v=st.i[a.id];if(v&&(v.s==='warn'||v.s==='bad')){custo+=num(v.c);L.push(`${v.s==='bad'?'🔴':'🟡'} ${a.t}${v.n?' — '+v.n:''}${num(v.c)?' ('+brl(num(v.c))+')':''}`)}});
+  const justo=Math.min(N('media')+N('bonus'),N('fipe'));
+  return `*Vistoria ${st.m.carro||'Cruze LTZ'}*${st.m.placa?'\nPlaca: '+st.m.placa.toUpperCase():''}\n\n*${$('#verdict').textContent}*\n${$('#verdictTxt').textContent}\n\n${L.length?L.join('\n'):'✅ Nenhum ponto negativo marcado.'}\n\nPedido: ${brl(N('pedido'))}\nPrimeira oferta: ${brl(Math.max(0,N('media')-custo))}\nFechar até: ${brl(Math.max(0,justo-custo))}`;
+}
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1800)}
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.seg button');
+  if(b){const item=b.closest('.item');const id=item.dataset.id;const v=st.i[id]||(st.i[id]={});v.s=v.s===b.dataset.v?'':b.dataset.v;
+    item.dataset.s=v.s||'';item.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.v===v.s)));update();
+    if(v.s==='warn'||v.s==='bad'){const ta=item.querySelector('textarea');setTimeout(()=>ta&&!ta.value&&ta.focus({preventScroll:true}),50)}return}
+  const nb=e.target.closest('.notebtn');if(nb){const it=nb.closest('.item');it.classList.add('open');it.querySelector('textarea').focus();return}
+  const g=e.target.closest('[data-go]');if(g){document.getElementById(g.dataset.go==='resultado'?'resultado':'s-'+g.dataset.go).scrollIntoView({behavior:'smooth'});return}
+});
+document.addEventListener('input',e=>{const el=e.target;
+  if(el.dataset.k){const id=el.closest('.item').dataset.id;const v=st.i[id]||(st.i[id]={});v[el.dataset.k]=el.dataset.k==='c'?num(el.value):el.value;update();return}
+  if(el.dataset.m){st.m[el.dataset.m]=el.value;update();return}
+  if(el.dataset.n){st.n[el.dataset.n]=num(el.value);update()}
+});
+document.addEventListener('focusout',e=>{const el=e.target;if((el.dataset.k==='c'||el.dataset.n)&&el.value){el.value=Math.round(num(el.value)).toLocaleString('pt-BR')}});
+$('#btnShare').onclick=async()=>{const t=resumo();if(navigator.share){try{await navigator.share({text:t});return}catch(e){if(e.name==='AbortError')return}}window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')};
+$('#btnCopy').onclick=async()=>{try{await navigator.clipboard.writeText(resumo());toast('Resumo copiado')}catch(e){toast('Não deu para copiar')}};
+$('#btnReset').onclick=()=>{if(!confirm('Apagar todas as marcações e começar uma nova vistoria?'))return;st={i:{},m:{carro:st.m.carro},n:st.n};save();render();window.scrollTo(0,0);toast('Vistoria zerada')};
+render();
+</script>
+</body>
+</html>
