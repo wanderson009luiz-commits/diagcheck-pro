@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vistoria de Compra</title>
+<meta name="theme-color" content="#1b1a17">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f1ede4;--paper:#fbf9f4;--ink:#1b1a17;--ink2:#5c5850;--ink3:#8d887d;--line:#dcd5c6;--line2:#e9e3d6;
+  --acc:#d9480f;--acc-ink:#fff;
+  --ok:#2d7a4b;--ok-bg:#e3f1e8;--warn:#a86a10;--warn-bg:#f8ecd3;--bad:#b3261e;--bad-bg:#f8e1df;--na:#7b776e;--na-bg:#ebe7de;
+  --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12110f;--paper:#1c1a17;--ink:#eee8dc;--ink2:#b3ac9e;--ink3:#7f796d;--line:#34302a;--line2:#2a2722;
+  --acc:#f2763a;--acc-ink:#1b1209;
+  --ok:#6fcf97;--ok-bg:#183323;--warn:#f0b450;--warn-bg:#3a2c12;--bad:#ff8a80;--bad-bg:#3d1916;--na:#a9a397;--na-bg:#2a2722;
+}}
+:root[data-theme="dark"]{
+  --bg:#12110f;--paper:#1c1a17;--ink:#eee8dc;--ink2:#b3ac9e;--ink3:#7f796d;--line:#34302a;--line2:#2a2722;
+  --acc:#f2763a;--acc-ink:#1b1209;
+  --ok:#6fcf97;--ok-bg:#183323;--warn:#f0b450;--warn-bg:#3a2c12;--bad:#ff8a80;--bad-bg:#3d1916;--na:#a9a397;--na-bg:#2a2722;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:128px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Archivo,system-ui,sans-serif}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:10;background:#1b1a17;color:#f1ede4;border-bottom:1px solid #000;padding:12px 0 0;box-shadow:0 2px 0 var(--acc)}
+.toprow{display:flex;align-items:center;gap:12px}
+.brand{font-weight:800;letter-spacing:-.01em;font-size:17px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{display:block;font:500 11px "JetBrains Mono",monospace;letter-spacing:.08em;opacity:.65;text-transform:uppercase}
+.pct{font:500 22px "JetBrains Mono",monospace}
+.bar{height:5px;background:rgba(255,255,255,.14);border-radius:3px;margin:10px 0 0;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--acc);width:0;transition:width .3s}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 0 12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid rgba(255,255,255,.22);color:inherit;background:none;border-radius:999px;padding:5px 10px;font:500 12px "JetBrains Mono",monospace;cursor:pointer;display:flex;gap:6px;align-items:center}
+.chip b{font-weight:500;opacity:.6}
+.chip.done{background:rgba(255,255,255,.12)}
+.chip.flag{border-color:var(--acc)}
+.chip .d{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3)}
+.chip.done .d{background:#6fcf97}.chip.flag .d{background:var(--acc)}
+
+.intro{padding:22px 0 6px}
+.intro h1{font-size:28px;line-height:1.1;margin:0 0 8px;letter-spacing:-.02em}
+.intro p{margin:0;color:var(--ink2)}
+.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0 0}
+.meta label{display:block;font:500 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+.meta .full{grid-column:1/-1}
+input,textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+input:focus,textarea:focus{outline:2px solid var(--acc);outline-offset:0;border-color:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:14px 0 0;font-size:13px;color:var(--ink2)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+section.sec{margin:30px 0 0}
+.sh{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:end;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:12px}
+.sh .n{font:500 40px/0.9 "JetBrains Mono",monospace;color:var(--acc);grid-row:span 2}
+.sh h2{margin:0;font-size:21px;letter-spacing:-.01em;line-height:1.15}
+.sh p{margin:0;color:var(--ink2);font-size:14px}
+.sec-note{background:var(--paper);border:1px dashed var(--line);border-left:4px solid var(--acc);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--ink2);margin-bottom:12px}
+
+.item{background:var(--paper);border:1px solid var(--line2);border-radius:var(--r);padding:14px;margin:0 0 10px;transition:border-color .2s,background .2s}
+.item[data-s="ok"]{border-color:color-mix(in srgb,var(--ok) 45%,transparent)}
+.item[data-s="warn"]{border-color:var(--warn);background:color-mix(in srgb,var(--warn-bg) 55%,var(--paper))}
+.item[data-s="bad"]{border-color:var(--bad);background:color-mix(in srgb,var(--bad-bg) 60%,var(--paper))}
+.item[data-s="na"]{opacity:.62}
+.it{font-weight:600;display:flex;gap:8px;align-items:flex-start}
+.it .crit{flex:none;font:500 10px "JetBrains Mono",monospace;letter-spacing:.06em;color:var(--acc);border:1px solid var(--acc);border-radius:4px;padding:1px 5px;margin-top:3px}
+.hint{color:var(--ink2);font-size:14px;margin:4px 0 0}
+.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0 0}
+.seg button{font:600 13px Archivo,sans-serif;padding:10px 4px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink2);cursor:pointer;min-height:44px}
+.seg button[aria-pressed="true"][data-v="ok"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.seg button[aria-pressed="true"][data-v="warn"]{background:var(--warn);border-color:var(--warn);color:#fff}
+.seg button[aria-pressed="true"][data-v="bad"]{background:var(--bad);border-color:var(--bad);color:#fff}
+.seg button[aria-pressed="true"][data-v="na"]{background:var(--na);border-color:var(--na);color:#fff}
+.more{margin-top:10px;display:none;gap:8px;grid-template-columns:minmax(0,1fr) 130px}
+.item.open .more,.item[data-s="warn"] .more,.item[data-s="bad"] .more{display:grid}
+.more textarea{min-height:44px;resize:vertical}
+.more .money{position:relative}
+.more .money span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ink3);font-size:14px}
+.more .money input{padding-left:32px}
+.notebtn{margin-top:8px;background:none;border:0;color:var(--ink3);font:500 12px "JetBrains Mono",monospace;cursor:pointer;padding:4px 0}
+.item.open .notebtn,.item[data-s="warn"] .notebtn,.item[data-s="bad"] .notebtn{display:none}
+
+.result{margin:34px 0 0;background:#1b1a17;color:#f1ede4;border:1px solid var(--line);border-radius:18px;padding:20px}
+.result h2{margin:0 0 4px;font-size:22px}
+.verdict{font-size:26px;font-weight:800;line-height:1.15;margin:12px 0 6px}
+.verdict.ok{color:#6fcf97}.verdict.warn{color:#f0b450}.verdict.bad{color:#ff8a80}
+.result p{margin:0;opacity:.8}
+.counts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:16px 0}
+.counts div{background:rgba(255,255,255,.07);border-radius:10px;padding:10px;text-align:center}
+.counts b{display:block;font:500 22px "JetBrains Mono",monospace}
+.counts span{font-size:12px;opacity:.7}
+.flags{list-style:none;margin:0;padding:0}
+.flags li{border-top:1px solid rgba(255,255,255,.12);padding:10px 0;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;font-size:15px}
+.flags .dot{width:10px;height:10px;border-radius:50%;margin-top:6px}
+.flags small{display:block;opacity:.65}
+.neg{margin-top:18px;border-top:2px solid var(--acc);padding-top:14px}
+.neg h3{margin:0 0 10px;font-size:17px}
+.neg .ins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.neg label{font:500 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;opacity:.65;display:block;margin-bottom:4px}
+.neg input{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:#f1ede4}
+.rows{margin-top:12px}
+.rows div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,.15)}
+.rows div b{font-family:"JetBrains Mono",monospace;font-weight:500;white-space:nowrap}
+.rows .hl{color:var(--acc);font-weight:700}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.btn{flex:1 1 140px;min-height:46px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:none;color:inherit;font:600 15px Archivo,sans-serif;cursor:pointer;padding:0 14px}
+.btn.pri{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.yn{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:12px 0 0}
+.yn button{font:600 13px Archivo,sans-serif;min-height:40px;padding:0 16px;border-radius:999px;border:1.5px dashed var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.yn button[aria-pressed="true"]{border-style:solid;background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.yn button[aria-pressed="true"].b,.yn button[aria-pressed="true"].u{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.costtag{font:500 11px "JetBrains Mono",monospace;color:var(--ink3);margin-left:2px}
+.item[data-r]:not([data-r=""]) .costtag{color:var(--ink2)}
+.seg{margin-top:10px}
+.yn+.seg{border-top:1px dashed var(--line);padding-top:10px}
+.ans{font:500 11px "JetBrains Mono",monospace;border:1px solid rgba(255,255,255,.3);border-radius:4px;padding:1px 5px;margin-left:4px;opacity:.85}
+.flags li.empty{display:block;opacity:.65}
+.man{margin-top:16px;border-top:2px solid var(--acc);padding-top:14px}
+.man h3{margin:0 0 4px;font-size:17px}
+.man p{font-size:14px;margin:0 0 8px}
+.mrow{display:grid;grid-template-columns:minmax(0,1fr) 128px;gap:10px;align-items:center;padding:10px 0;border-top:1px solid rgba(255,255,255,.12)}
+.mrow b{font-weight:600;font-size:15px}.mrow small{display:block;opacity:.6;font-size:12px}
+.mrow .money{position:relative}.mrow .money span{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.6;font-size:14px}
+.mrow input{padding-left:32px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:#f1ede4}
+.mtot{display:flex;justify-content:space-between;padding:10px 0 0;border-top:1px dashed rgba(255,255,255,.2);font-weight:700}
+.mtot b{font-family:"JetBrains Mono",monospace;font-weight:500;color:var(--acc)}
+footer{color:var(--ink3);font-size:13px;padding:24px 0 60px;text-align:center}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--acc);color:var(--acc-ink);padding:10px 16px;border-radius:999px;font-weight:600;opacity:0;transition:.25s;pointer-events:none;z-index:20}
+.toast.on{opacity:1;transform:translateX(-50%)}
+@media (max-width:420px){.sh .n{font-size:32px}.intro h1{font-size:24px}.more{grid-template-columns:1fr}.counts b{font-size:19px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="toprow">
+      <div class="brand"><small>Vistoria de compra</small><span id="hdrCarro">Novo veículo</span></div>
+      <div class="pct" id="pct">0%</div>
+    </div>
+    <div class="bar"><i id="barFill"></i></div>
+    <nav class="chips" id="chips"></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="intro">
+    <h1>Checklist de compra, na ordem da visita</h1>
+    <p>Siga as etapas de cima para baixo. Nas perguntas, marque a resposta (Sim / Não / Não sei) e a sua avaliação. Se algo não estiver certo, anote e coloque quanto custa resolver; manutenção que o dono não fez já entra com custo estimado. No fim sai o veredito e o preço para negociar. Tudo fica salvo neste celular.</p>
+    <div class="meta">
+      <div class="full"><label for="mCarro">Carro / anúncio</label><input id="mCarro" data-m="carro" placeholder="Ex.: Corolla XEi 2019 · 72.000 km · Recife"></div>
+      <div><label for="mPlaca">Placa</label><input id="mPlaca" data-m="placa" placeholder="ABC1D23" autocapitalize="characters"></div>
+      <div><label for="mData">Data da visita</label><input id="mData" data-m="data" type="date"></div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--ok)"></i>OK</span>
+      <span><i style="background:var(--warn)"></i>Atenção (dá pra negociar)</span>
+      <span><i style="background:var(--bad)"></i>Problema</span>
+      <span><i style="background:var(--na)"></i>Não se aplica</span>
+      <span><b style="color:var(--acc);font:500 11px 'JetBrains Mono',monospace">CRÍTICO</b> = problema aqui é motivo para desistir</span>
+    </div>
+  </div>
+  <div id="secs"></div>
+
+  <section class="result" id="resultado">
+    <div class="mono" style="font-size:11px;letter-spacing:.08em;opacity:.6;text-transform:uppercase">Etapa final</div>
+    <h2>Resultado e negociação</h2>
+    <div class="verdict" id="verdict">—</div>
+    <p id="verdictTxt"></p>
+    <div class="counts">
+      <div><b id="cOk">0</b><span>OK</span></div>
+      <div><b id="cWarn">0</b><span>Atenção</span></div>
+      <div><b id="cBad">0</b><span>Problema</span></div>
+      <div><b id="cLeft">0</b><span>Faltam</span></div>
+    </div>
+    <ul class="flags" id="flags"></ul>
+    <div class="man" id="manBox" hidden>
+      <h3>Manutenção que você vai fazer</h3>
+      <p style="opacity:.75">Coisas que o dono ainda não fez e que vão sair do seu bolso logo depois da compra. Ajuste os valores com o orçamento real.</p>
+      <div id="manList"></div>
+      <div class="mtot"><span>Total da manutenção</span><b id="manTot">R$ 0</b></div>
+    </div>
+    <div class="neg">
+      <h3>Quanto oferecer</h3>
+      <div class="ins">
+        <div><label for="nPedido">Preço pedido</label><input id="nPedido" data-n="pedido" inputmode="numeric" placeholder="do anúncio"></div>
+        <div><label for="nMedia">Média de mercado</label><input id="nMedia" data-n="media" inputmode="numeric" placeholder="OLX, Webmotors"></div>
+        <div><label for="nFipe">FIPE</label><input id="nFipe" data-n="fipe" inputmode="numeric" placeholder="tabela FIPE"></div>
+        <div><label for="nBonus">Bônus (km baixa, extras)</label><input id="nBonus" data-n="bonus" inputmode="numeric" placeholder="0"></div>
+      </div>
+      <div class="rows" id="negRows"></div>
+    </div>
+    <div class="actions">
+      <button class="btn pri" id="btnShare">Enviar resumo (WhatsApp)</button>
+      <button class="btn" id="btnCopy">Copiar resumo</button>
+      <button class="btn" id="btnReset">Nova vistoria</button>
+    </div>
+  </section>
+  <footer>Feito para o DiagCheck Pro · Depois de fechar, faça o laudo completo no app.</footer>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+// Item: [id, texto, dica, crítico, pergunta?]
+// pergunta: {bom:'sim'|'nao', custo:{k,label,v}, se:'sim'|'nao'}  -> resposta Sim/Não/Não sei
+//   bom = resposta que é boa (a outra sugere "Atenção"); custo entra em "Manutenção que você vai fazer" quando a resposta é ruim (ou "não sei")
+const S=[
+ {id:'antes',t:'Antes de sair de casa',q:'Pelo WhatsApp, no dia anterior',note:'Peça para NÃO ligarem o carro antes de você chegar. Motor frio é onde aparecem os defeitos de corrente, partida e vazamento.',items:[
+  ['placa','Pedir a placa e consultar no DiagCheck (histórico + leilão)','Roubo/furto, Renajud, restrições, multas, recall e leilão/sinistro. Abaixo da FIPE + leilão = desistir.',1],
+  ['crlvfoto','Pedir foto do CRLV','Confira cor, ano de fabricação/modelo e em nome de quem está. Tudo tem que bater com o anúncio.',1],
+  ['manualfoto','Pedir foto dos carimbos de revisão do manual','Datas e km em sequência, ~1 por ano ou a cada 10 mil km.'],
+  ['naoligar','Combinar: carro frio, sem ligar antes de você chegar','Se chegar e o motor estiver quente, desconfie.'],
+  ['kit','Separar o kit','Scanner OBD, lanterna, medidor de espessura de pintura, papel-toalha, luva, ímã, calibrador e o app DiagCheck.']
+ ]},
+ {id:'perguntas',t:'Perguntas ao chegar',q:'Antes de tocar no carro, olho no olho',note:'Marque a resposta (Sim / Não / Não sei) e depois a sua avaliação. Respostas que indicam manutenção pendente já entram com custo estimado no resultado final; dá para ajustar os valores lá.',items:[
+  ['dono','O carro ainda está no nome do dono (não da loja)?','Se for revenda, peça o contato do antigo proprietário.',0,{bom:'sim'}],
+  ['batida','Já bateu ou tem peça repintada?','Peça para ele mostrar quais peças. Depois confirme com o medidor de pintura.',1,{bom:'nao'}],
+  ['cor','A cor é de fábrica (não é envelopamento nem pintura geral)?','Confira com o CRLV e, depois, com o medidor de pintura.',1,{bom:'sim'}],
+  ['revisoes','As revisões foram feitas com o óleo da especificação do manual?','Óleo fora da especificação é o maior inimigo de motor turbo e de injeção direta. Peça as notas.',1,{bom:'sim',custo:{k:'oleo',label:'Troca de óleo + filtro (logo após comprar)',v:450}}],
+  ['ultimatroca','A última troca de óleo foi há menos de 1 ano?','Mais de 1 ano sem trocar, mesmo rodando pouco, é ruim.',0,{bom:'sim',custo:{k:'oleo',label:'Troca de óleo + filtro (logo após comprar)',v:450}}],
+  ['rev60','A próxima revisão grande (velas, filtros) já foi feita?','Veja no manual qual revisão vence na km atual: velas, filtros de ar, cabine e combustível, fluido de freio.',0,{bom:'sim',custo:{k:'rev60',label:'Revisão com velas, filtros e fluido de freio',v:1300}}],
+  ['cambio','O óleo do câmbio já foi trocado?','Em automático ou CVT, a troca preventiva entre 40 e 60 mil km prolonga a vida do câmbio. Em câmbio manual com km baixa, marque N/A.',0,{bom:'sim',custo:{k:'cambio',label:'Troca do óleo do câmbio',v:900}}],
+  ['termo','Já trocou a válvula termostática ou a bomba d\'água?','Peças de desgaste do arrefecimento. Troca com nota fiscal é ponto a favor; se nunca trocou num carro rodado, fique de olho.',0,{bom:'sim'}],
+  ['tampav','O carro já teve vazamento de óleo ou luz de injeção acesa?','Se sim, pergunte o que foi feito e peça a nota.',0,{bom:'nao'}],
+  ['bateria','A bateria tem menos de 3 anos (e é EFB/AGM, se o carro tem start-stop)?','Carro com start-stop exige bateria específica; bateria comum dura pouco nele.',0,{bom:'sim',custo:{k:'bateria',label:'Bateria nova',v:850}}],
+  ['debitos','Tem IPVA, multa ou financiamento em aberto?','Carro alienado só com quitação feita junto com o pagamento. Se tiver débito, lance o valor no campo de custo.',1,{bom:'nao'}],
+  ['transf','O vendedor paga a transferência?','Se não, conte DETRAN + vistoria + cartório.',0,{bom:'sim',custo:{k:'transf',label:'Transferência (DETRAN, vistoria, cartório)',v:600}}],
+  ['garantia','A loja dá garantia de motor e câmbio por escrito?','Garantia de 90 dias é o mínimo legal em revenda (CDC). Peça por escrito no recibo.',0,{bom:'sim'}]
+ ]},
+ {id:'docs',t:'Documentos e procedência',q:'Com o carro parado, antes de ligar',items:[
+  ['crlv','CRLV confere: placa, chassi, cor e ano','Tudo tem que bater com o carro e com a consulta.',1],
+  ['chassi','Chassi gravado nos vidros, etiquetas e plaqueta igual ao documento','Vidro sem gravação ou com número diferente = vidro trocado (batida ou roubo).',1],
+  ['manual','Manual tem carimbos em sequência, com km coerente?','Compare a km dos carimbos com a do painel. Em média um carro roda 10 a 15 mil km por ano; carimbo pulando anos é ponto de atenção.',0,{bom:'sim'}],
+  ['notas','Tem as notas fiscais das revisões?','Confirme o óleo usado nas notas.',0,{bom:'sim'}],
+  ['chave','Tem chave reserva funcionando (abre e dá partida)?','Chave codificada ou presencial é cara de fazer.',0,{bom:'sim',custo:{k:'chave',label:'Chave reserva (cópia + programação)',v:1200}}],
+  ['gm','Consulta na concessionária da marca pelo chassi','Mostra as revisões feitas na rede e recalls pendentes. Pode ser feita por telefone.']
+ ]},
+ {id:'frio',t:'Motor frio, antes de ligar e na partida',q:'Capô aberto, motor frio',note:'Ordem: olhar tudo desligado → ligar → escutar os primeiros segundos → testar a PCV.',items:[
+  ['temp','Motor está frio ao tocar?','Se estiver quente, alguém ligou antes, talvez para esconder barulho de partida.',1,{bom:'sim'}],
+  ['oleo','Óleo na vareta: nível certo, cor âmbar a marrom','Preto grosso = troca vencida. Aspecto leitoso = mistura com água (junta de cabeçote).',1],
+  ['tampaoleo','Tampa do óleo sem borra e sem espuma branca','Borra = óleo vencido por muito tempo.'],
+  ['arref','Reservatório de arrefecimento no nível','Líquido na cor original e limpo. Nível baixo ou só água = vazamento escondido; óleo no reservatório = problema grave.',1],
+  ['termostatica','Sem crosta ou marca de vazamento em mangueiras, válvula termostática e bomba d\'água','Crosta seca da cor do líquido (rosa, verde ou laranja) indica vazamento antigo. Use a lanterna.',1],
+  ['tampavalv','Tampa de válvulas sem óleo escorrendo','Vazamento aqui pode ser junta ressecada ou respiro do cárter (PCV) com problema.'],
+  ['bat','Bateria com data recente e terminais limpos',''],
+  ['partida','Partida pega de primeira, sem chocalho nos primeiros segundos','Barulho metálico rápido ao ligar frio = corrente de comando esticada.',1],
+  ['lenta','Marcha lenta estável, sem fumaça azul ou branca','Fumaça azul = queima óleo (turbo ou anéis). Branca persistente com cheiro doce = líquido.',1],
+  ['pcv','Teste do respiro: motor ligado, tirar a tampa do óleo','Se puxar forte ou assobiar, o respiro (PCV) está com defeito. Se soprar muito vapor ou óleo, pode ser desgaste interno do motor.']
+ ]},
+ {id:'lataria',t:'Lataria, pintura e vidros',q:'De preferência no sol, volta completa no carro',items:[
+  ['espessura','Medidor de espessura em todas as peças','Compare as peças entre si: uma bem mais grossa que as outras (ex.: acima de ~200 µm) indica repintura ou massa.',1],
+  ['tom','Mesmo tom de cor em todas as peças','Olhe de lado, contra a luz. Envelopamento aparece nas bordas e dentro das portas.'],
+  ['vaos','Vãos iguais entre portas, capô e porta-malas',''],
+  ['parafusos','Parafusos de para-lamas, capô e dobradiças sem marca de chave','Marca de chave = peça removida (batida).'],
+  ['borrachas','Borrachas e frisos sem respingo de tinta',''],
+  ['longarinas','Longarinas e assoalho do porta-malas sem solda ou massa','Levante o carpete do porta-malas. Solda aqui = batida forte.',1],
+  ['vidros','Vidros da mesma marca e com datas próximas',''],
+  ['farois','Faróis e lanternas originais, sem embaçado',''],
+  ['brakelight','Terceira luz de freio e lanternas sem trinca','Trinca deixa entrar água no porta-malas.'],
+  ['porta-malas','Porta-malas e poço do estepe secos, sem ferrugem','Água ali = terceira luz trincada ou borracha ruim.'],
+  ['parabrisa','Para-brisa sem trinca','']
+ ]},
+ {id:'rodas',t:'Rodas, pneus e freios',q:'Agachado, com lanterna',items:[
+  ['dot','Os pneus têm menos de 5 anos? (data DOT)','Os 4 últimos dígitos = semana/ano. Pneu com mais de 5 anos está vencido, mesmo com sulco bom.',0,{bom:'sim',custo:{k:'pneus',label:'Jogo de 4 pneus',v:2400}}],
+  ['desgaste','Desgaste uniforme nos pneus','Gasto só na borda = alinhamento ou suspensão.'],
+  ['rodas','Rodas sem amassado ou trinca (olhe por dentro)',''],
+  ['discos','Discos de freio sem degrau grande na borda','']
+ ]},
+ {id:'interior',t:'Interior e eletrônica',q:'Com o motor ligado',note:'Ligue tudo de uma vez: ar, rádio, faróis. Falha de módulo eletrônico aparece como luz piscando, trava falhando ou ar desligando sozinho.',items:[
+  ['usodesgaste','Desgaste de banco, volante, pedais e manopla combina com a km do painel','Pedal liso ou banco afundado com km baixa = hodômetro suspeito.'],
+  ['enchente','Sem cheiro de mofo; carpete seco; cinto limpo puxado até o fim','Barro no cinto ou ferrugem nos trilhos do banco = enchente.',1],
+  ['luzes','Nenhuma luz de alerta no painel depois da partida','',1],
+  ['ar','Ar gela bem e o painel digital funciona','Na saída central, tem que ficar bem frio em poucos minutos.'],
+  ['mylink','Multimídia: tela, bluetooth, Android Auto/CarPlay, GPS',''],
+  ['camera','Câmera de ré e sensores de estacionamento',''],
+  ['inducao','Tomadas USB e carregador (se tiver)',''],
+  ['vidrostravas','Vidros, travas e retrovisores elétricos (incluindo rebatimento)',''],
+  ['automaticos','Faróis automáticos, limpador automático e faróis de neblina',''],
+  ['keyless','Chave: trava à distância e dá partida (sem chave, se tiver)',''],
+  ['pacote','Todos os opcionais do anúncio estão no carro e funcionam?','Confira a lista do anúncio item por item (teto, sensores, alertas, bancos elétricos).',0,{bom:'sim'}],
+  ['lampadas','Todas as lâmpadas externas e a buzina','']
+ ]},
+ {id:'embaixo',t:'Embaixo do carro',q:'Lanterna, de preferência num elevador ou rampa',items:[
+  ['vazoleo','Sem vazamento de óleo do motor (cárter, retentores)','',1],
+  ['vazcambio','Sem vazamento de óleo do câmbio','',1],
+  ['vazagua','Sem vazamento de líquido de arrefecimento','Cristal rosa seco nas mangueiras e na bomba d\'água.'],
+  ['coifas','Coifas das homocinéticas inteiras',''],
+  ['escape','Escapamento sem furo e com catalisador',''],
+  ['amort','Amortecedores sem óleo escorrendo; buchas inteiras',''],
+  ['assoalho','Assoalho sem amassado forte, sem solda e sem ferrugem','']
+ ]},
+ {id:'scanner',t:'Scanner OBD',q:'Motor ligado, antes do test drive',note:'Leia os códigos ATIVOS e os MEMORIZADOS de todos os módulos. Monitores de prontidão (readiness) zerados indicam que alguém apagou os códigos há pouco tempo.',items:[
+  ['codmotor','Motor sem códigos (ativos ou memorizados)','',1],
+  ['p1101','Sem códigos de mistura (P0171/P0172) ou de respiro do cárter','Mistura pobre/rica: entrada falsa de ar, PCV, bico ou sensor.'],
+  ['p0299','Sem P0299/P0234 (pressão do turbo), se for turbo','Turbo é peça cara. Em motor aspirado, marque N/A.',1],
+  ['misfire','Sem P0300–P0304 (falha de ignição)','Vela, bobina ou carbonização.'],
+  ['p0128','Sem P0128 (válvula termostática)',''],
+  ['modulos','Câmbio, airbag, ABS e carroceria (BCM) sem códigos','Airbag com código memorizado pode ser batida.',1],
+  ['readiness','Monitores de prontidão completos','Todos incompletos = códigos apagados recentemente.',1],
+  ['trims','Ajustes de combustível (fuel trim) entre −10% e +10%','Fora disso: entrada falsa de ar, bico ou sensor.'],
+  ['tempmotor','Temperatura do motor sobe e estabiliza (~90–105 °C)','']
+ ]},
+ {id:'rodagem',t:'Teste de rodagem',q:'No mínimo 20 minutos: trânsito, retomada e lombada',note:'Rádio desligado e vidros fechados na primeira parte, para ouvir o carro.',items:[
+  ['saidaleve','Saída leve sem trepidar e sem tranco da 1ª para a 2ª','Automático: trepidação = conversor ou câmbio. Manual: embreagem trepidando ou patinando.',1],
+  ['turbo','Acelerada forte: o motor responde firme, sem falhar','Em turbo, a força chega cedo (2.000–2.500 rpm). Demora, falha ou chiado metálico = problema.',1],
+  ['retomada','Retomada de 40 a 80 km/h em D, sem hesitar',''],
+  ['trocas','Trocas e reduções suaves em todas as marchas','Manual: engates sem arranhar e embreagem sem patinar.',1],
+  ['re','Ré engata rápido, sem pancada',''],
+  ['park','Câmbio: P e N funcionam e não aparece mensagem de erro no painel','Em manual, marque N/A.'],
+  ['startstop','Start-stop desliga e religa normalmente no sinal (se tiver)',''],
+  ['direcao','Direção reta, sem puxar e sem barulho ao esterçar',''],
+  ['suspensao','Lombada e calçamento sem estalos ou batidas',''],
+  ['freio','Frenagem reta, sem pedal trepidando',''],
+  ['ponteiro','Temperatura estável o tempo todo e a ventoinha liga','Qualquer subida no ponteiro = desistir.',1]
+ ]},
+ {id:'quente',t:'Depois do test drive (motor quente)',q:'Parado, motor ligado e depois desligado',items:[
+  ['gotejo','Olhar embaixo de novo: nada pingando','Vazamento pequeno aparece com o motor quente.',1],
+  ['cheiro','Sem cheiro doce (líquido) ou de óleo queimado',''],
+  ['nivel','Nível do reservatório de arrefecimento não baixou','',1],
+  ['lentaquente','Marcha lenta quente estável com o ar ligado',''],
+  ['scan2','Scanner de novo: nenhum código novo','',1]
+ ]}
+];
+const KEY='vistoria-compra-v2';
+let st={i:{},m:{},n:{},mc:{}};
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.i)st=s}catch(e){}
+st.mc=st.mc||{};
+const DEF_N={pedido:0,media:0,fipe:0,bonus:0};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const n=parseFloat(String(v??'').replace(/[^\d,]/g,'').replace(',','.'));return isNaN(n)?0:n};
+const brl=n=>'R$ '+Math.round(n).toLocaleString('pt-BR');
+const ALL=[];S.forEach(s=>s.items.forEach(it=>ALL.push({sec:s,id:s.id+'.'+it[0],t:it[1],h:it[2],c:!!it[3],q:it[4]||null})));
+const BYID=Object.fromEntries(ALL.map(a=>[a.id,a]));
+const LBL={ok:'OK',warn:'Atenção',bad:'Problema',na:'N/A'};
+const RESP={sim:'Sim',nao:'Não',ns:'Não sei'};
+const ruim=(q,r)=>!!r&&r!==q.bom; // "não sei" conta como ruim
+
+function itemHTML(s,it){const id=s.id+'.'+it[0];const v=st.i[id]||{};const q=it[4];
+  return `<div class="item" data-id="${id}" data-s="${v.s||''}" data-r="${v.r||''}">
+    <div class="it">${it[3]?'<span class="crit">CRÍTICO</span>':''}<span>${esc(it[1])}</span></div>
+    ${it[2]?`<p class="hint">${esc(it[2])}</p>`:''}
+    ${q?`<div class="yn" role="group" aria-label="Resposta">${['sim','nao','ns'].map(x=>`<button type="button" data-r="${x}" aria-pressed="${v.r===x}" class="${x===q.bom?'g':x==='ns'?'u':'b'}">${RESP[x]}</button>`).join('')}${q.custo?`<span class="costtag">${ruim(q,v.r)?'+ '+brl(st.mc[q.custo.k]??q.custo.v)+' na manutenção':'gera custo se a resposta for ruim'}</span>`:''}</div>`:''}
+    <div class="seg">${['ok','warn','bad','na'].map(x=>`<button type="button" data-v="${x}" aria-pressed="${v.s===x}">${LBL[x]}</button>`).join('')}</div>
+    <button type="button" class="notebtn">+ anotação</button>
+    <div class="more"><textarea rows="1" data-k="n" placeholder="O que viu?">${esc(v.n||'')}</textarea><div class="money"><span>R$</span><input data-k="c" inputmode="numeric" placeholder="custo" value="${v.c?esc(Math.round(v.c).toLocaleString('pt-BR')):''}"></div></div>
+  </div>`}
+function render(){
+  $('#secs').innerHTML=S.map((s,k)=>`<section class="sec" id="s-${s.id}">
+    <div class="sh"><div class="n">${String(k+1).padStart(2,'0')}</div><h2>${esc(s.t)}</h2><p>${esc(s.q)}</p></div>
+    ${s.note?`<div class="sec-note">${esc(s.note)}</div>`:''}
+    ${s.items.map(it=>itemHTML(s,it)).join('')}
+  </section>`).join('');
+  $('#chips').innerHTML=S.map((s,k)=>`<button class="chip" data-go="${s.id}"><span class="d"></span><b>${k+1}</b>${esc(k===0?'Antes':s.t.replace(/\s*\(.*\)/,'').split(',')[0])}</button>`).join('')+'<button class="chip" data-go="resultado"><b>✓</b>Resultado</button>';
+  document.querySelectorAll('[data-m]').forEach(el=>{if(st.m[el.dataset.m]!=null)el.value=st.m[el.dataset.m]});
+  if(!st.m.data){$('#mData').valueAsDate=new Date()}
+  document.querySelectorAll('[data-n]').forEach(el=>{const v=st.n[el.dataset.n]??DEF_N[el.dataset.n];el.value=v?Math.round(v).toLocaleString('pt-BR'):''});
+  update();
+}
+function manutencao(){ // custos únicos por chave
+  const m={};ALL.forEach(a=>{const v=st.i[a.id];if(!a.q||!a.q.custo||!v||!ruim(a.q,v.r))return;const k=a.q.custo.k;
+    if(!m[k])m[k]={k,label:a.q.custo.label,v:st.mc[k]??a.q.custo.v,de:[]};m[k].de.push(`${a.t} → ${RESP[v.r]}`)});
+  return Object.values(m);
+}
+function update(){
+  let ok=0,warn=0,bad=0,na=0,custo=0;const flags=[];let critBad=0;
+  ALL.forEach(a=>{const v=st.i[a.id]||{};if(v.s==='ok')ok++;else if(v.s==='warn')warn++;else if(v.s==='bad')bad++;else if(v.s==='na')na++;
+    if(v.s==='warn'||v.s==='bad'){custo+=num(v.c);flags.push({a,v});if(v.s==='bad'&&a.c)critBad++}});
+  const man=manutencao();const custoMan=man.reduce((t,x)=>t+num(x.v),0);const custoTot=custo+custoMan;
+  const done=ok+warn+bad+na,tot=ALL.length,left=tot-done,p=Math.round(done/tot*100);
+  $('#pct').textContent=p+'%';$('#barFill').style.width=p+'%';
+  $('#cOk').textContent=ok;$('#cWarn').textContent=warn;$('#cBad').textContent=bad;$('#cLeft').textContent=left;
+  $('#hdrCarro').textContent=($('#mCarro').value||'Novo veículo').split('·')[0].trim();
+  S.forEach(s=>{const ch=document.querySelector(`.chip[data-go="${s.id}"]`);if(!ch)return;const ids=s.items.map(it=>s.id+'.'+it[0]);
+    const all=ids.every(id=>st.i[id]&&st.i[id].s);const fl=ids.some(id=>st.i[id]&&(st.i[id].s==='bad'||st.i[id].s==='warn'));
+    ch.classList.toggle('done',all&&!fl);ch.classList.toggle('flag',fl)});
+  const V=$('#verdict'),T=$('#verdictTxt');
+  if(critBad){V.className='verdict bad';V.textContent='Não compre';T.textContent=`${critBad} problema(s) em item crítico. Só volte a considerar com conserto feito pelo vendedor e garantia por escrito.`}
+  else if(bad||warn||custoMan){V.className='verdict warn';V.textContent='Negocie';T.textContent=`Nada eliminatório, mas há ${warn+bad} ponto(s) da vistoria${man.length?` e ${man.length} manutenção(ões) pendente(s)`:''} para usar na negociação${custoTot?` (≈ ${brl(custoTot)})`:''}.`}
+  else if(left>tot*.4){V.className='verdict';V.textContent='Vistoria em andamento';T.textContent='Siga as etapas; o veredito aparece conforme você marca.'}
+  else{V.className='verdict ok';V.textContent='Compra recomendada';T.textContent=left?`Tudo certo até aqui. Faltam ${left} item(ns).`:'Tudo certo em todas as etapas. Feche no preço-alvo.'}
+  $('#flags').innerHTML=flags.sort((x,y)=>(y.v.s==='bad')-(x.v.s==='bad')).map(({a,v})=>`<li><span class="dot" style="background:${v.s==='bad'?'#ff8a80':'#f0b450'}"></span><span>${esc(a.t)}${a.q&&v.r?` <b class="ans">${RESP[v.r]}</b>`:''}${v.n?`<small>${esc(v.n)}</small>`:''}<small>${esc(a.sec.t)}</small></span><span class="mono">${num(v.c)?brl(num(v.c)):''}</span></li>`).join('')||'<li class="empty">Nenhum ponto negativo marcado na vistoria.</li>';
+  const mb=$('#manBox');
+  if(man.length){mb.hidden=false;
+    const cur=document.activeElement&&document.activeElement.dataset?document.activeElement.dataset.mc:null;
+    if(!cur){$('#manList').innerHTML=man.map(x=>`<div class="mrow"><div><b>${esc(x.label)}</b><small>${x.de.map(esc).join('<br>')}</small></div><div class="money"><span>R$</span><input data-mc="${x.k}" inputmode="numeric" value="${Math.round(num(x.v)).toLocaleString('pt-BR')}"></div></div>`).join('')}
+    $('#manTot').textContent=brl(custoMan)}
+  else{mb.hidden=true;$('#manList').innerHTML=''}
+  const N=k=>st.n[k]??DEF_N[k];const pedido=N('pedido'),media=N('media'),fipe=N('fipe'),bonus=N('bonus');
+  const base=media||fipe||pedido;const justo=fipe?Math.min(base+bonus,fipe):base+bonus;const abertura=Math.max(0,base-custoTot);const alvo=Math.max(0,justo-custoTot);const teto=pedido?Math.min(pedido,alvo+1000):alvo+1000;
+  if(!base){$('#negRows').innerHTML=`<div><span style="opacity:.75">Preencha o preço pedido, a média de mercado ou a FIPE para calcular a oferta.</span></div>${custoTot?`<div class="hl"><span>Total a descontar</span><b>${brl(custoTot)}</b></div>`:''}`;save();return}
+  $('#negRows').innerHTML=`<div><span>Preço justo (média + bônus)</span><b>${brl(justo)}</b></div>
+   ${custo?`<div><span>Problemas encontrados na vistoria</span><b>− ${brl(custo)}</b></div>`:''}
+   ${custoMan?`<div><span>Manutenção que você vai fazer</span><b>− ${brl(custoMan)}</b></div>`:''}
+   <div><span>Primeira oferta</span><b>${brl(abertura)}</b></div>
+   <div class="hl"><span>Fechar até</span><b>${brl(alvo)}</b></div>
+   <div><span>Teto (só com garantia, pneus ou transferência inclusos)</span><b>${brl(teto)}</b></div>
+   <div><span>Desconto sobre o pedido</span><b>${pedido?Math.round((1-alvo/pedido)*100):0}%</b></div>
+   <div><span>Custo real do carro (fechar até + manutenção)</span><b>${brl(alvo+custoMan)}</b></div>`;
+  save();
+}
+function resumo(){
+  const N=k=>st.n[k]??DEF_N[k];let custo=0;const L=[];
+  ALL.forEach(a=>{const v=st.i[a.id];if(v&&(v.s==='warn'||v.s==='bad')){custo+=num(v.c);L.push(`${v.s==='bad'?'🔴':'🟡'} ${a.t}${a.q&&v.r?' → '+RESP[v.r]:''}${v.n?' — '+v.n:''}${num(v.c)?' ('+brl(num(v.c))+')':''}`)}});
+  const man=manutencao();const cm=man.reduce((t,x)=>t+num(x.v),0);const tot=custo+cm;
+  const base=N('media')||N('fipe')||N('pedido');const justo=N('fipe')?Math.min(base+N('bonus'),N('fipe')):base+N('bonus');
+  return `*Vistoria ${$('#mCarro').value||'Veículo'}*${st.m.placa?'\nPlaca: '+st.m.placa.toUpperCase():''}\n\n*${$('#verdict').textContent}*\n${$('#verdictTxt').textContent}\n\n${L.length?L.join('\n'):'✅ Nenhum ponto negativo marcado.'}${man.length?'\n\n*Manutenção pendente*\n'+man.map(x=>`🔧 ${x.label}: ${brl(num(x.v))}`).join('\n'):''}${base?`\n\nPedido: ${brl(N('pedido'))}\nPrimeira oferta: ${brl(Math.max(0,base-tot))}\nFechar até: ${brl(Math.max(0,justo-tot))}`:(tot?`\n\nTotal a descontar: ${brl(tot)}`:'')}`;
+}
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1800)}
+function refreshItem(item){const id=item.dataset.id;const a=BYID[id];const sec=S.find(s=>s.id===a.sec.id);const it=sec.items.find(x=>sec.id+'.'+x[0]===id);
+  const open=item.classList.contains('open');const tmp=document.createElement('div');tmp.innerHTML=itemHTML(sec,it);const n=tmp.firstElementChild;if(open)n.classList.add('open');item.replaceWith(n);return n}
+
+document.addEventListener('click',e=>{
+  const r=e.target.closest('.yn button');
+  if(r){let item=r.closest('.item');const id=item.dataset.id;const a=BYID[id];const v=st.i[id]||(st.i[id]={});const was=v.r;v.r=v.r===r.dataset.r?'':r.dataset.r;
+    // sugere a avaliação se ainda não foi marcada (ou se foi sugerida antes)
+    if(!v.s||v.auto){if(!v.r){if(v.auto){v.s='';v.auto=false}}else{v.s=ruim(a.q,v.r)?'warn':'ok';v.auto=true}}
+    refreshItem(item);update();return}
+  const b=e.target.closest('.seg button');
+  if(b){const item=b.closest('.item');const id=item.dataset.id;const v=st.i[id]||(st.i[id]={});v.s=v.s===b.dataset.v?'':b.dataset.v;v.auto=false;
+    item.dataset.s=v.s||'';item.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.v===v.s)));update();
+    if((v.s==='warn'||v.s==='bad')&&!BYID[id].q){const ta=item.querySelector('textarea');setTimeout(()=>ta&&!ta.value&&ta.focus({preventScroll:true}),50)}return}
+  const nb=e.target.closest('.notebtn');if(nb){const it=nb.closest('.item');it.classList.add('open');it.querySelector('textarea').focus();return}
+  const g=e.target.closest('[data-go]');if(g){document.getElementById(g.dataset.go==='resultado'?'resultado':'s-'+g.dataset.go).scrollIntoView({behavior:'smooth'});return}
+});
+document.addEventListener('input',e=>{const el=e.target;
+  if(el.dataset.k){const id=el.closest('.item').dataset.id;const v=st.i[id]||(st.i[id]={});v[el.dataset.k]=el.dataset.k==='c'?num(el.value):el.value;update();return}
+  if(el.dataset.mc){st.mc[el.dataset.mc]=num(el.value);update();return}
+  if(el.dataset.m){st.m[el.dataset.m]=el.value;update();return}
+  if(el.dataset.n){st.n[el.dataset.n]=num(el.value);update()}
+});
+document.addEventListener('focusout',e=>{const el=e.target;if((el.dataset.k==='c'||el.dataset.n||el.dataset.mc)&&el.value){el.value=Math.round(num(el.value)).toLocaleString('pt-BR')}
+  if(el.dataset.mc){document.querySelectorAll('.item').forEach(it=>{const a=BYID[it.dataset.id];if(a&&a.q&&a.q.custo&&a.q.custo.k===el.dataset.mc)refreshItem(it)});setTimeout(update,0)}});
+$('#btnShare').onclick=async()=>{const t=resumo();if(navigator.share){try{await navigator.share({text:t});return}catch(e){if(e.name==='AbortError')return}}window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')};
+$('#btnCopy').onclick=async()=>{try{await navigator.clipboard.writeText(resumo());toast('Resumo copiado')}catch(e){toast('Não deu para copiar')}};
+$('#btnReset').onclick=()=>{if(!confirm('Apagar todas as marcações e começar uma nova vistoria?'))return;st={i:{},m:{carro:st.m.carro},n:st.n,mc:st.mc};save();render();window.scrollTo(0,0);toast('Vistoria zerada')};
+render();
+</script>
+</body>
+</html>
