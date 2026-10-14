@@ -113,6 +113,25 @@ section.sec{margin:30px 0 0}
 .actions{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
 .btn{flex:1 1 140px;min-height:46px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:none;color:inherit;font:600 15px Archivo,sans-serif;cursor:pointer;padding:0 14px}
 .btn.pri{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.yn{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:12px 0 0}
+.yn button{font:600 13px Archivo,sans-serif;min-height:40px;padding:0 16px;border-radius:999px;border:1.5px dashed var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.yn button[aria-pressed="true"]{border-style:solid;background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.yn button[aria-pressed="true"].b,.yn button[aria-pressed="true"].u{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.costtag{font:500 11px "JetBrains Mono",monospace;color:var(--ink3);margin-left:2px}
+.item[data-r]:not([data-r=""]) .costtag{color:var(--ink2)}
+.seg{margin-top:10px}
+.yn+.seg{border-top:1px dashed var(--line);padding-top:10px}
+.ans{font:500 11px "JetBrains Mono",monospace;border:1px solid rgba(255,255,255,.3);border-radius:4px;padding:1px 5px;margin-left:4px;opacity:.85}
+.flags li.empty{display:block;opacity:.65}
+.man{margin-top:16px;border-top:2px solid var(--acc);padding-top:14px}
+.man h3{margin:0 0 4px;font-size:17px}
+.man p{font-size:14px;margin:0 0 8px}
+.mrow{display:grid;grid-template-columns:minmax(0,1fr) 128px;gap:10px;align-items:center;padding:10px 0;border-top:1px solid rgba(255,255,255,.12)}
+.mrow b{font-weight:600;font-size:15px}.mrow small{display:block;opacity:.6;font-size:12px}
+.mrow .money{position:relative}.mrow .money span{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.6;font-size:14px}
+.mrow input{padding-left:32px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:#f1ede4}
+.mtot{display:flex;justify-content:space-between;padding:10px 0 0;border-top:1px dashed rgba(255,255,255,.2);font-weight:700}
+.mtot b{font-family:"JetBrains Mono",monospace;font-weight:500;color:var(--acc)}
 footer{color:var(--ink3);font-size:13px;padding:24px 0 60px;text-align:center}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--acc);color:var(--acc-ink);padding:10px 16px;border-radius:999px;font-weight:600;opacity:0;transition:.25s;pointer-events:none;z-index:20}
 .toast.on{opacity:1;transform:translateX(-50%)}
@@ -134,7 +153,7 @@ footer{color:var(--ink3);font-size:13px;padding:24px 0 60px;text-align:center}
 <main class="wrap">
   <div class="intro">
     <h1>Checklist do Cruze, na ordem da visita</h1>
-    <p>Siga as etapas de cima para baixo. Marque cada item; se algo não estiver certo, anote e coloque quanto custa resolver. No fim sai o veredito e o preço para negociar. Tudo fica salvo neste celular.</p>
+    <p>Siga as etapas de cima para baixo. Nas perguntas, marque a resposta (Sim / Não / Não sei) e a sua avaliação. Se algo não estiver certo, anote e coloque quanto custa resolver; manutenção que o dono não fez já entra com custo estimado. No fim sai o veredito e o preço para negociar. Tudo fica salvo neste celular.</p>
     <div class="meta">
       <div class="full"><label for="mCarro">Carro / anúncio</label><input id="mCarro" data-m="carro" value="Chevrolet Cruze LTZ 1.4 Turbo 2018 · 58.007 km · Recife"></div>
       <div><label for="mPlaca">Placa</label><input id="mPlaca" data-m="placa" placeholder="ABC1D23" autocapitalize="characters"></div>
@@ -162,6 +181,12 @@ footer{color:var(--ink3);font-size:13px;padding:24px 0 60px;text-align:center}
       <div><b id="cLeft">0</b><span>Faltam</span></div>
     </div>
     <ul class="flags" id="flags"></ul>
+    <div class="man" id="manBox" hidden>
+      <h3>Manutenção que você vai fazer</h3>
+      <p style="opacity:.75">Coisas que o dono ainda não fez e que vão sair do seu bolso logo depois da compra. Ajuste os valores com o orçamento real.</p>
+      <div id="manList"></div>
+      <div class="mtot"><span>Total da manutenção</span><b id="manTot">R$ 0</b></div>
+    </div>
     <div class="neg">
       <h3>Quanto oferecer</h3>
       <div class="ins">
@@ -183,6 +208,9 @@ footer{color:var(--ink3);font-size:13px;padding:24px 0 60px;text-align:center}
 <div class="toast" id="toast"></div>
 
 <script>
+// Item: [id, texto, dica, crítico, pergunta?]
+// pergunta: {bom:'sim'|'nao', custo:{k,label,v}, se:'sim'|'nao'}  -> resposta Sim/Não/Não sei
+//   bom = resposta que é boa (a outra sugere "Atenção"); custo entra em "Manutenção que você vai fazer" quando a resposta é ruim (ou "não sei")
 const S=[
  {id:'antes',t:'Antes de sair de casa',q:'Pelo WhatsApp, no dia anterior',note:'Peça para NÃO ligarem o carro antes de você chegar. Motor frio é onde aparecem os defeitos de corrente, partida e vazamento.',items:[
   ['placa','Pedir a placa e consultar no DiagCheck (histórico + leilão)','Roubo/furto, Renajud, restrições, multas, recall e leilão/sinistro. Abaixo da FIPE + leilão = desistir.',1],
@@ -191,28 +219,31 @@ const S=[
   ['naoligar','Combinar: carro frio, sem ligar antes de você chegar','Se chegar e o motor estiver quente, desconfie.'],
   ['kit','Separar o kit','Scanner OBD, lanterna, medidor de espessura de pintura, papel-toalha, luva, ímã, calibrador e o app DiagCheck.']
  ]},
- {id:'perguntas',t:'Perguntas ao chegar',q:'Antes de tocar no carro, olho no olho',note:'Anote as respostas. Depois compare com o que o carro e o scanner mostrarem: resposta que não bate é o maior sinal de alerta.',items:[
-  ['dono','O carro está no nome da loja ou do dono? Posso falar com o dono?','O anúncio diz "único dono". Se for revenda, peça o contato do antigo proprietário.'],
-  ['porque','Por que está sendo vendido? Há quanto tempo está à venda?',''],
-  ['batida','Já bateu? Tem peça repintada? A cor verde é original?','Não lembro de verde no catálogo do Cruze 2018: pode ser cor rara, envelopamento ou repintura.',1],
-  ['revisoes','Onde fez as revisões e qual óleo foi usado?','Tem que ser 5W-30 dexos1 (Gen2/Gen3). Óleo genérico em turbo de injeção direta é risco de pré-ignição.',1],
-  ['ultimatroca','Quando foi a última troca de óleo (data e km)?','Mais de 1 ano sem trocar, mesmo rodando pouco, é ruim.'],
-  ['trocas','Já trocou bomba d\'água, válvula termostática, tampa de válvulas ou turbo?','São os defeitos clássicos. Troca com nota fiscal é ponto a favor.'],
-  ['cambio','O óleo do câmbio já foi trocado?','Não é obrigatório, mas perto dos 60 mil km é recomendado.'],
-  ['bateria','Quando trocou a bateria? É do tipo EFB/AGM?','O start-stop exige bateria específica.'],
-  ['debitos','Tem IPVA, multa ou financiamento em aberto?','Carro alienado só com quitação feita junto com o pagamento.',1],
-  ['garantia','A loja dá garantia de motor e câmbio? Quem paga a transferência?','Garantia de 90 dias é o mínimo legal em revenda (CDC).']
+ {id:'perguntas',t:'Perguntas ao chegar',q:'Antes de tocar no carro, olho no olho',note:'Marque a resposta (Sim / Não / Não sei) e depois a sua avaliação. Respostas que indicam manutenção pendente já entram com custo estimado no resultado final; dá para ajustar os valores lá.',items:[
+  ['dono','O carro ainda está no nome do dono (não da loja)?','O anúncio diz "único dono". Se for revenda, peça o contato do antigo proprietário.',0,{bom:'sim'}],
+  ['batida','Já bateu ou tem peça repintada?','Peça para ele mostrar quais peças. Depois confirme com o medidor de pintura.',1,{bom:'nao'}],
+  ['cor','A cor verde é de fábrica (não é envelopamento nem pintura)?','Não lembro de verde no catálogo do Cruze 2018: pode ser cor rara, envelopamento ou repintura. Confira no CRLV.',1,{bom:'sim'}],
+  ['revisoes','As revisões foram feitas com óleo dexos1 (5W-30)?','Óleo genérico em turbo de injeção direta é risco de pré-ignição. Peça as notas.',1,{bom:'sim',custo:{k:'oleo',label:'Troca de óleo dexos1 + filtro (logo após comprar)',v:450}}],
+  ['ultimatroca','A última troca de óleo foi há menos de 1 ano?','Mais de 1 ano sem trocar, mesmo rodando pouco, é ruim.',0,{bom:'sim',custo:{k:'oleo',label:'Troca de óleo dexos1 + filtro (logo após comprar)',v:450}}],
+  ['rev60','Já fez a revisão dos 60 mil km?','Com 58 mil km, ela vence agora: velas, filtros de ar, cabine e combustível, fluido de freio.',0,{bom:'sim',custo:{k:'rev60',label:'Revisão dos 60 mil km (velas, filtros, fluido de freio)',v:1300}}],
+  ['cambio','O óleo do câmbio já foi trocado?','Não é obrigatório pelo manual, mas perto dos 60 mil km é recomendado.',0,{bom:'sim',custo:{k:'cambio',label:'Troca do fluido do câmbio automático',v:900}}],
+  ['termo','Já trocou a válvula termostática ou a bomba d\'água?','Defeito clássico do Cruze. Se não trocou, não é custo agora, mas fique de olho no reservatório.',0,{bom:'sim'}],
+  ['tampav','Já trocou a tampa de válvulas (PCV)?','Se não trocou e o teste da PCV der problema, o custo entra na vistoria.',0,{bom:'sim'}],
+  ['bateria','A bateria tem menos de 3 anos e é do tipo EFB/AGM?','O start-stop exige bateria específica; bateria comum dura pouco.',0,{bom:'sim',custo:{k:'bateria',label:'Bateria EFB para start-stop',v:850}}],
+  ['debitos','Tem IPVA, multa ou financiamento em aberto?','Carro alienado só com quitação feita junto com o pagamento. Se tiver débito, lance o valor no campo de custo.',1,{bom:'nao'}],
+  ['transf','O vendedor paga a transferência?','Se não, conte DETRAN + vistoria + cartório.',0,{bom:'sim',custo:{k:'transf',label:'Transferência (DETRAN, vistoria, cartório)',v:600}}],
+  ['garantia','A loja dá garantia de motor e câmbio por escrito?','Garantia de 90 dias é o mínimo legal em revenda (CDC). Peça por escrito no recibo.',0,{bom:'sim'}]
  ]},
  {id:'docs',t:'Documentos e procedência',q:'Com o carro parado, antes de ligar',items:[
   ['crlv','CRLV confere: placa, chassi, cor e ano','Tudo tem que bater com o carro e com a consulta.',1],
   ['chassi','Chassi gravado nos vidros, etiquetas e plaqueta igual ao documento','Vidro sem gravação ou com número diferente = vidro trocado (batida ou roubo).',1],
-  ['manual','Manual com carimbos em sequência e km coerente','58 mil km em ~8 anos = uns 7 mil por ano. Carimbo pulando anos é ponto de atenção.'],
-  ['notas','Notas fiscais das revisões','Confirme o óleo usado nas notas.'],
-  ['chave','Chave reserva abre e dá partida','A chave do Cruze é cara de fazer.'],
+  ['manual','Manual tem carimbos em sequência, com km coerente?','58 mil km em ~8 anos = uns 7 mil por ano. Carimbo pulando anos é ponto de atenção.',0,{bom:'sim'}],
+  ['notas','Tem as notas fiscais das revisões?','Confirme o óleo usado nas notas.',0,{bom:'sim'}],
+  ['chave','Tem chave reserva funcionando (abre e dá partida)?','A chave presencial do Cruze é cara de fazer.',0,{bom:'sim',custo:{k:'chave',label:'Chave reserva presencial (cópia + programação)',v:1200}}],
   ['gm','Consulta na concessionária GM pelo chassi','Mostra as revisões feitas na rede e recalls pendentes. Pode ser feita por telefone.']
  ]},
  {id:'frio',t:'Motor frio, antes de ligar e na partida',q:'Capô aberto, motor frio',note:'Ordem: olhar tudo desligado → ligar → escutar os primeiros segundos → testar a PCV.',items:[
-  ['temp','Motor está frio ao tocar?','Se estiver quente, alguém ligou antes, talvez para esconder barulho de partida.',1],
+  ['temp','Motor está frio ao tocar?','Se estiver quente, alguém ligou antes, talvez para esconder barulho de partida.',1,{bom:'sim'}],
   ['oleo','Óleo na vareta: nível certo, cor âmbar a marrom','Preto grosso = troca vencida. Aspecto leitoso = mistura com água (junta de cabeçote).',1],
   ['tampaoleo','Tampa do óleo sem borra e sem espuma branca','Borra = óleo vencido por muito tempo.'],
   ['arref','Reservatório de arrefecimento no nível e líquido rosa limpo','Nível baixo ou só água = vazamento escondido. Óleo no reservatório = problema grave.',1],
@@ -237,7 +268,7 @@ const S=[
   ['parabrisa','Para-brisa sem trinca','']
  ]},
  {id:'rodas',t:'Rodas, pneus e freios',q:'Agachado, com lanterna',items:[
-  ['dot','Data (DOT) dos 4 pneus e do estepe','Os 4 dígitos: semana/ano. Com mais de 5 anos, conte a troca (uns R$ 2.400 o jogo 215/50 R17).'],
+  ['dot','Os pneus têm menos de 5 anos? (data DOT)','Os 4 últimos dígitos = semana/ano. Pneu original de 2017/2018 já está vencido.',0,{bom:'sim',custo:{k:'pneus',label:'Jogo de 4 pneus 215/50 R17',v:2400}}],
   ['desgaste','Desgaste uniforme nos pneus','Gasto só na borda = alinhamento ou suspensão.'],
   ['rodas','Rodas sem amassado ou trinca (olhe por dentro)',''],
   ['discos','Discos de freio sem degrau grande na borda','']
@@ -253,7 +284,7 @@ const S=[
   ['vidrostravas','Vidros, travas e retrovisores elétricos (incluindo rebatimento)',''],
   ['automaticos','Faróis automáticos, limpador automático e faróis de neblina',''],
   ['keyless','Entrada e partida sem chave',''],
-  ['pacote','Tem o pacote opcional? (alerta de ponto cego no retrovisor, teto solar)','Só para saber o que está levando. Se tiver, teste cada função.'],
+  ['pacote','Tem o pacote opcional? (alerta de ponto cego no retrovisor, teto solar)','Só para saber o que está levando. Se tiver, teste cada função.',0,{bom:'sim'}],
   ['lampadas','Todas as lâmpadas externas e a buzina','']
  ]},
  {id:'embaixo',t:'Embaixo do carro',q:'Lanterna, de preferência num elevador ou rampa',items:[
@@ -298,87 +329,118 @@ const S=[
  ]}
 ];
 const KEY='vistoria-cruze-v1';
-let st={i:{},m:{},n:{}};
+let st={i:{},m:{},n:{},mc:{}};
 try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.i)st=s}catch(e){}
+st.mc=st.mc||{};
 const DEF_N={pedido:84990,media:77000,fipe:85030,bonus:4500};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const num=v=>{const n=parseFloat(String(v??'').replace(/[^\d,]/g,'').replace(',','.'));return isNaN(n)?0:n};
 const brl=n=>'R$ '+Math.round(n).toLocaleString('pt-BR');
-const ALL=[];S.forEach(s=>s.items.forEach(it=>ALL.push({sec:s,id:s.id+'.'+it[0],t:it[1],h:it[2],c:!!it[3]})));
+const ALL=[];S.forEach(s=>s.items.forEach(it=>ALL.push({sec:s,id:s.id+'.'+it[0],t:it[1],h:it[2],c:!!it[3],q:it[4]||null})));
+const BYID=Object.fromEntries(ALL.map(a=>[a.id,a]));
 const LBL={ok:'OK',warn:'Atenção',bad:'Problema',na:'N/A'};
+const RESP={sim:'Sim',nao:'Não',ns:'Não sei'};
+const ruim=(q,r)=>!!r&&r!==q.bom; // "não sei" conta como ruim
 
+function itemHTML(s,it){const id=s.id+'.'+it[0];const v=st.i[id]||{};const q=it[4];
+  return `<div class="item" data-id="${id}" data-s="${v.s||''}" data-r="${v.r||''}">
+    <div class="it">${it[3]?'<span class="crit">CRÍTICO</span>':''}<span>${esc(it[1])}</span></div>
+    ${it[2]?`<p class="hint">${esc(it[2])}</p>`:''}
+    ${q?`<div class="yn" role="group" aria-label="Resposta">${['sim','nao','ns'].map(x=>`<button type="button" data-r="${x}" aria-pressed="${v.r===x}" class="${x===q.bom?'g':x==='ns'?'u':'b'}">${RESP[x]}</button>`).join('')}${q.custo?`<span class="costtag">${ruim(q,v.r)?'+ '+brl(st.mc[q.custo.k]??q.custo.v)+' na manutenção':'gera custo se a resposta for ruim'}</span>`:''}</div>`:''}
+    <div class="seg">${['ok','warn','bad','na'].map(x=>`<button type="button" data-v="${x}" aria-pressed="${v.s===x}">${LBL[x]}</button>`).join('')}</div>
+    <button type="button" class="notebtn">+ anotação</button>
+    <div class="more"><textarea rows="1" data-k="n" placeholder="O que viu?">${esc(v.n||'')}</textarea><div class="money"><span>R$</span><input data-k="c" inputmode="numeric" placeholder="custo" value="${v.c?esc(Math.round(v.c).toLocaleString('pt-BR')):''}"></div></div>
+  </div>`}
 function render(){
   $('#secs').innerHTML=S.map((s,k)=>`<section class="sec" id="s-${s.id}">
     <div class="sh"><div class="n">${String(k+1).padStart(2,'0')}</div><h2>${esc(s.t)}</h2><p>${esc(s.q)}</p></div>
     ${s.note?`<div class="sec-note">${esc(s.note)}</div>`:''}
-    ${s.items.map(it=>{const id=s.id+'.'+it[0];const v=st.i[id]||{};return `<div class="item" data-id="${id}" data-s="${v.s||''}">
-      <div class="it">${it[3]?'<span class="crit">CRÍTICO</span>':''}<span>${esc(it[1])}</span></div>
-      ${it[2]?`<p class="hint">${esc(it[2])}</p>`:''}
-      <div class="seg">${['ok','warn','bad','na'].map(x=>`<button type="button" data-v="${x}" aria-pressed="${v.s===x}">${LBL[x]}</button>`).join('')}</div>
-      <button type="button" class="notebtn">+ anotação</button>
-      <div class="more"><textarea rows="1" data-k="n" placeholder="O que viu?">${esc(v.n||'')}</textarea><div class="money"><span>R$</span><input data-k="c" inputmode="numeric" placeholder="custo" value="${v.c?esc(Math.round(v.c).toLocaleString('pt-BR')):''}"></div></div>
-    </div>`}).join('')}
+    ${s.items.map(it=>itemHTML(s,it)).join('')}
   </section>`).join('');
-  $('#chips').innerHTML=S.map((s,k)=>`<button class="chip" data-go="${s.id}"><span class="d"></span><b>${k+1}</b>${esc(s.t.split(' ')[0]==='Antes'&&k===0?'Antes':s.t.replace(/\s*\(.*\)/,'').split(',')[0])}</button>`).join('')+'<button class="chip" data-go="resultado"><b>✓</b>Resultado</button>';
+  $('#chips').innerHTML=S.map((s,k)=>`<button class="chip" data-go="${s.id}"><span class="d"></span><b>${k+1}</b>${esc(k===0?'Antes':s.t.replace(/\s*\(.*\)/,'').split(',')[0])}</button>`).join('')+'<button class="chip" data-go="resultado"><b>✓</b>Resultado</button>';
   document.querySelectorAll('[data-m]').forEach(el=>{if(st.m[el.dataset.m]!=null)el.value=st.m[el.dataset.m]});
   if(!st.m.data){$('#mData').valueAsDate=new Date()}
   document.querySelectorAll('[data-n]').forEach(el=>{const v=st.n[el.dataset.n]??DEF_N[el.dataset.n];el.value=Math.round(v).toLocaleString('pt-BR')});
   update();
 }
+function manutencao(){ // custos únicos por chave
+  const m={};ALL.forEach(a=>{const v=st.i[a.id];if(!a.q||!a.q.custo||!v||!ruim(a.q,v.r))return;const k=a.q.custo.k;
+    if(!m[k])m[k]={k,label:a.q.custo.label,v:st.mc[k]??a.q.custo.v,de:[]};m[k].de.push(`${a.t} → ${RESP[v.r]}`)});
+  return Object.values(m);
+}
 function update(){
   let ok=0,warn=0,bad=0,na=0,custo=0;const flags=[];let critBad=0;
   ALL.forEach(a=>{const v=st.i[a.id]||{};if(v.s==='ok')ok++;else if(v.s==='warn')warn++;else if(v.s==='bad')bad++;else if(v.s==='na')na++;
     if(v.s==='warn'||v.s==='bad'){custo+=num(v.c);flags.push({a,v});if(v.s==='bad'&&a.c)critBad++}});
+  const man=manutencao();const custoMan=man.reduce((t,x)=>t+num(x.v),0);const custoTot=custo+custoMan;
   const done=ok+warn+bad+na,tot=ALL.length,left=tot-done,p=Math.round(done/tot*100);
   $('#pct').textContent=p+'%';$('#barFill').style.width=p+'%';
   $('#cOk').textContent=ok;$('#cWarn').textContent=warn;$('#cBad').textContent=bad;$('#cLeft').textContent=left;
-  $('#hdrCarro').textContent=(st.m.carro||'Chevrolet Cruze LTZ').split('·')[0].trim();
+  $('#hdrCarro').textContent=($('#mCarro').value||'Chevrolet Cruze LTZ').split('·')[0].trim();
   S.forEach(s=>{const ch=document.querySelector(`.chip[data-go="${s.id}"]`);if(!ch)return;const ids=s.items.map(it=>s.id+'.'+it[0]);
     const all=ids.every(id=>st.i[id]&&st.i[id].s);const fl=ids.some(id=>st.i[id]&&(st.i[id].s==='bad'||st.i[id].s==='warn'));
     ch.classList.toggle('done',all&&!fl);ch.classList.toggle('flag',fl)});
   const V=$('#verdict'),T=$('#verdictTxt');
   if(critBad){V.className='verdict bad';V.textContent='Não compre';T.textContent=`${critBad} problema(s) em item crítico. Só volte a considerar com conserto feito pelo vendedor e garantia por escrito.`}
-  else if(bad||warn){V.className='verdict warn';V.textContent='Negocie';T.textContent=`Nada eliminatório, mas há ${warn+bad} ponto(s) para usar na negociação${custo?` (≈ ${brl(custo)} em custos)`:''}.`}
+  else if(bad||warn||custoMan){V.className='verdict warn';V.textContent='Negocie';T.textContent=`Nada eliminatório, mas há ${warn+bad} ponto(s) da vistoria${man.length?` e ${man.length} manutenção(ões) pendente(s)`:''} para usar na negociação${custoTot?` (≈ ${brl(custoTot)})`:''}.`}
   else if(left>tot*.4){V.className='verdict';V.textContent='Vistoria em andamento';T.textContent='Siga as etapas; o veredito aparece conforme você marca.'}
   else{V.className='verdict ok';V.textContent='Compra recomendada';T.textContent=left?`Tudo certo até aqui. Faltam ${left} item(ns).`:'Tudo certo em todas as etapas. Feche no preço-alvo.'}
-  $('#flags').innerHTML=flags.sort((x,y)=>(y.v.s==='bad')-(x.v.s==='bad')).map(({a,v})=>`<li><span class="dot" style="background:${v.s==='bad'?'#ff8a80':'#f0b450'}"></span><span>${esc(a.t)}${v.n?`<small>${esc(v.n)}</small>`:''}<small>${esc(a.sec.t)}</small></span><span class="mono">${num(v.c)?brl(num(v.c)):''}</span></li>`).join('');
+  $('#flags').innerHTML=flags.sort((x,y)=>(y.v.s==='bad')-(x.v.s==='bad')).map(({a,v})=>`<li><span class="dot" style="background:${v.s==='bad'?'#ff8a80':'#f0b450'}"></span><span>${esc(a.t)}${a.q&&v.r?` <b class="ans">${RESP[v.r]}</b>`:''}${v.n?`<small>${esc(v.n)}</small>`:''}<small>${esc(a.sec.t)}</small></span><span class="mono">${num(v.c)?brl(num(v.c)):''}</span></li>`).join('')||'<li class="empty">Nenhum ponto negativo marcado na vistoria.</li>';
+  const mb=$('#manBox');
+  if(man.length){mb.hidden=false;
+    const cur=document.activeElement&&document.activeElement.dataset?document.activeElement.dataset.mc:null;
+    if(!cur){$('#manList').innerHTML=man.map(x=>`<div class="mrow"><div><b>${esc(x.label)}</b><small>${x.de.map(esc).join('<br>')}</small></div><div class="money"><span>R$</span><input data-mc="${x.k}" inputmode="numeric" value="${Math.round(num(x.v)).toLocaleString('pt-BR')}"></div></div>`).join('')}
+    $('#manTot').textContent=brl(custoMan)}
+  else{mb.hidden=true;$('#manList').innerHTML=''}
   const N=k=>st.n[k]??DEF_N[k];const pedido=N('pedido'),media=N('media'),fipe=N('fipe'),bonus=N('bonus');
-  const justo=Math.min(media+bonus,fipe);const abertura=Math.max(0,media-custo);const alvo=Math.max(0,justo-custo);const teto=Math.min(pedido,alvo+1000);
+  const justo=Math.min(media+bonus,fipe);const abertura=Math.max(0,media-custoTot);const alvo=Math.max(0,justo-custoTot);const teto=Math.min(pedido,alvo+1000);
   $('#negRows').innerHTML=`<div><span>Preço justo (média + km baixa)</span><b>${brl(justo)}</b></div>
-   ${custo?`<div><span>Custos encontrados na vistoria</span><b>− ${brl(custo)}</b></div>`:''}
+   ${custo?`<div><span>Problemas encontrados na vistoria</span><b>− ${brl(custo)}</b></div>`:''}
+   ${custoMan?`<div><span>Manutenção que você vai fazer</span><b>− ${brl(custoMan)}</b></div>`:''}
    <div><span>Primeira oferta</span><b>${brl(abertura)}</b></div>
    <div class="hl"><span>Fechar até</span><b>${brl(alvo)}</b></div>
    <div><span>Teto (só com garantia, pneus ou transferência inclusos)</span><b>${brl(teto)}</b></div>
-   <div><span>Desconto sobre o pedido</span><b>${pedido?Math.round((1-alvo/pedido)*100):0}%</b></div>`;
+   <div><span>Desconto sobre o pedido</span><b>${pedido?Math.round((1-alvo/pedido)*100):0}%</b></div>
+   <div><span>Custo real do carro (fechar até + manutenção)</span><b>${brl(alvo+custoMan)}</b></div>`;
   save();
 }
 function resumo(){
   const N=k=>st.n[k]??DEF_N[k];let custo=0;const L=[];
-  ALL.forEach(a=>{const v=st.i[a.id];if(v&&(v.s==='warn'||v.s==='bad')){custo+=num(v.c);L.push(`${v.s==='bad'?'🔴':'🟡'} ${a.t}${v.n?' — '+v.n:''}${num(v.c)?' ('+brl(num(v.c))+')':''}`)}});
+  ALL.forEach(a=>{const v=st.i[a.id];if(v&&(v.s==='warn'||v.s==='bad')){custo+=num(v.c);L.push(`${v.s==='bad'?'🔴':'🟡'} ${a.t}${a.q&&v.r?' → '+RESP[v.r]:''}${v.n?' — '+v.n:''}${num(v.c)?' ('+brl(num(v.c))+')':''}`)}});
+  const man=manutencao();const cm=man.reduce((t,x)=>t+num(x.v),0);const tot=custo+cm;
   const justo=Math.min(N('media')+N('bonus'),N('fipe'));
-  return `*Vistoria ${st.m.carro||'Cruze LTZ'}*${st.m.placa?'\nPlaca: '+st.m.placa.toUpperCase():''}\n\n*${$('#verdict').textContent}*\n${$('#verdictTxt').textContent}\n\n${L.length?L.join('\n'):'✅ Nenhum ponto negativo marcado.'}\n\nPedido: ${brl(N('pedido'))}\nPrimeira oferta: ${brl(Math.max(0,N('media')-custo))}\nFechar até: ${brl(Math.max(0,justo-custo))}`;
+  return `*Vistoria ${$('#mCarro').value||'Cruze LTZ'}*${st.m.placa?'\nPlaca: '+st.m.placa.toUpperCase():''}\n\n*${$('#verdict').textContent}*\n${$('#verdictTxt').textContent}\n\n${L.length?L.join('\n'):'✅ Nenhum ponto negativo marcado.'}${man.length?'\n\n*Manutenção pendente*\n'+man.map(x=>`🔧 ${x.label}: ${brl(num(x.v))}`).join('\n'):''}\n\nPedido: ${brl(N('pedido'))}\nPrimeira oferta: ${brl(Math.max(0,N('media')-tot))}\nFechar até: ${brl(Math.max(0,justo-tot))}`;
 }
 let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1800)}
+function refreshItem(item){const id=item.dataset.id;const a=BYID[id];const sec=S.find(s=>s.id===a.sec.id);const it=sec.items.find(x=>sec.id+'.'+x[0]===id);
+  const open=item.classList.contains('open');const tmp=document.createElement('div');tmp.innerHTML=itemHTML(sec,it);const n=tmp.firstElementChild;if(open)n.classList.add('open');item.replaceWith(n);return n}
 
 document.addEventListener('click',e=>{
+  const r=e.target.closest('.yn button');
+  if(r){let item=r.closest('.item');const id=item.dataset.id;const a=BYID[id];const v=st.i[id]||(st.i[id]={});const was=v.r;v.r=v.r===r.dataset.r?'':r.dataset.r;
+    // sugere a avaliação se ainda não foi marcada (ou se foi sugerida antes)
+    if(!v.s||v.auto){if(!v.r){if(v.auto){v.s='';v.auto=false}}else{v.s=ruim(a.q,v.r)?'warn':'ok';v.auto=true}}
+    refreshItem(item);update();return}
   const b=e.target.closest('.seg button');
-  if(b){const item=b.closest('.item');const id=item.dataset.id;const v=st.i[id]||(st.i[id]={});v.s=v.s===b.dataset.v?'':b.dataset.v;
+  if(b){const item=b.closest('.item');const id=item.dataset.id;const v=st.i[id]||(st.i[id]={});v.s=v.s===b.dataset.v?'':b.dataset.v;v.auto=false;
     item.dataset.s=v.s||'';item.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.v===v.s)));update();
-    if(v.s==='warn'||v.s==='bad'){const ta=item.querySelector('textarea');setTimeout(()=>ta&&!ta.value&&ta.focus({preventScroll:true}),50)}return}
+    if((v.s==='warn'||v.s==='bad')&&!BYID[id].q){const ta=item.querySelector('textarea');setTimeout(()=>ta&&!ta.value&&ta.focus({preventScroll:true}),50)}return}
   const nb=e.target.closest('.notebtn');if(nb){const it=nb.closest('.item');it.classList.add('open');it.querySelector('textarea').focus();return}
   const g=e.target.closest('[data-go]');if(g){document.getElementById(g.dataset.go==='resultado'?'resultado':'s-'+g.dataset.go).scrollIntoView({behavior:'smooth'});return}
 });
 document.addEventListener('input',e=>{const el=e.target;
   if(el.dataset.k){const id=el.closest('.item').dataset.id;const v=st.i[id]||(st.i[id]={});v[el.dataset.k]=el.dataset.k==='c'?num(el.value):el.value;update();return}
+  if(el.dataset.mc){st.mc[el.dataset.mc]=num(el.value);update();return}
   if(el.dataset.m){st.m[el.dataset.m]=el.value;update();return}
   if(el.dataset.n){st.n[el.dataset.n]=num(el.value);update()}
 });
-document.addEventListener('focusout',e=>{const el=e.target;if((el.dataset.k==='c'||el.dataset.n)&&el.value){el.value=Math.round(num(el.value)).toLocaleString('pt-BR')}});
+document.addEventListener('focusout',e=>{const el=e.target;if((el.dataset.k==='c'||el.dataset.n||el.dataset.mc)&&el.value){el.value=Math.round(num(el.value)).toLocaleString('pt-BR')}
+  if(el.dataset.mc){document.querySelectorAll('.item').forEach(it=>{const a=BYID[it.dataset.id];if(a&&a.q&&a.q.custo&&a.q.custo.k===el.dataset.mc)refreshItem(it)});setTimeout(update,0)}});
 $('#btnShare').onclick=async()=>{const t=resumo();if(navigator.share){try{await navigator.share({text:t});return}catch(e){if(e.name==='AbortError')return}}window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')};
 $('#btnCopy').onclick=async()=>{try{await navigator.clipboard.writeText(resumo());toast('Resumo copiado')}catch(e){toast('Não deu para copiar')}};
-$('#btnReset').onclick=()=>{if(!confirm('Apagar todas as marcações e começar uma nova vistoria?'))return;st={i:{},m:{carro:st.m.carro},n:st.n};save();render();window.scrollTo(0,0);toast('Vistoria zerada')};
+$('#btnReset').onclick=()=>{if(!confirm('Apagar todas as marcações e começar uma nova vistoria?'))return;st={i:{},m:{carro:st.m.carro},n:st.n,mc:st.mc};save();render();window.scrollTo(0,0);toast('Vistoria zerada')};
 render();
 </script>
 </body>
