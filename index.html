@@ -345,6 +345,133 @@ textarea.input{height:auto;min-height:88px;padding:12px 14px;resize:vertical;lin
 .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:14px;margin:0;width:100%}
 .kv dt{color:var(--fg-3)}.kv dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
 
+/* checklist em etapas (estilo folha de inspeção) */
+.ic{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+html.travado,html.travado body{overflow:hidden}
+.ckx{display:flex;flex-direction:column;gap:20px}
+.sx-rail{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;padding:8px 4px 2px;margin:0 -4px;scroll-behavior:smooth}
+.sx-rail::-webkit-scrollbar{display:none}
+.sx{position:relative;flex:none;display:flex;flex-direction:column;align-items:center;gap:7px;width:64px;padding:0;border:0;background:none;color:var(--fg-3)}
+.sx>.ic{width:52px;height:52px;padding:13px;border-radius:16px;border:1px solid var(--line-soft);background:var(--surface);color:var(--fg-2);box-sizing:border-box;transition:border-color .15s,background .15s}
+.sx:hover>.ic{border-color:var(--silver-lo)}
+.sx[aria-current="true"]>.ic{background:var(--surface-2);border-color:var(--silver);color:var(--fg);box-shadow:0 0 0 1px var(--silver)}
+.sx+.sx::before{content:"";position:absolute;left:-12px;top:26px;width:10px;border-top:1px dashed var(--line)}
+.sx-l{font-size:10.5px;line-height:1.15;text-align:center;letter-spacing:.02em;max-width:64px}
+.sx[aria-current="true"] .sx-l{color:var(--fg)}
+.sx-st{position:absolute;top:-5px;right:2px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--bg)}
+.sx-st svg{width:11px;height:11px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.sx-st.done{background:var(--ok)}.sx-st.warn{background:var(--warn)}.sx-st.bad{background:var(--bad)}
+.sx-head{display:flex;flex-direction:column;gap:8px}
+.sx-head h2{font-size:clamp(22px,3vw,28px)}
+.sx-head .hint{max-width:70ch;font-size:13.5px}
+.ckl{display:flex;flex-direction:column;gap:18px;width:100%;max-width:780px}
+.sx-head{max-width:780px}
+.ckr{display:flex;flex-direction:column;gap:7px}
+.ckr-t{font-size:15px;font-weight:500;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;padding-inline:2px}
+.ctag{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--bad);border:1px solid var(--bad);border-radius:4px;padding:1px 5px;line-height:1.3;font-weight:400}
+.ckr-h{margin:-3px 0 0;padding-inline:2px;font-size:12.5px;color:var(--fg-3);line-height:1.4}
+.ckr-card{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:6px;padding:6px 8px 6px 12px;border:1px solid var(--line-soft);border-radius:14px;background:var(--surface);transition:border-color .15s}
+.ckr[data-s="atencao"] .ckr-card{border-color:var(--warn)}
+.ckr[data-s="critico"] .ckr-card{border-color:var(--bad)}
+.ckr[data-s="na"] .ckr-card{opacity:.6}
+.ckr-ic{display:grid;place-items:center;width:34px;height:34px;color:var(--fg-3)}
+.ckr-ic .ic{width:24px;height:24px}
+.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px}
+.o{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:56px;padding:6px 2px;border:0;background:none;border-radius:10px;font-size:12px;color:var(--fg-3);transition:background .15s}
+.o i{width:22px;height:22px;border-radius:50%;border:2px solid var(--c);display:grid;place-items:center;opacity:.75}
+.o i::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--c);transform:scale(0);transition:transform .15s}
+.o span{color:var(--c);opacity:.85}
+.o.ok{--c:var(--ok)}.o.warn{--c:var(--warn)}.o.bad{--c:var(--bad)}.o.neu{--c:var(--fg-2)}
+.o:hover{background:var(--surface-2)}
+.o[aria-checked="true"]{background:var(--surface-2)}
+.o[aria-checked="true"] i{opacity:1}
+.o[aria-checked="true"] i::after{transform:scale(1)}
+.o[aria-checked="true"] span{opacity:1;font-weight:600}
+.mais{position:relative;width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:none;color:var(--fg-2);display:grid;place-items:center}
+.mais:hover{border-color:var(--silver-lo);color:var(--fg)}
+.mais .ic{width:20px;height:20px}
+.mais b{position:absolute;top:-7px;right:-7px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--silver-hi);color:var(--ink-on-silver);font-size:10.5px;font-weight:600;display:grid;place-items:center;border:2px solid var(--bg)}
+.mais b.dot{min-width:12px;width:12px;height:12px;padding:0;top:-4px;right:-4px}
+.ckr-x{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding-inline:2px}
+.ckr-nota{font-size:13px;color:var(--fg-2);flex-basis:100%}
+.mini{display:inline-flex;gap:6px;align-items:center}
+.mini b{font-size:12px;color:var(--fg-3);font-weight:500}
+.mi{position:relative;width:46px;height:36px;padding:0;border:0;border-radius:7px;overflow:hidden;background:var(--surface-2)}
+.mi img{width:100%;height:100%;object-fit:cover;display:block}
+.mi-v{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.25);color:#fff}
+.mi-v .ic{width:18px;height:18px}
+.mi-p{position:absolute;right:3px;bottom:3px;width:7px;height:7px;border-radius:50%;background:var(--warn);box-shadow:0 0 0 2px rgba(0,0,0,.4)}
+.sx-foot{position:sticky;bottom:16px;z-index:6;width:100%;max-width:780px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;padding:8px;border-radius:999px;background:color-mix(in srgb,var(--bg) 94%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--line-soft)}
+.sx-foot .btn{height:48px}
+.sx-pos{font-family:var(--f-mono);font-size:12px;color:var(--fg-3);min-width:40px;text-align:center}
+@media (max-width:860px){.sx-foot{bottom:calc(72px + env(safe-area-inset-bottom,0px))}}
+/* resumo da última etapa */
+.fin-st{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.fin-st>div{border:1px solid var(--line-soft);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.fin-st b{font-family:var(--f-display);font-weight:400;font-size:26px;line-height:1}
+.fin-st span{font-size:12px;color:var(--fg-3)}
+.fin-st .ok b{color:var(--ok)}.fin-st .warn b{color:var(--warn)}.fin-st .bad b{color:var(--bad)}
+@media (max-width:560px){.fin-st{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* folha de detalhes (botão +) */
+.sh-bg{position:fixed;inset:0;z-index:60;background:rgba(5,6,8,.55);display:flex;align-items:flex-end;justify-content:center}
+.sh{width:min(560px,100%);max-height:92vh;max-height:92dvh;overflow:auto;overscroll-behavior:contain;background:var(--surface);border:1px solid var(--line);border-bottom:0;border-radius:22px 22px 0 0;padding:6px 18px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:18px;box-shadow:0 -12px 40px rgba(0,0,0,.35)}
+.sh-bg.anim{animation:dcFade .18s ease-out}.sh.anim{animation:dcSobe .24s cubic-bezier(.2,.8,.2,1)}
+@keyframes dcFade{from{opacity:0}}@keyframes dcSobe{from{transform:translateY(40px);opacity:.4}}
+@media (min-width:861px){.sh-bg{align-items:center;padding:24px}.sh{border-radius:22px;border-bottom:1px solid var(--line)}}
+.sh>*{flex-shrink:0}
+.sh-grip{width:42px;height:4px;border-radius:2px;background:var(--line);margin:4px auto 0;flex:none}
+.sh-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
+.sh-top h3{font-size:17px;letter-spacing:0;text-transform:none;color:var(--fg);font-weight:600;line-height:1.3;margin-top:2px}
+.ibtn{width:44px;height:44px;border-radius:50%;border:0;background:var(--surface-2);color:var(--fg-2);display:grid;place-items:center;flex:none}
+.ibtn .ic{width:20px;height:20px}
+.ibtn.claro{background:rgba(255,255,255,.12);color:#fff}
+.seg4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.seg4.s3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.seg4 button{min-height:46px;border-radius:12px;border:1px solid var(--line);background:none;color:var(--fg-2);font-size:13.5px;padding:0 4px}
+.seg4 button:hover{border-color:var(--silver-lo);color:var(--fg)}
+.seg4 button[aria-pressed="true"]{font-weight:600}
+.seg4 button[aria-pressed="true"].ok{background:var(--ok-bg);color:var(--ok);border-color:var(--ok)}
+.seg4 button[aria-pressed="true"].warn{background:var(--warn-bg);color:var(--warn);border-color:var(--warn)}
+.seg4 button[aria-pressed="true"].bad{background:var(--bad-bg);color:var(--bad);border-color:var(--bad)}
+.seg4 button[aria-pressed="true"].neu{background:var(--surface-2);color:var(--fg);border-color:var(--silver-lo)}
+.macts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.field label.mact,.mact{font-size:13px;letter-spacing:0;text-transform:none;color:var(--fg)}
+.mact{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:72px;border-radius:14px;border:1px solid var(--line);background:var(--surface-2);color:var(--fg);font-size:13px;cursor:pointer;text-align:center}
+.mact:hover{border-color:var(--silver-lo)}
+.mact .ic{width:24px;height:24px;color:var(--fg-2)}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:4px}
+.mt{position:relative;aspect-ratio:4/3;border:0;padding:0;border-radius:10px;overflow:hidden;background:var(--surface-2)}
+.mt img{width:100%;height:100%;object-fit:cover;display:block}
+.mt-sem{display:block;width:100%;height:100%}
+.mt-v{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:4px;background:rgba(0,0,0,.28);color:#fff}
+.mt-v small{position:absolute;right:6px;bottom:4px;font-size:11px;font-family:var(--f-mono)}
+.mt-p{position:absolute;left:6px;bottom:6px;font-size:10.5px;padding:2px 6px;border-radius:6px;background:rgba(0,0,0,.6);color:#fff}
+/* visualizador */
+.vw{position:fixed;inset:0;z-index:80;background:#000;display:flex;flex-direction:column;color:#fff}
+.vw-top{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px}
+.vw-t{flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.9}
+.vw-body{flex:1;min-height:0;display:grid;place-items:center;padding:0 0 calc(10px + env(safe-area-inset-bottom,0px))}
+.vw-body img,.vw-body video{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.vw-msg{opacity:.7;font-size:14px;padding:20px;text-align:center}
+.vw-conf{position:absolute;left:16px;right:16px;bottom:calc(20px + env(safe-area-inset-bottom,0px));display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:14px 16px;border-radius:14px;background:#1b1e23;color:#e9ebee}
+.vw-conf span{flex:1;min-width:140px}
+/* assinatura */
+.ass{display:flex;flex-direction:column;gap:10px}
+.ass-pad{position:relative;height:170px;border-radius:14px;background:#fbfbfc;border:1px dashed #b9bfc8;touch-action:none;overflow:hidden;cursor:crosshair}
+.ass-pad canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.ass-linha{position:absolute;left:22px;right:22px;bottom:38px;border-top:1px solid #c9ced6;pointer-events:none}
+.ass-dica{position:absolute;left:0;right:0;bottom:14px;text-align:center;font-size:12px;color:#8a919b;pointer-events:none}
+.ass-pad.sujo .ass-dica{opacity:0}
+.ass-img{display:grid;place-items:center;height:130px;border-radius:14px;background:#fbfbfc;border:1px solid var(--line-soft);padding:10px}
+.ass-img img{max-height:100%;max-width:100%}
+.ass-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center}
+@media (max-width:560px){.ass-row{grid-template-columns:1fr 1fr}.ass-row .input{grid-column:1/-1}}
+/* reparos: prazo */
+.pz{border:0;cursor:pointer}
+.pz-tot{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--fg-2)}
+.pz-tot b{color:var(--fg);font-weight:500}
+@media (max-width:420px){.o{font-size:11.5px;min-height:54px}.ckr-card{padding:6px 6px 6px 8px;gap:4px}.ckr-ic{width:28px}.ckr-ic .ic{width:22px;height:22px}.mais{width:40px;height:40px}}
+
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--silver-hi);color:var(--ink-on-silver);padding:10px 18px;border-radius:999px;font-size:13.5px;z-index:50;box-shadow:0 8px 30px rgba(0,0,0,.35)}
 .notice{padding:12px 16px;border-radius:10px;background:var(--warn-bg);font-size:13.5px}
 .confirm{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 16px;border-radius:10px;background:var(--bad-bg);font-size:13.5px}
@@ -393,19 +520,131 @@ textarea.input{height:auto;min-height:88px;padding:12px 14px;resize:vertical;lin
 
 <script>
 /* ===================== Dados de referência ===================== */
-const CATEGORIAS=[
- {id:'motor',label:'Motor',itens:[['motor_partida','Partida a frio',3],['motor_fumaca','Ausência de fumaça',3],['motor_ruidos','Sem ruídos anormais',3],['motor_vazamentos','Sem vazamentos de óleo',4],['motor_nivel_oleo','Nível e qualidade do óleo',3],['motor_nivel_agua','Nível do líquido de arrefecimento',3],['motor_correia','Correia dentada e acessórios',3],['motor_velas','Velas de ignição',3]]},
- {id:'transmissao',label:'Transmissão',itens:[['trans_marchas','Troca de marchas suave',4],['trans_embreagem','Embreagem sem patinar',4],['trans_ruidos','Sem ruídos na caixa',4],['trans_fluido','Fluido da transmissão',3]]},
- {id:'freios',label:'Freios',itens:[['freio_pedal','Pedal firme e consistente',5],['freio_pastilhas','Pastilhas e lonas',4],['freio_discos','Discos e tambores',4],['freio_fluido','Fluido de freio',2]]},
- {id:'suspensao',label:'Suspensão e direção',itens:[['susp_amortecedores','Amortecedores',3],['susp_buchas','Buchas e bandejas',3],['susp_direcao','Folga na direção',2],['susp_alinhamento','Alinhamento e balanceamento',2]]},
- {id:'eletrica',label:'Elétrica',itens:[['elet_bateria','Bateria',3],['elet_alternador','Alternador',3],['elet_iluminacao','Iluminação completa',2],['elet_painel','Painel sem luzes de alerta',2]]},
- {id:'carroceria',label:'Carroceria',itens:[['carr_lataria','Lataria sem amassados',2],['carr_pintura','Pintura original uniforme',2],['carr_corrosao','Sem corrosão ou ferrugem',3],['carr_portas','Portas e travas',2],['carr_vidros','Vidros e borrachas',1]]},
- {id:'interior',label:'Interior',itens:[['int_bancos','Bancos e estofados',1],['int_painel','Painel e acabamentos',1],['int_ar','Ar-condicionado',2],['int_som','Som e multimídia',1]]},
- {id:'pneus',label:'Pneus e rodas',itens:[['pneu_sulcos','Sulcos dos pneus',2],['pneu_desgaste','Desgaste uniforme',2],['pneu_estepe','Estepe em boas condições',1]]},
- {id:'documentacao',label:'Documentação',itens:[['doc_crlv','CRLV em dia',2],['doc_historico','Histórico de manutenção',2],['doc_sinistro','Sem registro de sinistro grave',1]]},
+/* Checklist em etapas, na ordem da visita (estilo folha de inspeção de concessionária).
+   Item: {id, t: texto, ic: ícone, p: peso na nota (0 = não entra), c: crítico (problema aqui é motivo para desistir),
+          h: dica de como conferir, q: pergunta (resposta boa: 'sim' | 'nao'),
+          mp: manutenção pendente quando a resposta é ruim {k: chave do custo, l: nome, v: valor padrão, pz: prazo em dias}}
+   Os 39 itens da versão anterior mantêm o mesmo id, então as avaliações antigas continuam abrindo iguais. */
+const SECOES=[
+ {id:'perguntas',label:'Perguntas',titulo:'Perguntas ao vendedor',ic:'chat',nota:'Antes de tocar no carro. Responda Sim, Não ou Não sei; resposta ruim já entra como ponto de atenção e, quando gera gasto, como manutenção pendente.',itens:[
+  {id:'q_dono',t:'O carro está no nome de quem está vendendo?',ic:'user',q:'sim',h:'Se for revenda, peça o contato do antigo dono.'},
+  {id:'q_batida',t:'Já bateu ou tem peça repintada?',ic:'car',q:'nao',c:1,h:'Peça para mostrar quais peças. Depois confirme com o medidor de pintura.'},
+  {id:'q_cor',t:'A cor é de fábrica (sem envelopamento ou pintura geral)?',ic:'paint',q:'sim',h:'Confira a cor escrita no CRLV.'},
+  {id:'q_oleo',t:'As revisões usaram o óleo da especificação do manual?',ic:'oil',q:'sim',mp:{k:'oleo',l:'Troca de óleo e filtro',v:450,pz:0},h:'Óleo fora da especificação é o maior inimigo de motor turbo e de injeção direta. Peça as notas.'},
+  {id:'q_troca',t:'A última troca de óleo foi há menos de 1 ano?',ic:'calendar',q:'sim',mp:{k:'oleo',l:'Troca de óleo e filtro',v:450,pz:0},h:'Mais de 1 ano sem trocar é ruim, mesmo rodando pouco.'},
+  {id:'q_revisao',t:'A próxima revisão grande (velas, filtros) já foi feita?',ic:'wrench',q:'sim',mp:{k:'revisao',l:'Revisão com velas, filtros e fluido de freio',v:1300,pz:30},h:'Veja no manual qual revisão vence na km atual.'},
+  {id:'q_cambio',t:'O óleo do câmbio já foi trocado?',ic:'gear',q:'sim',mp:{k:'cambio',l:'Troca do óleo do câmbio',v:900,pz:30},h:'Automático ou CVT: troca preventiva entre 40 e 60 mil km. Câmbio manual com km baixa: marque N/A no botão +.'},
+  {id:'q_arref',t:'Já trocou a válvula termostática ou a bomba d’água?',ic:'coolant',q:'sim',h:'Peças de desgaste do arrefecimento. Troca com nota fiscal é ponto a favor.'},
+  {id:'q_falhas',t:'O carro já teve vazamento de óleo ou luz de injeção acesa?',ic:'alert',q:'nao',h:'Se sim, pergunte o que foi feito e peça a nota.'},
+  {id:'q_bateria',t:'A bateria tem menos de 3 anos?',ic:'battery',q:'sim',mp:{k:'bateria',l:'Bateria nova',v:650,pz:30},h:'Carro com start-stop precisa de bateria EFB ou AGM.'},
+  {id:'q_chave',t:'Tem chave reserva funcionando?',ic:'key',q:'sim',mp:{k:'chave',l:'Chave reserva (cópia e programação)',v:1200,pz:90},h:'Chave codificada ou presencial é cara de fazer.'},
+  {id:'q_debitos',t:'Tem IPVA, multa ou financiamento em aberto?',ic:'money',q:'nao',c:1,h:'Se tiver, lance o valor no custo (botão +). Carro alienado: quitação junto com o pagamento.'},
+  {id:'q_transf',t:'O vendedor paga a transferência?',ic:'doc',q:'sim',mp:{k:'transf',l:'Transferência (DETRAN, vistoria e cartório)',v:600,pz:0}},
+  {id:'q_garantia',t:'Tem garantia de motor e câmbio por escrito?',ic:'shield',q:'sim',h:'Em revenda, 90 dias é o mínimo legal (CDC). Compra de particular: marque N/A.'},
+ ]},
+ {id:'documentos',label:'Documentos',titulo:'Documentos e procedência',ic:'doc',nota:'Com o carro parado, antes de ligar.',itens:[
+  {id:'doc_crlv',t:'CRLV confere: placa, chassi, cor e ano',ic:'doc',p:2,c:1,h:'Tudo tem que bater com o carro e com a consulta de histórico.'},
+  {id:'doc_chassi',t:'Chassi gravado nos vidros e etiquetas igual ao documento',ic:'vin',p:3,c:1,h:'Vidro sem gravação ou com número diferente foi trocado (batida ou roubo).'},
+  {id:'doc_historico',t:'Histórico de revisões (manual e notas fiscais)',ic:'wrench',p:2,h:'Carimbos em sequência e km coerente. Em média um carro roda 10 a 15 mil km por ano.'},
+  {id:'doc_sinistro',t:'Sem registro de sinistro, leilão ou recuperação',ic:'alert',p:1,c:1,h:'A consulta de leilão na etapa Histórico preenche este item sozinha.'},
+  {id:'doc_recall',t:'Recalls em dia',ic:'shield',p:1,h:'Consulte pelo chassi no site da marca ou numa concessionária.'},
+ ]},
+ {id:'capo',label:'Sob o capô',titulo:'Sob o capô',ic:'engine',nota:'Com o motor frio: olhe tudo desligado, depois ligue e escute os primeiros segundos.',itens:[
+  {id:'cap_frio',t:'Motor estava frio quando você chegou',ic:'thermo',p:0,h:'Motor quente na chegada pode esconder barulho de partida.'},
+  {id:'motor_nivel_oleo',t:'Nível e aspecto do óleo',ic:'oil',p:3,c:1,h:'Preto e grosso = troca vencida. Aspecto leitoso = mistura com água (junta do cabeçote).'},
+  {id:'motor_nivel_agua',t:'Nível e cor do líquido de arrefecimento',ic:'coolant',p:3,c:1,h:'Nível baixo ou só água = vazamento escondido. Óleo no reservatório = problema grave.'},
+  {id:'cap_arref',t:'Mangueiras, válvula termostática e bomba d’água sem vazamento',ic:'drop',p:3,c:1,h:'Crosta seca da cor do líquido (rosa, verde ou laranja) indica vazamento antigo.'},
+  {id:'motor_vazamentos',t:'Motor sem vazamento de óleo (tampa de válvulas e juntas)',ic:'drop',p:4},
+  {id:'motor_correia',t:'Correias e tensionadores',ic:'belt',p:3,h:'Correia dentada vencida por tempo ou por km entra como custo.'},
+  {id:'elet_bateria',t:'Bateria: carga, data e terminais',ic:'battery',p:3,h:'Terminais limpos, sem zinabre. Com testador: saúde acima de 70%.'},
+  {id:'elet_alternador',t:'Carga do alternador (13,8 a 14,7 V com o motor ligado)',ic:'bolt',p:3},
+  {id:'trans_fluido',t:'Óleo do câmbio (nível e cor, se tiver vareta)',ic:'flask',p:3},
+  {id:'motor_partida',t:'Partida a frio limpa, sem chocalho nos primeiros segundos',ic:'engine',p:3,c:1,h:'Barulho metálico rápido ao ligar frio = corrente de comando esticada.'},
+  {id:'motor_fumaca',t:'Sem fumaça no escapamento',ic:'smoke',p:3,c:1,h:'Azul = queima óleo. Branca e constante com cheiro doce = líquido. Preta = mistura rica.'},
+  {id:'motor_ruidos',t:'Motor sem ruídos anormais em marcha lenta',ic:'noise',p:3,c:1},
+  {id:'cap_pcv',t:'Teste do respiro: tampa do óleo aberta com o motor ligado',ic:'gauge',p:2,h:'Puxar forte ou assobiar = respiro (PCV) com defeito. Soprar muito vapor = desgaste interno.'},
+  {id:'motor_velas',t:'Ignição sem falhas (velas e bobinas)',ic:'spark',p:3},
+  {id:'cap_estrutura',t:'Compartimento sem sinais de batida (longarinas, suportes, solda)',ic:'frame',p:3,c:1},
+ ]},
+ {id:'externo',label:'Externo',titulo:'Externo: lataria, pintura e vidros',ic:'car',nota:'De preferência no sol. Dê uma volta completa no carro.',itens:[
+  {id:'carr_pintura',t:'Pintura: medidor de espessura em todas as peças',ic:'paint',p:2,c:1,h:'Compare as peças: uma bem mais grossa que as outras (ex.: acima de ~200 µm) indica repintura ou massa. Veja o tom contra a luz.'},
+  {id:'carr_lataria',t:'Lataria sem amassados',ic:'car',p:2},
+  {id:'ext_vaos',t:'Vãos iguais entre portas, capô e tampa',ic:'door',p:2},
+  {id:'ext_parafusos',t:'Parafusos de para-lamas, capô e dobradiças sem marca de chave',ic:'wrench',p:2,h:'Marca de chave = peça removida (batida).'},
+  {id:'carr_portas',t:'Portas, fechaduras e travas',ic:'door',p:2},
+  {id:'carr_vidros',t:'Vidros, para-brisa, retrovisores e borrachas',ic:'window',p:1},
+  {id:'ext_vidros_data',t:'Vidros da mesma marca e com datas próximas',ic:'window',p:1,h:'Vidro com data diferente foi trocado.'},
+  {id:'elet_iluminacao',t:'Faróis, lanternas e luzes de freio',ic:'light',p:2},
+  {id:'ext_limpador',t:'Limpadores e lavador do para-brisa',ic:'wiper',p:1},
+  {id:'ext_porta_malas',t:'Porta-malas e poço do estepe secos, sem ferrugem',ic:'trunk',p:2,h:'Água ali = lanterna trincada ou borracha ruim.'},
+  {id:'carr_corrosao',t:'Sem corrosão ou ferrugem (bordas das portas e soleiras)',ic:'rust',p:3},
+ ]},
+ {id:'rodas',label:'Rodas e pneus',titulo:'Rodas e pneus',ic:'tire',nota:'Agachado, com lanterna. Olhe as rodas por dentro.',itens:[
+  {id:'pneu_sulcos',t:'Sulco dos pneus (mínimo legal 1,6 mm)',ic:'tire',p:2},
+  {id:'q_dot',t:'Os pneus têm menos de 5 anos? (data DOT)',ic:'calendar',q:'sim',mp:{k:'pneus',l:'Jogo de 4 pneus',v:2400,pz:30},h:'Os 4 últimos dígitos são semana e ano. Pneu com mais de 5 anos está vencido, mesmo com sulco bom.'},
+  {id:'pneu_desgaste',t:'Desgaste uniforme (sem gastar só na borda)',ic:'tire',p:2,h:'Gasto só na borda = alinhamento ou suspensão.'},
+  {id:'rod_rodas',t:'Rodas sem amassado ou trinca',ic:'tire',p:2},
+  {id:'pneu_estepe',t:'Estepe, macaco e chave de roda',ic:'tire',p:1},
+ ]},
+ {id:'freios',label:'Freios',titulo:'Freios',ic:'brake',itens:[
+  {id:'freio_pedal',t:'Pedal firme e consistente',ic:'pedal',p:5,c:1},
+  {id:'freio_pastilhas',t:'Pastilhas e lonas',ic:'brake',p:4},
+  {id:'freio_discos',t:'Discos sem degrau ou empeno',ic:'brake',p:4},
+  {id:'freio_fluido',t:'Fluido de freio (nível e cor)',ic:'flask',p:2,h:'Escuro = vencido. A troca é a cada 2 anos.'},
+  {id:'fre_estac',t:'Freio de estacionamento segura o carro',ic:'handbrake',p:2},
+ ]},
+ {id:'interno',label:'Interno',titulo:'Interno e elétrica',ic:'seat',nota:'Com o motor ligado, ligue tudo de uma vez: ar, rádio e faróis. Falha de módulo aparece como luz piscando, trava falhando ou ar desligando sozinho.',itens:[
+  {id:'elet_painel',t:'Painel sem luzes de alerta depois da partida',ic:'gauge',p:2,c:1},
+  {id:'int_desgaste',t:'Desgaste de banco, volante e pedais combina com a km',ic:'odometer',p:2,c:1,h:'Pedal liso ou banco afundado com km baixa = hodômetro suspeito.'},
+  {id:'int_enchente',t:'Sem sinais de enchente (mofo, barro no cinto, ferrugem nos trilhos)',ic:'flood',p:4,c:1,h:'Puxe o cinto até o fim e levante o carpete.'},
+  {id:'int_ar',t:'Ar-condicionado gela bem',ic:'snow',p:2,h:'Saída central bem fria em poucos minutos (abaixo de ~8 °C no termômetro).'},
+  {id:'int_som',t:'Multimídia, câmera de ré e sensores',ic:'screen',p:1},
+  {id:'int_vidros',t:'Vidros e retrovisores elétricos',ic:'window',p:1},
+  {id:'int_comandos',t:'Comandos do volante, buzina e luzes internas',ic:'steering',p:1},
+  {id:'int_bancos',t:'Bancos, estofados e cintos',ic:'seat',p:1},
+  {id:'int_painel',t:'Painel, forros e acabamentos',ic:'seat',p:1},
+  {id:'q_opcionais',t:'Todos os opcionais do anúncio estão no carro e funcionam?',ic:'check',q:'sim',h:'Confira a lista do anúncio item por item.'},
+ ]},
+ {id:'inferior',label:'Parte inferior',titulo:'Parte inferior',ic:'lift',nota:'No elevador ou numa rampa, com lanterna.',itens:[
+  {id:'inf_carter',t:'Cárter e retentores sem vazamento (vista de baixo)',ic:'drop',p:3},
+  {id:'inf_cambio',t:'Câmbio sem vazamento',ic:'gear',p:4,c:1},
+  {id:'susp_amortecedores',t:'Amortecedores sem vazamento',ic:'shock',p:3},
+  {id:'susp_buchas',t:'Buchas, bandejas e pivôs',ic:'joint',p:3},
+  {id:'inf_direcao',t:'Caixa e terminais de direção sem folga',ic:'steering',p:3},
+  {id:'inf_coifas',t:'Coifas das homocinéticas inteiras',ic:'joint',p:2},
+  {id:'inf_escape',t:'Escapamento sem furos e com catalisador',ic:'exhaust',p:2},
+  {id:'inf_assoalho',t:'Assoalho e longarinas sem batida, solda ou ferrugem',ic:'frame',p:3,c:1},
+ ]},
+ {id:'scanner',label:'Scanner',titulo:'Scanner',ic:'obd',nota:'Motor ligado, antes do test drive. Leia os códigos ativos e memorizados de todos os módulos e anote os códigos na etapa Códigos OBD.',itens:[
+  {id:'scn_motor',t:'Motor sem códigos ativos ou memorizados',ic:'obd',p:3,c:1},
+  {id:'scn_modulos',t:'Câmbio, ABS, airbag e carroceria sem códigos',ic:'obd',p:3,c:1,h:'Airbag com código memorizado pode indicar batida.'},
+  {id:'scn_prontidao',t:'Monitores de prontidão completos',ic:'check',p:2,c:1,h:'Todos incompletos = alguém apagou os códigos há pouco tempo.'},
+  {id:'scn_trims',t:'Ajustes de combustível entre −10% e +10%',ic:'gauge',p:2,h:'Fora disso: entrada falsa de ar, bico ou sensor.'},
+  {id:'scn_temp',t:'Temperatura do motor sobe e estabiliza (90 a 105 °C)',ic:'thermo',p:3,c:1},
+  {id:'scn_km',t:'Km gravada nos módulos bate com o painel (se o scanner ler)',ic:'odometer',p:2,c:1},
+ ]},
+ {id:'rodagem',label:'Teste de rodagem',titulo:'Teste de rodagem',ic:'road',nota:'No mínimo 20 minutos: trânsito, retomada e lombada. Rádio desligado e vidros fechados no começo, para ouvir o carro.',itens:[
+  {id:'trans_embreagem',t:'Saída sem trepidar e embreagem sem patinar',ic:'gear',p:4,c:1,h:'Automático: trepidação na saída = conversor de torque ou câmbio.'},
+  {id:'trans_marchas',t:'Trocas de marcha suaves, subindo e reduzindo',ic:'gear',p:4,c:1},
+  {id:'trans_ruidos',t:'Câmbio sem ruídos',ic:'noise',p:4},
+  {id:'rod_resposta',t:'Motor responde firme ao acelerar forte',ic:'engine',p:3,c:1,h:'Em turbo, a força chega cedo (2.000 a 2.500 rpm). Demora, falha ou chiado metálico = problema.'},
+  {id:'susp_direcao',t:'Direção sem folga e sem barulho ao esterçar',ic:'steering',p:2},
+  {id:'susp_alinhamento',t:'Não puxa para os lados',ic:'steering',p:2},
+  {id:'rod_suspensao',t:'Lombadas e calçamento sem estalos',ic:'shock',p:2},
+  {id:'rod_frenagem',t:'Frenagem reta, sem pedal trepidando',ic:'brake',p:3},
+  {id:'rod_temp',t:'Temperatura estável o tempo todo e ventoinha liga',ic:'thermo',p:4,c:1,h:'Qualquer subida do ponteiro = desistir.'},
+  {id:'rod_pos',t:'Depois do teste: nada pingando e reservatório no nível',ic:'drop',p:3,c:1,h:'Vazamento pequeno aparece com o motor quente.'},
+  {id:'rod_mensagens',t:'Sem mensagens de erro no painel (câmbio, start-stop)',ic:'alert',p:1},
+ ]},
+ {id:'final',label:'Finalizar',titulo:'Finalizar e assinar',ic:'sign',nota:'Confira o resumo, marque a preparação para revenda e assine.',itens:[]},
 ];
-const ITENS={};CATEGORIAS.forEach(c=>c.itens.forEach(([id,label,peso])=>ITENS[id]={id,label,peso,cat:c}));
-const ST={ok:{label:'OK',score:1},atencao:{label:'Atenção',score:.5},critico:{label:'Crítico',score:0},na:{label:'N/A',score:null}};
+const SECAO={};SECOES.forEach(s=>SECAO[s.id]=s);
+const ITENS={};SECOES.forEach(s=>s.itens.forEach(it=>ITENS[it.id]={...it,label:it.t,peso:it.p||0,crit:!!it.c,cat:s}));
+const IDS=Object.keys(ITENS);
+// itens da versão anterior: avaliação concluída antes desta versão calcula o progresso só com eles
+const LEGADO=['motor_partida','motor_fumaca','motor_ruidos','motor_vazamentos','motor_nivel_oleo','motor_nivel_agua','motor_correia','motor_velas','trans_marchas','trans_embreagem','trans_ruidos','trans_fluido','freio_pedal','freio_pastilhas','freio_discos','freio_fluido','susp_amortecedores','susp_buchas','susp_direcao','susp_alinhamento','elet_bateria','elet_alternador','elet_iluminacao','elet_painel','carr_lataria','carr_pintura','carr_corrosao','carr_portas','carr_vidros','int_bancos','int_painel','int_ar','int_som','pneu_sulcos','pneu_desgaste','pneu_estepe','doc_crlv','doc_historico','doc_sinistro'];
+const ST={ok:{label:'OK',cls:'ok',score:1},atencao:{label:'Atenção',cls:'warn',score:.5},critico:{label:'Problema',cls:'bad',score:0},na:{label:'N/A',cls:'',score:null}};
+// custo de reparo por item: [nome, mínimo, máximo, médio]. Atenção usa o médio; Problema usa o máximo.
 const CUSTO={
  motor_partida:['Partida a frio',150,600,375],motor_fumaca:['Fumaça no escapamento',800,4000,2400],motor_ruidos:['Ruído no motor',500,3500,2000],motor_vazamentos:['Vazamento de óleo',150,800,475],motor_nivel_oleo:['Troca de óleo',120,300,210],motor_nivel_agua:['Arrefecimento',150,350,250],motor_correia:['Correia dentada',400,1200,800],motor_velas:['Velas de ignição',120,400,260],
  trans_marchas:['Trocas de marcha',800,2500,1650],trans_embreagem:['Embreagem',700,1800,1250],trans_ruidos:['Ruído na caixa',1500,4000,2750],trans_fluido:['Fluido de transmissão',150,400,275],
@@ -415,7 +654,81 @@ const CUSTO={
  carr_lataria:['Amassados',150,800,475],carr_pintura:['Pintura',300,1500,900],carr_corrosao:['Ferrugem e corrosão',200,1200,700],carr_portas:['Travas e portas',150,500,325],carr_vidros:['Borrachas e vidros',100,400,250],
  int_bancos:['Bancos e estofados',300,1500,900],int_painel:['Painel e acabamentos',150,600,375],int_ar:['Ar-condicionado',150,1200,675],int_som:['Som e multimídia',150,800,475],
  pneu_sulcos:['Pneu novo',250,600,425],pneu_desgaste:['Alinhamento e balanceamento',80,200,140],pneu_estepe:['Estepe',200,500,350],
- doc_crlv:['Regularização do CRLV',150,500,325],doc_historico:['Laudo técnico',100,300,200],doc_sinistro:['Sinistro / recuperado',2000,8000,5000],
+ doc_crlv:['Regularização do CRLV',150,500,325],doc_historico:['Laudo técnico (falta histórico)',100,300,200],doc_sinistro:['Sinistro / recuperado',2000,8000,5000],
+ cap_arref:['Válvula termostática ou bomba d’água',350,1400,800],cap_pcv:['Respiro do cárter (PCV)',250,900,575],cap_estrutura:['Reparo estrutural',1500,6000,3750],
+ ext_vaos:['Alinhamento de portas e capô',100,500,300],ext_limpador:['Palhetas e lavador',60,250,155],ext_porta_malas:['Vedação do porta-malas',100,500,300],
+ rod_rodas:['Reparo de roda',150,600,375],fre_estac:['Freio de estacionamento',100,600,350],
+ int_vidros:['Máquina de vidro',200,600,400],int_comandos:['Reparo elétrico',100,500,300],
+ inf_carter:['Retentores e juntas',200,900,550],inf_cambio:['Vedação do câmbio',250,1200,725],inf_direcao:['Terminais e caixa de direção',300,2000,1150],inf_coifas:['Coifa da homocinética',120,400,260],inf_escape:['Escapamento',200,1200,700],inf_assoalho:['Reparo de assoalho',300,2500,1400],
+ scn_motor:['Diagnóstico de códigos',150,500,325],scn_modulos:['Diagnóstico de módulos',150,500,325],scn_trims:['Diagnóstico de mistura',150,600,375],scn_temp:['Arrefecimento',150,800,475],
+ rod_resposta:['Diagnóstico de perda de potência',200,1500,850],rod_suspensao:['Ruído de suspensão',150,900,525],rod_frenagem:['Discos e pastilhas',300,900,600],rod_temp:['Arrefecimento',150,800,475],rod_pos:['Vazamento após o teste',150,900,525],rod_mensagens:['Diagnóstico com scanner',100,300,200],
+};
+const RESP={sim:'Sim',nao:'Não',ns:'Não sei'};
+const PRAZOS=[[0,'Agora'],[30,'30 dias'],[60,'60 dias'],[90,'90 dias']];
+const pzTxt=d=>d===0?'agora':'em até '+d+' dias';
+const pzCurto=d=>d===0?'Agora':d+' dias';
+const IC={
+ chat:'<path d="M6 4h12a2.5 2.5 0 0 1 2.5 2.5V14a2.5 2.5 0 0 1-2.5 2.5h-6.5L7 20v-3.5H6A2.5 2.5 0 0 1 3.5 14V6.5A2.5 2.5 0 0 1 6 4z"/><path d="M10 8.5a2 2 0 1 1 2.9 1.8c-.6.3-.9.8-.9 1.4"/><path d="M12 14.3h.1"/>',
+ doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v3.5c0 .8.7 1.5 1.5 1.5H19"/><path d="M9 12.5h6"/><path d="M9 16.5h6"/><path d="M9 8.5h2"/>',
+ engine:'<path d="M8.5 4.5h7"/><path d="M12 4.5v3"/><path d="M6.5 7.5h10l2 2.5h2.5v7H19l-2.5 2.5H9l-2.5-2.5v-1.5h-3v-4.5h3z"/>',
+ car:'<path d="M5.4 15.5H3.8a.8.8 0 0 1-.8-.8v-2.9c0-.8.5-1.5 1.3-1.7l2.2-.3 2.4-2.9a1.6 1.6 0 0 1 1.2-.6h4.6c.5 0 .9.2 1.2.5l2.8 3 1.5.4c.5.1.8.6.8 1.1v3.4a.8.8 0 0 1-.8.8h-1.6"/><circle cx="7.5" cy="15.5" r="2.1"/><circle cx="16.5" cy="15.5" r="2.1"/><path d="M9.6 15.5h4.8"/>',
+ tire:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.2"/><path d="M20.9 13.6L18.6 14.9M17.2 19.4L14.6 18.7M10.4 20.9L9.1 18.6M4.6 17.2L5.3 14.6M3.1 10.4L5.4 9.1M6.8 4.6L9.4 5.3M13.6 3.1L14.9 5.4M19.4 6.8L18.7 9.4"/><circle cx="12" cy="12" r="0.8"/>',
+ brake:'<circle cx="11" cy="13" r="8"/><circle cx="11" cy="13" r="1.6"/><circle cx="14.4" cy="16.4" r="0.6"/><circle cx="7.6" cy="16.4" r="0.6"/><circle cx="7.6" cy="9.6" r="0.6"/><circle cx="14.4" cy="9.6" r="0.6"/><path d="M12.4 5.1L12.8 2.9A10.3 10.3 0 0 1 21.1 11.2L18.9 11.6"/>',
+ seat:'<path d="M6.3 3h2.4A1.3 1.3 0 0 1 10 4.3v.9a1.3 1.3 0 0 1-1.3 1.3H6.3A1.3 1.3 0 0 1 5 5.2v-.9A1.3 1.3 0 0 1 6.3 3z"/><path d="M6 8h3a1 1 0 0 1 1 .8l1.4 6.2H17a2 2 0 0 1 2 2v.8a1.2 1.2 0 0 1-1.2 1.2H8.6a1.5 1.5 0 0 1-1.5-1.2L5 9.2A1 1 0 0 1 6 8z"/><path d="M10 21h8"/>',
+ lift:'<path d="M3.5 20.5v-17M2.5 20.5h2M3.5 15h4"/><path d="M20.5 20.5v-17M19.5 20.5h2M20.5 15h-4"/><path d="M7.6 12h-1a.6.6 0 0 1-.6-.6V9.5c0-.6.4-1 .9-1.2l1.5-.2 1.6-1.9a1.1 1.1 0 0 1 .8-.4h3a1 1 0 0 1 .8.4l1.9 2 .9.3c.4.1.6.4.6.8v2.1a.6.6 0 0 1-.6.6h-1"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><path d="M10.4 12h3.2"/>',
+ obd:'<rect x="3" y="2.5" width="10" height="14" rx="2"/><rect x="5" y="4.5" width="6" height="4.5" rx="1"/><path d="M6.5 12.5h3"/><path d="M8 16.5v1.5a3 3 0 0 0 3 3h3.5a3 3 0 0 0 3-3V16"/><path d="M14.7 10.5h5.6a.6.6 0 0 1 .6.7l-.6 3.9a1 1 0 0 1-1 .9h-3.6a1 1 0 0 1-1-.9l-.6-3.9a.6.6 0 0 1 .6-.7z"/><path d="M16.3 12.8h.1"/><path d="M18.7 12.8h.1"/>',
+ road:'<path d="M8.5 3.5 4 20.5"/><path d="M15.5 3.5 20 20.5"/><path d="M12 4v1.5"/><path d="M12 8.5V11"/><path d="M12 14.5V19"/>',
+ sign:'<path d="M8 15.4L8.6 12.4L16.6 4.4A1.7 1.7 0 0 1 19 6.8L11 14.8z"/><path d="M8.6 12.4L11 14.8"/><path d="M3.5 16.9c1-1.5 1.8-2.6 2.5-2.3.8.4-.6 2.9.3 3 .6.1 1.2-.8 1.7-1.7"/><path d="M3.5 20h17"/>',
+ user:'<circle cx="12" cy="7.7" r="3.8"/><path d="M5 20.2v-.6a4.6 4.6 0 0 1 4.6-4.6h4.8a4.6 4.6 0 0 1 4.6 4.6v.6"/>',
+ oil:'<path d="M5.5 9h8.2l1.6 1.8 6.2-3.3-5.8 7.9a1.6 1.6 0 0 1-1.3.6H6.5a1 1 0 0 1-1-1z"/><path d="M5.5 10.5H3.5a1 1 0 0 0-1 1v1.4a1 1 0 0 0 .6.9l2.4 1.2"/><path d="M9.5 9V6.5"/><path d="M7.5 6.5h4"/><path d="M21 15.9c0 .9-.6 1.5-1.2 1.5s-1.2-.6-1.2-1.5c0-.8 1.2-2.3 1.2-2.3s1.2 1.5 1.2 2.3z"/>',
+ coolant:'<path d="M10.6 8.6V4.4a1.4 1.4 0 0 1 2.8 0v4.2a2.6 2.6 0 1 1-2.8 0z"/><path d="M13.4 5h1.6"/><path d="M13.4 7.5h1.6"/><path d="M3 17c1.2 0 1.8-1 3-1s1.8 1 3 1 1.8-1 3-1 1.8 1 3 1 1.8-1 3-1 1.8 1 3 1"/><path d="M3 20.5c1.2 0 1.8-1 3-1s1.8 1 3 1 1.8-1 3-1 1.8 1 3 1 1.8-1 3-1 1.8 1 3 1"/>',
+ drop:'<path d="M12 3c-.7 2.7-2.6 4.9-4.3 6.9C6.6 11.3 6 12.8 6 14.5a6 6 0 0 0 12 0c0-1.7-.6-3.2-1.7-4.6C14.6 7.9 12.7 5.7 12 3z"/><path d="M9 14.8a3 3 0 0 0 2.6 2.7"/>',
+ belt:'<circle cx="7.9" cy="15" r="4"/><circle cx="17.4" cy="7.5" r="2.7"/><circle cx="7.9" cy="15" r="1"/><circle cx="17.4" cy="7.5" r="0.6"/><path d="M10.7 17.9L19.3 9.4M5.8 11.6L16 5.2"/>',
+ battery:'<rect x="3" y="7" width="18" height="12" rx="2"/><path d="M6 7V5h3v2"/><path d="M15 7V5h3v2"/><path d="M6 13h3"/><path d="M15 13h3"/><path d="M16.5 11.5v3"/>',
+ bolt:'<path d="M13.3 2.5 4.8 13.5h7l-1 8 8.5-11h-7z"/>',
+ spark:'<path d="M12 2.5v1.8"/><rect x="9.8" y="4.3" width="4.4" height="5.4" rx="1.4"/><rect x="7.2" y="9.7" width="9.6" height="3.8" rx="1"/><path d="M9.4 13.5v4.3a1 1 0 0 0 1 1h3.2a1 1 0 0 0 1-1v-4.3"/><path d="M9.4 16.1h5.2"/><path d="M12 18.8v2.2"/>',
+ gear:'<path d="M10.3 5.2L10.7 3.1L13.3 3.1L13.7 5.2A7 7 0 0 1 15.6 6L17.4 4.8L19.2 6.6L18 8.4A7 7 0 0 1 18.8 10.3L20.9 10.7L20.9 13.3L18.8 13.7A7 7 0 0 1 18 15.6L19.2 17.4L17.4 19.2L15.6 18A7 7 0 0 1 13.7 18.8L13.3 20.9L10.7 20.9L10.3 18.8A7 7 0 0 1 8.4 18L6.6 19.2L4.8 17.4L6 15.6A7 7 0 0 1 5.2 13.7L3.1 13.3L3.1 10.7L5.2 10.3A7 7 0 0 1 6 8.4L4.8 6.6L6.6 4.8L8.4 6A7 7 0 0 1 10.3 5.2z"/><circle cx="12" cy="12" r="3"/>',
+ flask:'<rect x="9" y="2.5" width="6" height="2.5" rx="0.8"/><path d="M10 5v1.6L6.8 9A2 2 0 0 0 6 10.6V19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8.4a2 2 0 0 0-.8-1.6L14 6.6V5"/><path d="M6 14h12"/>',
+ key:'<rect x="3" y="6.5" width="8" height="11" rx="3"/><circle cx="7" cy="10.5" r="1.3"/><path d="M5.5 14.5h3"/><path d="M11 10h9.2a.8.8 0 0 1 .7 1.2L19.5 14H18l-1-1-1 1h-1.5l-1-1-1 1H11"/>',
+ shield:'<path d="M12 2.8c2 1.6 4.2 2.4 6.8 2.6.4 0 .7.4.7.8v5.6c0 4.6-3 7.7-7.2 9.3a.9.9 0 0 1-.6 0C7.5 19.5 4.5 16.4 4.5 11.8V6.2c0-.4.3-.8.7-.8C7.8 5.2 10 4.4 12 2.8z"/><path d="M8.8 12.2l2.2 2.2 4.2-4.4"/>',
+ money:'<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 12h.1"/><path d="M18 12h.1"/>',
+ wrench:'<path d="M16.6 9.6L20 6.3A5 5 0 0 1 13.3 13L6.8 19.5A1.6 1.6 0 0 1 4.5 17.2L11 10.7A5 5 0 0 1 17.7 4L14.4 7.4z"/>',
+ paint:'<rect x="3" y="3.5" width="14" height="5" rx="1.5"/><path d="M17 6h2.5a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H12a1 1 0 0 0-1 1v1.5"/><rect x="9.5" y="13.5" width="3" height="7" rx="1"/>',
+ door:'<path d="M5 21h13.5a1.5 1.5 0 0 0 1.5-1.5v-15A1.5 1.5 0 0 0 18.5 3h-7.6a1.5 1.5 0 0 0-1.1.5L4.4 9.6A1.5 1.5 0 0 0 4 10.6V20a1 1 0 0 0 1 1z"/><path d="M4 11h16"/><path d="M15 14.5h2.5"/>',
+ window:'<path d="M3.5 17.5 8.7 7.6a2 2 0 0 1 1.8-1.1h8.5a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5z"/><path d="M10 14.8l3.6-5.6"/><path d="M13.6 14.8l2.2-3.4"/>',
+ light:'<path d="M14.5 5.5c3.6 0 6.5 2.9 6.5 6.5s-2.9 6.5-6.5 6.5c-1 0-1.8-2.9-1.8-6.5s.8-6.5 1.8-6.5z"/><path d="M3 8.5h6.5"/><path d="M3 12h6.5"/><path d="M3 15.5h6.5"/>',
+ wiper:'<path d="M3.5 18.3 4.8 9.1c.2-1.6 1.4-2.8 3-3 1.4-.2 2.8-.3 4.2-.3s2.8.1 4.2.3c1.6.2 2.8 1.4 3 3l1.3 9.2z"/><path d="M12 18.3 7.5 9.8"/><path d="M11.1 11.8A6.6 6.6 0 0 1 12.5 11.7M13.6 11.9A6.6 6.6 0 0 1 14.9 12.4M15.9 13A6.6 6.6 0 0 1 16.9 13.9"/>',
+ trunk:'<path d="M5.4 15.5H3.8a.8.8 0 0 1-.8-.8v-3h2"/><path d="M6.5 9.8l2.4-2.9a1.6 1.6 0 0 1 1.2-.6h4.6c.5 0 .9.2 1.2.5l2.8 3 1.5.4c.5.1.8.6.8 1.1v3.4a.8.8 0 0 1-.8.8h-1.6"/><path d="M6.5 9.8 3.4 5.6"/><circle cx="7.5" cy="15.5" r="2.1"/><circle cx="16.5" cy="15.5" r="2.1"/><path d="M9.6 15.5h4.8"/>',
+ rust:'<path d="M13 20.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5h14A1.5 1.5 0 0 1 20.5 5v7.5l-1.9 1.1.6 2.3-2.3.5-.3 2.4-2.2.1z"/><circle cx="14.2" cy="12.4" r="1.2"/><circle cx="9.6" cy="13.6" r="0.6"/><circle cx="12.4" cy="16.8" r="0.5"/><circle cx="19.6" cy="18.6" r="0.5"/><circle cx="18.2" cy="20.6" r="0.3"/>',
+ gauge:'<path d="M5.6 19.3A9 9 0 1 1 18.4 19.3"/><circle cx="12" cy="12.9" r="1.6"/><path d="M13.1 11.8L16.2 8.7"/>',
+ snow:'<path d="M12 3L12 21M19.8 7.5L4.2 16.5M19.8 16.5L4.2 7.5M13.9 5L12 7L10.1 5M19 10.1L16.3 9.5L17.1 6.9M17.1 17.1L16.3 14.5L19 13.9M10.1 19L12 17L13.9 19M5 13.9L7.7 14.5L6.9 17.1M6.9 6.9L7.7 9.5L5 10.1"/>',
+ screen:'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M10.5 8v6l4.5-3z"/><path d="M8.5 20.5h7"/>',
+ steering:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M3 12h6.5"/><path d="M14.5 12H21"/><path d="M12 14.5V21"/>',
+ shock:'<path d="M7.5 4.5h9"/><path d="M12 2.5v2"/><path d="M8 6.5l8 2.2-8 2.2 8 2.2-8 2.2 8 2.2"/><path d="M7.5 19.5h9"/><path d="M12 19.5v2"/>',
+ exhaust:'<path d="M2.5 13h8.5"/><path d="M2.5 18h8.5"/><ellipse cx="11" cy="15.5" rx="1.5" ry="2.5"/><circle cx="16.5" cy="12.5" r="2"/><circle cx="19.5" cy="7.5" r="1.5"/>',
+ joint:'<path d="M7 10.1Q7.9 7.1 10.3 9.1Q11.3 6.2 13.7 8.2Q14.6 5.2 17 7.2"/><path d="M7 13.9Q7.9 16.9 10.3 14.9Q11.3 17.8 13.7 15.8Q14.6 18.8 17 16.8"/><path d="M7 10.1L7 13.9"/><path d="M17 7.2h1.5a2.5 2.5 0 0 1 2.5 2.5v4.6a2.5 2.5 0 0 1-2.5 2.5h-1.5z"/><path d="M3 12H7"/>',
+ frame:'<path d="M9 3.5v17"/><path d="M15 3.5v17"/><path d="M6.5 6.5h11"/><path d="M9 12h6"/><path d="M6.5 17.5h11"/><rect x="3.5" y="4" width="3" height="5" rx="1.2"/><rect x="17.5" y="4" width="3" height="5" rx="1.2"/><rect x="3.5" y="15" width="3" height="5" rx="1.2"/><rect x="17.5" y="15" width="3" height="5" rx="1.2"/>',
+ thermo:'<path d="M9.8 13.6V5.2a2.2 2.2 0 0 1 4.4 0v8.4a4 4 0 1 1-4.4 0z"/><circle cx="12" cy="16.9" r="1.5"/>',
+ smoke:'<path d="M7.5 17.5c-1.5-1.5-1.5-3 0-4.5s1.5-3 0-4.5"/><path d="M12 19c-1.5-1.5-1.5-3 0-4.5s1.5-3 0-4.5 1.5-3 0-4.5"/><path d="M16.5 17.5c-1.5-1.5-1.5-3 0-4.5s1.5-3 0-4.5"/>',
+ noise:'<path d="M3.5 9.5h2.5l4.5-4v13l-4.5-4H3.5z"/><path d="M14.5 9a4 4 0 0 1 0 6"/><path d="M17.5 6.5a7.5 7.5 0 0 1 0 11"/>',
+ vin:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M6.5 9.5v5"/><path d="M9 9.5v5"/><path d="M12 9.5v5"/><path d="M14.5 9.5v5"/><path d="M17.5 9.5v5"/>',
+ alert:'<path d="M10.3 4.2a2 2 0 0 1 3.4 0l7.5 13a2 2 0 0 1-1.7 3H4.5a2 2 0 0 1-1.7-3z"/><path d="M12 9.5v4"/><path d="M12 16.8h.1"/>',
+ calendar:'<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M3.5 10h17"/><path d="M8 14h.1"/><path d="M12 14h.1"/><path d="M16 14h.1"/>',
+ flood:'<path d="M3 7.5c1.2 0 1.8-1 3-1s1.8 1 3 1 1.8-1 3-1 1.8 1 3 1 1.8-1 3-1 1.8 1 3 1"/><path d="M3 12.5c1.2 0 1.8-1 3-1s1.8 1 3 1 1.8-1 3-1 1.8 1 3 1 1.8-1 3-1 1.8 1 3 1"/><path d="M3 17.5c1.2 0 1.8-1 3-1s1.8 1 3 1 1.8-1 3-1 1.8 1 3 1 1.8-1 3-1 1.8 1 3 1"/>',
+ pedal:'<circle cx="7.5" cy="4.5" r="1.6"/><path d="M8.4 5.8C9.5 8.6 10.6 10.6 11.8 12.2L14 14.4"/><path d="M17.1 11.3L10.9 17.5L13 19.6L19.2 13.4z"/><path d="M3.5 20.5h17"/>',
+ handbrake:'<circle cx="12" cy="12" r="6.5"/><path d="M10.5 15.5v-7h2.2a2 2 0 0 1 0 4h-2.2"/><path d="M4.2 17.4A9.5 9.5 0 0 1 4.2 6.6"/><path d="M19.8 6.6A9.5 9.5 0 0 1 19.8 17.4"/>',
+ odometer:'<path d="M5.1 15.5A8 8 0 1 1 18.9 15.5"/><path d="M12 11.5L14.5 7.2"/><rect x="8.5" y="16" width="7" height="4" rx="1"/><path d="M10.8 16v4"/><path d="M13.2 16v4"/>',
+ check:'<circle cx="12" cy="12" r="9"/><path d="M8.2 12.3l2.6 2.6 5-5.2"/>',
+ question:'<circle cx="12" cy="12" r="9"/><path d="M9.3 9.4a2.8 2.8 0 0 1 5.4 1c0 1.8-2.7 2.6-2.7 2.6"/><path d="M12 16.8h.1"/>',
+ camera:'<path d="M9 4.5h6l1.6 2.3H19a2 2 0 0 1 2 2v8.7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8.8a2 2 0 0 1 2-2h2.4z"/><circle cx="12" cy="13" r="3.5"/>',
+ video:'<rect x="3" y="6.5" width="13" height="11" rx="2"/><path d="M16 10l5-3v10l-5-3z"/>',
+ gallery:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9.5" r="1.8"/><path d="M3.5 18l5-5a1.4 1.4 0 0 1 2 0l3 3 2-2a1.4 1.4 0 0 1 2 0l3 3"/>',
+ trash:'<path d="M4 6.5h16"/><path d="M9.5 6.5v-2a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v2"/><path d="M6 6.5l.9 12.6a1.6 1.6 0 0 0 1.6 1.4h7a1.6 1.6 0 0 0 1.6-1.4L18 6.5"/><path d="M10 10.5v6"/><path d="M14 10.5v6"/>',
+ close:'<path d="M6 6l12 12"/><path d="M18 6 6 18"/>',
+ plus:'<path d="M12 5v14"/><path d="M5 12h14"/>',
+ play:'<circle cx="12" cy="12" r="9"/><path d="M10.3 8.5v7l5.4-3.5z"/>',
+ flip:'<path d="M4.5 12A7.5 7.5 0 0 1 17.3 6.7"/><path d="M14.9 6.7h2.4V4.3"/><path d="M19.5 12A7.5 7.5 0 0 1 6.7 17.3"/><path d="M9.1 17.3H6.7v2.4"/><circle cx="12" cy="12" r="2.3"/>',
+ record:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/>',
 };
 const MARCAS=['Chevrolet','Fiat','Volkswagen','Ford','Toyota','Honda','Hyundai','Renault','Nissan','Jeep','Peugeot','Citroën','Mitsubishi','Kia','Chery','BYD','GWM','BMW','Mercedes-Benz','Audi','Volvo','Land Rover','RAM','Porsche'];
 const ANOS=Array.from({length:30},(_,k)=>String(new Date().getFullYear()+1-k));
@@ -497,6 +810,1070 @@ const ICON={
  search:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg>',
 };
 
+/* ==========================================================================
+   DiagCheck Pro · Mídia — captura, compressão e fila offline de fotos e vídeos
+   JavaScript clássico (ES2019), sem bibliotecas. Cole no início do <script> do app.
+   Nomes globais criados (só estes): comprimirFoto, thumbDeVideo, tipoVideoSuportado,
+   abrirGravador, filaMidia, MIDIA_CSS. Todo o resto fica fechado no IIFE abaixo.
+   ========================================================================== */
+const { comprimirFoto, thumbDeVideo, tipoVideoSuportado, abrirGravador, filaMidia, MIDIA_CSS } = (() => {
+  'use strict';
+
+  const ERR_IMG = 'Arquivo não é uma imagem.';
+  const ERR_VID = 'Não foi possível ler o vídeo.';
+  const ERR_GALERIA = 'Este navegador não grava vídeo aqui. Use o botão Galeria.';
+
+  /* ---------- utilitários ---------- */
+
+  function _ehBlob(x) {
+    return !!x && (x instanceof Blob ||
+      (typeof x.size === 'number' && typeof x.slice === 'function' && typeof x.type === 'string'));
+  }
+  function _num(v, def) { v = Number(v); return isFinite(v) && v > 0 ? v : def; }
+  function _q(v, def) { v = Number(v); return v > 0 && v <= 1 ? v : def; }
+
+  // Lado maior ≤ max, sem nunca ampliar.
+  function _escala(w, h, max) {
+    const s = Math.min(1, max / Math.max(w, h));
+    return { w: Math.max(1, Math.round(w * s)), h: Math.max(1, Math.round(h * s)) };
+  }
+
+  function _canvas(w, h) {
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    return c;
+  }
+  // iOS conta a memória de canvas até o GC; zerar devolve na hora.
+  function _liberar(c) { try { c.width = 0; c.height = 0; } catch (e) { /* nada */ } }
+
+  function _buf(b) {
+    if (typeof b.arrayBuffer === 'function') return b.arrayBuffer();
+    return new Promise((res, rej) => {
+      const fr = new FileReader();
+      fr.onload = () => res(fr.result);
+      fr.onerror = () => rej(fr.error);
+      fr.readAsArrayBuffer(b);
+    });
+  }
+
+  const _temQualidade = typeof CanvasRenderingContext2D !== 'undefined' &&
+    'imageSmoothingQuality' in CanvasRenderingContext2D.prototype;
+
+  // Desenha `fonte` em w×h sobre fundo branco (PNG transparente vira branco no JPEG).
+  function _desenhar(fonte, w, h) {
+    const c = _canvas(w, h);
+    const ctx = c.getContext('2d', { alpha: false });
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, w, h);
+    ctx.imageSmoothingEnabled = true;
+    if (_temQualidade) ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(fonte, 0, 0, w, h);
+    return c;
+  }
+
+  // Reduz para w×h. Sem imageSmoothingQuality (Firefox antigo), reduz em metades para não serrilhar.
+  function _reduzir(fonte, sw, sh, w, h) {
+    let src = fonte, cw = sw, ch = sh, tmp = null;
+    if (!_temQualidade) {
+      while (cw / 2 >= w && ch / 2 >= h) {
+        const nw = Math.round(cw / 2), nh = Math.round(ch / 2);
+        const c = _canvas(nw, nh);
+        c.getContext('2d').drawImage(src, 0, 0, nw, nh);
+        if (tmp) _liberar(tmp);
+        tmp = c; src = c; cw = nw; ch = nh;
+      }
+    }
+    const out = _desenhar(src, w, h);
+    if (tmp) _liberar(tmp);
+    return out;
+  }
+
+  // canvas → Blob JPEG: canvas.toBlob; se faltar ou falhar, OffscreenCanvas.convertToBlob.
+  function _jpeg(canvas, q) {
+    return new Promise((resolve, reject) => {
+      const falha = () => reject(new Error('Não foi possível gerar a imagem.'));
+      const viaOffscreen = () => {
+        if (typeof OffscreenCanvas === 'undefined') { falha(); return; }
+        try {
+          const oc = new OffscreenCanvas(canvas.width, canvas.height);
+          oc.getContext('2d').drawImage(canvas, 0, 0);
+          oc.convertToBlob({ type: 'image/jpeg', quality: q }).then(resolve, falha);
+        } catch (e) { falha(); }
+      };
+      if (typeof canvas.toBlob !== 'function') { viaOffscreen(); return; }
+      try {
+        canvas.toBlob(b => { if (b && b.size) resolve(b); else viaOffscreen(); }, 'image/jpeg', q);
+      } catch (e) { viaOffscreen(); }
+    });
+  }
+
+  /* ---------- fotos ---------- */
+
+  // Teste único: o createImageBitmap deste navegador aplica a orientação EXIF com
+  // imageOrientation:'from-image'? Monta um JPEG 2×1 com EXIF "girar 90°" (orientação 6):
+  // se respeitar, o bitmap sai 1×2. Se não, usamos <img>, que gira sozinho nos navegadores atuais.
+  let _orientaBmp = null;
+  function _bitmapOrienta() {
+    if (_orientaBmp) return _orientaBmp;
+    _orientaBmp = (async () => {
+      let bmp = null;
+      try {
+        const c = _canvas(2, 1);
+        c.getContext('2d').fillRect(0, 0, 2, 1);
+        const base = new Uint8Array(await _buf(await _jpeg(c, 0.5)));
+        _liberar(c);
+        const exif = new Uint8Array([0xFF, 0xE1, 0, 34, 0x45, 0x78, 0x69, 0x66, 0, 0,
+          0x4D, 0x4D, 0, 42, 0, 0, 0, 8, 0, 1, 0x01, 0x12, 0, 3, 0, 0, 0, 1, 0, 6, 0, 0, 0, 0, 0, 0]);
+        const teste = new Blob([base.subarray(0, 2), exif, base.subarray(2)], { type: 'image/jpeg' });
+        bmp = await createImageBitmap(teste, { imageOrientation: 'from-image' });
+        return bmp.width === 1 && bmp.height === 2;
+      } catch (e) {
+        return false;
+      } finally {
+        if (bmp && bmp.close) bmp.close();
+      }
+    })();
+    return _orientaBmp;
+  }
+
+  function _viaImg(file) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      const soltar = () => { img.onload = img.onerror = null; URL.revokeObjectURL(url); };
+      img.onload = () => {
+        const w = img.naturalWidth, h = img.naturalHeight;
+        if (!w || !h) { soltar(); reject(new Error('decode')); return; }
+        resolve({ fonte: img, w, h, fechar: () => { soltar(); img.removeAttribute('src'); } });
+      };
+      img.onerror = () => { soltar(); reject(new Error('decode')); };
+      img.src = url;
+    });
+  }
+
+  async function _decodificar(file) {
+    if (typeof createImageBitmap === 'function' && await _bitmapOrienta()) {
+      try {
+        const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
+        return { fonte: bmp, w: bmp.width, h: bmp.height, fechar: () => { try { bmp.close(); } catch (e) { /* nada */ } } };
+      } catch (e) { /* formato que o bitmap não lê (ex.: SVG): tenta <img> */ }
+    }
+    return _viaImg(file);
+  }
+
+  /**
+   * Reduz e converte uma foto para JPEG respeitando a orientação EXIF (e removendo os
+   * metadados, inclusive GPS). → {blob, thumb, w, h, mime:'image/jpeg'}
+   */
+  async function comprimirFoto(file, opt) {
+    const o = Object.assign({ max: 1600, q: 0.8, tmax: 480, tq: 0.7 }, opt || {});
+    const max = _num(o.max, 1600), tmax = _num(o.tmax, 480), q = _q(o.q, 0.8), tq = _q(o.tq, 0.7);
+    if (!_ehBlob(file)) throw new Error(ERR_IMG);
+    const tipo = String(file.type || '').toLowerCase();
+    if (tipo && tipo.indexOf('image/') !== 0) throw new Error(ERR_IMG);
+    let d;
+    try {
+      d = await _decodificar(file);
+    } catch (e) {
+      if (!tipo) throw new Error(ERR_IMG);
+      if (/hei[cf]/.test(tipo)) throw new Error('Foto em HEIC não abre neste navegador. Envie em JPEG.');
+      throw new Error('Não foi possível abrir a imagem.');
+    }
+    let c = null, ct = null;
+    try {
+      const a = _escala(d.w, d.h, max);
+      c = _reduzir(d.fonte, d.w, d.h, a.w, a.h);
+      d.fechar(); // libera a imagem original (grande) antes de gerar os JPEGs
+      const blob = await _jpeg(c, q);
+      const t = _escala(a.w, a.h, tmax);
+      ct = _reduzir(c, a.w, a.h, t.w, t.h);
+      const thumb = await _jpeg(ct, tq);
+      return { blob, thumb, w: a.w, h: a.h, mime: 'image/jpeg' };
+    } catch (e) {
+      throw new Error('Não foi possível processar a imagem.'); // ex.: falta de memória no aparelho
+    } finally {
+      d.fechar();
+      if (c) _liberar(c);
+      if (ct) _liberar(ct);
+    }
+  }
+
+  /* ---------- vídeos ---------- */
+
+  // Espera `nome` (ou 'error') no elemento.
+  function _evento(el, nome) {
+    return new Promise((res, rej) => {
+      const ok = () => { off(); res(); };
+      const err = () => { off(); rej(new Error(ERR_VID)); };
+      const off = () => { el.removeEventListener(nome, ok); el.removeEventListener('error', err); };
+      el.addEventListener(nome, ok);
+      el.addEventListener('error', err);
+    });
+  }
+
+  // Busca o tempo t e espera o 'seeked' DESTA busca (ignora o de uma busca anterior).
+  function _buscar(v, t) {
+    return new Promise((res, rej) => {
+      const ok = () => { if (v.seeking) return; off(); res(); };
+      const err = () => { off(); rej(new Error(ERR_VID)); };
+      const off = () => { v.removeEventListener('seeked', ok); v.removeEventListener('error', err); };
+      v.addEventListener('seeked', ok);
+      v.addEventListener('error', err);
+      try { v.currentTime = t; } catch (e) { off(); rej(new Error(ERR_VID)); }
+    });
+  }
+
+  // WebM do MediaRecorder vem sem duração (Infinity). Truque: buscar um tempo enorme faz o
+  // navegador ler o arquivo até o fim e descobrir a duração real. → segundos ou null.
+  function _descobrirDuracao(v) {
+    return new Promise(res => {
+      let feito = false, tm = 0;
+      const fim = () => {
+        if (feito) return;
+        feito = true;
+        clearTimeout(tm);
+        v.removeEventListener('seeked', fim);
+        v.removeEventListener('error', fim);
+        res(isFinite(v.duration) && v.duration > 0 ? v.duration : null);
+      };
+      tm = setTimeout(fim, 3000);
+      v.addEventListener('seeked', fim);
+      v.addEventListener('error', fim);
+      try { v.currentTime = 1e101; } catch (e) { fim(); }
+    });
+  }
+
+  /**
+   * Gera a miniatura JPEG de um vídeo (quadro em min(0,5 s; 10% da duração)).
+   * → {thumb, w, h, dur}  (w×h = tamanho do vídeo; dur em segundos ou null)
+   */
+  async function thumbDeVideo(fileOrBlob, opt) {
+    const o = Object.assign({ tmax: 480, tq: 0.7 }, opt || {});
+    const tmax = _num(o.tmax, 480), tq = _q(o.tq, 0.7);
+    if (!_ehBlob(fileOrBlob) || !fileOrBlob.size) throw new Error(ERR_VID);
+    const url = URL.createObjectURL(fileOrBlob);
+    const v = document.createElement('video');
+    v.muted = true; v.defaultMuted = true; v.playsInline = true;
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', '');
+    v.preload = 'auto';
+    v.setAttribute('aria-hidden', 'true');
+    // No documento (mas invisível): o Safari do iPhone só decodifica quadros de vídeos anexados.
+    v.style.cssText = 'position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none;z-index:-1';
+    let tm = 0, c = null;
+    const trabalho = (async () => {
+      (document.body || document.documentElement).appendChild(v);
+      const meta = _evento(v, 'loadedmetadata');
+      v.src = url;
+      await meta;
+      let dur = v.duration;
+      if (dur === Infinity) dur = await _descobrirDuracao(v);
+      if (!(isFinite(dur) && dur > 0)) dur = null;
+      const alvo = dur ? Math.max(0.01, Math.min(0.5, dur * 0.1)) : 0.5;
+      await _buscar(v, alvo);
+      if (v.readyState < 2) { // iOS às vezes só mostra o quadro depois de tocar
+        const quadro = _evento(v, 'timeupdate');
+        try { await v.play(); } catch (e) { /* segue */ }
+        await quadro;
+        v.pause();
+      }
+      const w = v.videoWidth, h = v.videoHeight;
+      if (!w || !h) throw new Error(ERR_VID);
+      const t = _escala(w, h, tmax);
+      c = _desenhar(v, t.w, t.h);
+      const thumb = await _jpeg(c, tq);
+      return { thumb, w, h, dur: dur === null ? null : Math.round(dur * 100) / 100 };
+    })();
+    trabalho.catch(() => { /* evita "unhandled rejection" se o prazo vencer antes */ });
+    const prazo = new Promise((_, rej) => { tm = setTimeout(() => rej(new Error(ERR_VID)), 8000); });
+    try {
+      return await Promise.race([trabalho, prazo]);
+    } catch (e) {
+      throw new Error(ERR_VID);
+    } finally {
+      clearTimeout(tm);
+      try { v.pause(); } catch (e) { /* nada */ }
+      v.removeAttribute('src');
+      try { v.load(); } catch (e) { /* nada */ } // devolve o decodificador (iOS tem poucos)
+      if (v.parentNode) v.parentNode.removeChild(v);
+      URL.revokeObjectURL(url);
+      if (c) _liberar(c);
+    }
+  }
+
+  /** Melhor mimeType do MediaRecorder neste navegador, ou ''. */
+  function tipoVideoSuportado() {
+    if (typeof MediaRecorder === 'undefined' || typeof MediaRecorder.isTypeSupported !== 'function') return '';
+    const tipos = [
+      'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+      'video/mp4;codecs=avc1,mp4a.40.2',
+      'video/mp4;codecs=avc1,opus',
+      'video/mp4;codecs=avc1',
+      'video/webm;codecs=h264,opus',
+      'video/mp4',
+      'video/webm;codecs=vp9,opus',
+      'video/webm;codecs=vp8,opus',
+      'video/webm'
+    ];
+    for (let i = 0; i < tipos.length; i++) {
+      try { if (MediaRecorder.isTypeSupported(tipos[i])) return tipos[i]; } catch (e) { /* segue */ }
+    }
+    return '';
+  }
+
+  // 'video/webm;codecs=vp9,opus' → 'video/webm'
+  function _container(t) {
+    t = String(t || '').toLowerCase().split(';')[0].trim();
+    if (t.indexOf('mp4') >= 0) return 'video/mp4';
+    if (t.indexOf('webm') >= 0) return 'video/webm';
+    return t.indexOf('video/') === 0 ? t : 'video/webm';
+  }
+
+  /* ---------- fila persistente (IndexedDB, com plano B em memória) ---------- */
+
+  const filaMidia = (() => {
+    const NOME = 'diagcheck-midia', LOJA = 'pendentes';
+    const mem = new Map();   // plano B (sem IndexedDB) e registros que o banco recusou
+    let dbP = null;          // Promise<IDBDatabase|null>
+    let semIdb = false;      // IndexedDB indisponível nesta sessão (ex.: modo privado antigo)
+    let semBlob = false;     // banco não aceita Blob (Safari antigo): grava ArrayBuffer + tipo
+
+    function abrir() {
+      if (semIdb) return Promise.resolve(null);
+      if (dbP) return dbP;
+      const p = new Promise(res => {
+        let feito = false, tm = 0;
+        const fim = db => {
+          if (feito) { if (db) { try { db.close(); } catch (e) { /* nada */ } } return; }
+          feito = true; clearTimeout(tm); res(db);
+        };
+        tm = setTimeout(() => fim(null), 4000); // aberto em outra aba com versão antiga etc.
+        try {
+          const r = indexedDB.open(NOME, 1);
+          r.onupgradeneeded = () => {
+            try {
+              const db = r.result;
+              if (!db.objectStoreNames.contains(LOJA)) db.createObjectStore(LOJA, { keyPath: 'key' });
+            } catch (e) { /* nada */ }
+          };
+          r.onsuccess = () => {
+            const db = r.result;
+            db.onversionchange = () => { try { db.close(); } catch (e) { /* nada */ } if (dbP === p) dbP = null; };
+            db.onclose = () => { if (dbP === p) dbP = null; };
+            fim(db);
+          };
+          r.onerror = ev => { if (ev && ev.preventDefault) ev.preventDefault(); fim(null); };
+        } catch (e) { fim(null); }
+      }).then(db => {
+        if (!db) { semIdb = true; if (dbP === p) dbP = null; }
+        return db;
+      });
+      dbP = p;
+      return p;
+    }
+
+    // Roda fn(store, saida) numa transação; resolve com saida.v quando a transação completa.
+    async function tx(modo, fn) {
+      const db = await abrir();
+      if (!db) throw new Error('sem-idb');
+      return new Promise((res, rej) => {
+        const saida = { v: undefined };
+        let t;
+        try { t = db.transaction(LOJA, modo); } catch (e) { dbP = null; rej(e); return; }
+        t.oncomplete = () => res(saida.v);
+        t.onabort = () => rej(t.error || new Error('abort')); // erro de request aborta a transação
+        try { fn(t.objectStore(LOJA), saida); } catch (e) { try { t.abort(); } catch (x) { /* nada */ } rej(e); }
+      });
+    }
+
+    function _simples(v) {
+      if (!v || typeof v !== 'object') return false;
+      const p = Object.getPrototypeOf(v);
+      return p === Object.prototype || p === null;
+    }
+    function _temBlob(v, n) {
+      if (_ehBlob(v)) return true;
+      if ((n || 0) > 3 || !v || typeof v !== 'object') return false;
+      if (Array.isArray(v)) return v.some(x => _temBlob(x, (n || 0) + 1));
+      return _simples(v) && Object.keys(v).some(k => _temBlob(v[k], (n || 0) + 1));
+    }
+    // Blob → {__mBlob, type, buf[, name, lastModified]} (sem alterar o registro original)
+    async function _serial(v, n) {
+      n = n || 0;
+      if (_ehBlob(v)) {
+        const o = { __mBlob: 1, type: v.type || '', buf: await _buf(v) };
+        if (typeof File !== 'undefined' && v instanceof File) { o.name = v.name; o.lastModified = v.lastModified; }
+        return o;
+      }
+      if (n > 3 || !v || typeof v !== 'object') return v;
+      if (Array.isArray(v)) return Promise.all(v.map(x => _serial(x, n + 1)));
+      if (!_simples(v)) return v;
+      const o = {};
+      const ks = Object.keys(v);
+      for (let i = 0; i < ks.length; i++) o[ks[i]] = await _serial(v[ks[i]], n + 1);
+      return o;
+    }
+    function _desserial(v, n) {
+      n = n || 0;
+      if (!v || typeof v !== 'object') return v;
+      if (v.__mBlob === 1 && v.buf) {
+        if (v.name != null && typeof File === 'function') {
+          try { return new File([v.buf], v.name, { type: v.type, lastModified: v.lastModified }); } catch (e) { /* segue */ }
+        }
+        return new Blob([v.buf], { type: v.type });
+      }
+      if (n > 3) return v;
+      if (Array.isArray(v)) return v.map(x => _desserial(x, n + 1));
+      if (!_simples(v)) return v;
+      const o = {};
+      Object.keys(v).forEach(k => { o[k] = _desserial(v[k], n + 1); });
+      return o;
+    }
+
+    async function gravar(rec) {
+      const val = semBlob ? await _serial(rec) : rec;
+      await tx('readwrite', s => { s.put(val); });
+    }
+
+    /** Guarda (ou substitui) um registro. → true se guardou (no banco ou, sem banco, na memória). */
+    async function put(rec) {
+      try {
+        if (!rec || typeof rec !== 'object' || rec.key == null) return false;
+        if (await abrir()) {
+          try {
+            await gravar(rec);
+            mem.delete(rec.key);
+            return true;
+          } catch (e) {
+            const n = e && e.name;
+            if (!semBlob && (n === 'DataCloneError' || n === 'UnknownError') && _temBlob(rec)) {
+              try {
+                semBlob = true;
+                await gravar(rec);
+                mem.delete(rec.key);
+                return true;
+              } catch (e2) { semBlob = false; }
+            }
+          }
+        }
+        mem.set(rec.key, rec); // sem banco (ou banco cheio): fica na memória desta aba
+        return true;
+      } catch (e) {
+        try { mem.set(rec.key, rec); return true; } catch (x) { return false; }
+      }
+    }
+
+    /** → registro ou null */
+    async function get(key) {
+      try {
+        if (key == null) return null;
+        if (mem.has(key)) return mem.get(key);
+        if (!(await abrir())) return null;
+        const r = await tx('readonly', (s, o) => { const q = s.get(key); q.onsuccess = () => { o.v = q.result; }; });
+        return r ? _desserial(r) : null;
+      } catch (e) {
+        return mem.has(key) ? mem.get(key) : null;
+      }
+    }
+
+    /** → todos os registros, do mais antigo para o mais novo (rec.criado) */
+    async function all() {
+      let lista = [];
+      try {
+        if (await abrir()) {
+          lista = await tx('readonly', (s, o) => {
+            o.v = [];
+            if (typeof s.getAll === 'function') {
+              const q = s.getAll();
+              q.onsuccess = () => { o.v = q.result || []; };
+            } else {
+              const q = s.openCursor();
+              q.onsuccess = () => { const c = q.result; if (c) { o.v.push(c.value); c.continue(); } };
+            }
+          }) || [];
+        }
+      } catch (e) { lista = []; }
+      const porChave = new Map();
+      lista.forEach(r => { if (r && r.key != null) porChave.set(r.key, _desserial(r)); });
+      mem.forEach((r, k) => { porChave.set(k, r); });
+      return Array.from(porChave.values())
+        .sort((a, b) => (Number(a && a.criado) || 0) - (Number(b && b.criado) || 0));
+    }
+
+    /** Remove um registro. → true se a remoção foi confirmada */
+    async function del(key) {
+      try {
+        if (key == null) return false;
+        const tinha = mem.delete(key);
+        if (!(await abrir())) return tinha;
+        await tx('readwrite', s => { s.delete(key); });
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    /** → quantidade de registros pendentes */
+    async function count() {
+      try {
+        if (!(await abrir())) return mem.size;
+        const r = await tx('readonly', (s, o) => {
+          const q = typeof s.getAllKeys === 'function' ? s.getAllKeys() : s.count();
+          q.onsuccess = () => { o.v = q.result; };
+        });
+        if (Array.isArray(r)) {
+          const ks = new Set(r);
+          mem.forEach((_, k) => ks.add(k));
+          return ks.size;
+        }
+        return (Number(r) || 0) + mem.size;
+      } catch (e) {
+        return mem.size;
+      }
+    }
+
+    return {
+      put, get, all, del, count,
+      /** 'indexeddb' ou 'memoria' (sem banco: some ao fechar a aba). Confiável após a 1ª chamada. */
+      get modo() { return semIdb ? 'memoria' : 'indexeddb'; }
+    };
+  })();
+
+  /* ---------- estilos do gravador (sempre escuro, como câmera nativa) ---------- */
+
+  const MIDIA_CSS = `
+.gv-root{position:fixed;top:0;right:0;bottom:0;left:0;z-index:1000;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"topo" "palco" "barra";overflow:hidden;background:#000;color:var(--fg,#e9ebee);font-family:var(--f-body,system-ui),system-ui,sans-serif;font-size:15px;line-height:1.35;color-scheme:dark;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;overscroll-behavior:contain;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;outline:none;animation:gv-entra .2s ease-out}
+.gv-root.gv-claro{--bg:#0c0d10;--surface:#14161a;--fg:#e9ebee;--fg-2:#a7adb6;--line:#2a2e35;--bad:#e0645c;--warn:#d6a24a;--silver-hi:#f3f5f8;--ink-on-silver:#0c0d10}
+.gv-root *,.gv-root *::before,.gv-root *::after{box-sizing:border-box}
+.gv-root [hidden]{display:none!important}
+.gv-root button{font:inherit;-webkit-appearance:none;appearance:none;margin:0;touch-action:manipulation}
+.gv-root button:focus-visible{outline:2px solid var(--silver-hi,#f3f5f8);outline-offset:3px}
+.gv-preview{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;background:#000;transition:opacity .3s ease}
+.gv-preview.gv-espelho{transform:scaleX(-1)}
+.gv-root[data-estado="abrindo"] .gv-preview{opacity:0}
+.gv-root.gv-trocando .gv-preview{opacity:.15}
+.gv-review{grid-area:palco;display:none;width:100%;height:100%;min-height:0;object-fit:contain;background:#000}
+.gv-root[data-estado="revisao"] .gv-review{display:block}
+.gv-root[data-estado="revisao"] .gv-preview{display:none}
+.gv-topo{grid-area:topo;position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px;min-width:0;padding:max(10px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 30px max(16px,env(safe-area-inset-left));text-align:center;background:linear-gradient(180deg,rgba(0,0,0,.68) 0%,rgba(0,0,0,.34) 58%,rgba(0,0,0,0) 100%)}
+.gv-prog{align-self:stretch;height:3px;border-radius:2px;background:rgba(255,255,255,.13);overflow:hidden;transition:background-color .2s}
+.gv-root[data-estado="gravando"] .gv-prog,.gv-root[data-estado="processando"] .gv-prog{background:rgba(255,255,255,.24)}
+.gv-prog>i{display:block;height:100%;background:var(--silver-hi,#f3f5f8);transform-origin:0 50%;transform:scaleX(0);transition:transform .2s linear}
+.gv-root[data-estado="gravando"] .gv-prog>i{background:var(--bad,#e0645c)}
+.gv-cab{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;max-width:min(36rem,100%)}
+.gv-kicker{margin:0;font-size:10.5px;font-weight:500;line-height:1.4;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-2,#a7adb6)}
+.gv-titulo{margin:0;max-width:100%;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;font-family:inherit;font-size:17px;font-weight:600;font-style:normal;line-height:1.25;letter-spacing:-.005em;text-wrap:balance;color:var(--fg,#e9ebee);text-shadow:0 1px 10px rgba(0,0,0,.4)}
+.gv-chips{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px}
+.gv-timer{display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 12px 0 11px;border-radius:999px;background:rgba(12,13,16,.52);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);font-family:var(--f-mono,ui-monospace),ui-monospace,monospace;font-size:13.5px;font-variant-numeric:tabular-nums;letter-spacing:.02em;color:#fff;transition:background-color .2s}
+.gv-lim{color:rgba(255,255,255,.58)}
+.gv-ponto{flex:none;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.5)}
+.gv-root[data-estado="gravando"] .gv-timer{background:var(--bad,#e0645c)}
+.gv-root[data-estado="gravando"] .gv-ponto{background:#fff;animation:gv-pulso 1.2s ease-in-out infinite}
+.gv-root[data-estado="gravando"] .gv-lim{color:rgba(255,255,255,.8)}
+.gv-root[data-estado="revisao"] .gv-prog,.gv-root[data-estado="revisao"] .gv-timer{display:none}
+.gv-nota{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px 0 10px;border-radius:999px;border:1px solid rgba(214,162,74,.38);background:rgba(214,162,74,.16);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);font-size:13px;font-weight:500;color:var(--warn,#d6a24a)}
+.gv-nota svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.gv-msg{grid-area:palco;z-index:1;align-self:center;justify-self:center;display:none;flex-direction:column;align-items:center;gap:14px;font-size:14px;color:var(--fg-2,#a7adb6)}
+.gv-root[data-estado="abrindo"] .gv-msg,.gv-root[data-estado="processando"] .gv-msg{display:flex}
+.gv-giro{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.16);border-top-color:var(--silver-hi,#f3f5f8);animation:gv-gira .8s linear infinite}
+.gv-aviso{grid-area:palco;z-index:3;align-self:end;justify-self:center;max-width:calc(100% - 32px);margin:0 16px 14px;padding:9px 16px;border-radius:999px;background:rgba(12,13,16,.8);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);font-size:14px;text-align:center;color:#fff}
+.gv-barra{grid-area:barra;position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;column-gap:12px;padding:22px max(20px,env(safe-area-inset-right)) max(24px,calc(env(safe-area-inset-bottom) + 14px)) max(20px,env(safe-area-inset-left));background:linear-gradient(0deg,rgba(0,0,0,.76) 0%,rgba(0,0,0,.42) 62%,rgba(0,0,0,0) 100%)}
+.gv-lado-a{justify-self:start;display:flex}
+.gv-lado-b{display:flex}
+.gv-lado-c{justify-self:end;display:flex}
+.gv-texto{min-width:48px;min-height:48px;margin-left:-10px;padding:0 10px;border:0;border-radius:999px;background:transparent;font-size:16px;font-weight:500;color:var(--fg,#e9ebee);cursor:pointer;transition:background-color .15s}
+.gv-texto:active{background:rgba(255,255,255,.12)}
+.gv-rec{position:relative;display:block;width:78px;height:78px;padding:0;border:0;border-radius:50%;background:transparent;box-shadow:inset 0 0 0 4px #fff;cursor:pointer;transition:box-shadow .25s,opacity .2s}
+.gv-rec::after{content:"";position:absolute;top:9px;right:9px;bottom:9px;left:9px;border-radius:50%;background:var(--bad,#e0645c);transition:top .25s cubic-bezier(.3,.7,.3,1),right .25s cubic-bezier(.3,.7,.3,1),bottom .25s cubic-bezier(.3,.7,.3,1),left .25s cubic-bezier(.3,.7,.3,1),border-radius .25s,transform .12s}
+.gv-rec:active::after{transform:scale(.9)}
+.gv-rec:disabled{opacity:.4;cursor:default}
+.gv-root[data-estado="gravando"] .gv-rec{box-shadow:inset 0 0 0 4px var(--bad,#e0645c),0 0 0 6px rgba(224,100,92,.22)}
+.gv-root[data-estado="gravando"] .gv-rec::after{top:25px;right:25px;bottom:25px;left:25px;border-radius:7px}
+.gv-redondo{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.14);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#fff;cursor:pointer;transition:background-color .15s,opacity .2s}
+.gv-redondo:active{background:rgba(255,255,255,.26)}
+.gv-redondo:disabled{opacity:.35;cursor:default}
+.gv-redondo svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.gv-acoes{grid-column:1/-1;display:none;justify-content:center;gap:12px;width:100%}
+.gv-root[data-estado="revisao"] .gv-acoes{display:flex}
+.gv-root[data-estado="revisao"] .gv-lado-a,.gv-root[data-estado="revisao"] .gv-lado-b,.gv-root[data-estado="revisao"] .gv-lado-c{display:none}
+.gv-pilula{flex:1 1 0;min-width:0;max-width:220px;min-height:52px;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 18px;border:1px solid rgba(255,255,255,.26);border-radius:999px;background:rgba(255,255,255,.06);font-size:16px;font-weight:600;letter-spacing:.005em;white-space:nowrap;color:var(--fg,#e9ebee);cursor:pointer;transition:background-color .15s,filter .15s}
+.gv-pilula:active{background:rgba(255,255,255,.14)}
+.gv-pilula svg{flex:none;width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.gv-pilula.gv-primario{border-color:transparent;background:var(--silver-hi,#f3f5f8);color:var(--ink-on-silver,#0c0d10)}
+.gv-pilula.gv-primario:active{filter:brightness(.9)}
+.gv-sr{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media (orientation:landscape) and (max-height:540px){
+.gv-root{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto minmax(0,1fr);grid-template-areas:"topo barra" "palco barra"}
+.gv-root::before{content:"";position:absolute;top:0;right:0;left:0;z-index:1;height:136px;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.68) 0%,rgba(0,0,0,.34) 58%,rgba(0,0,0,0) 100%)}
+.gv-root[data-estado="revisao"]::before{display:none}
+.gv-topo{gap:8px;padding:max(8px,env(safe-area-inset-top)) 20px 22px max(20px,env(safe-area-inset-left));background:none}
+.gv-titulo{font-size:15px;-webkit-line-clamp:1}
+.gv-barra{grid-template-columns:auto;grid-template-rows:minmax(0,1fr) auto minmax(0,1fr);justify-items:center;row-gap:10px;padding:max(14px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) 18px;background:linear-gradient(270deg,rgba(0,0,0,.76) 0%,rgba(0,0,0,.42) 62%,rgba(0,0,0,0) 100%)}
+.gv-lado-c{grid-row:1;justify-self:center;align-self:start}
+.gv-lado-b{grid-row:2}
+.gv-lado-a{grid-row:3;justify-self:center;align-self:end}
+.gv-texto{margin-left:0}
+.gv-acoes{grid-row:1/-1;flex-direction:column-reverse;justify-content:center;width:auto}
+.gv-pilula{flex:0 0 auto;width:188px}
+}
+@keyframes gv-entra{from{opacity:0}to{opacity:1}}
+@keyframes gv-gira{to{transform:rotate(360deg)}}
+@keyframes gv-pulso{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.gv-root,.gv-root *{animation:none!important;transition:none!important}}
+`;
+
+  /* ---------- gravador de vídeo em tela cheia ---------- */
+
+  const _SVG = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">';
+  const ICO = {
+    trocar: _SVG + '<path d="M4 8h2.6l1.5-2.1A2 2 0 0 1 9.7 5h4.6a2 2 0 0 1 1.6.9L17.4 8H20a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>' +
+      '<path d="M9.5 13.5a2.5 2.5 0 0 1 4.27-1.77"/><path d="M12.27 11.73h1.5v-1.5"/>' +
+      '<path d="M14.5 13.5a2.5 2.5 0 0 1-4.27 1.77"/><path d="M11.73 15.27h-1.5v1.5"/></svg>',
+    refazer: _SVG + '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>',
+    ok: _SVG + '<path d="M20 6 9 17l-5-5"/></svg>',
+    semMic: _SVG + '<path d="M3 3l18 18"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12"/><path d="M15 9.34V6a3 3 0 0 0-5.68-1.34"/>' +
+      '<path d="M19 11a7 7 0 0 1-.64 2.94"/><path d="M5 11a7 7 0 0 0 11.29 5.53"/><path d="M12 18v3"/></svg>'
+  };
+
+  let _aberto = null;          // gravador aberto (um por vez)
+  let _seq = 0;
+  const _FECHADO = { fechado: true };
+
+  function _injetarCss() {
+    if (document.getElementById('gv-style')) return;
+    const s = document.createElement('style');
+    s.id = 'gv-style';
+    s.textContent = MIDIA_CSS;
+    (document.head || document.documentElement).appendChild(s);
+  }
+
+  // O app está no tema claro? O gravador continua escuro: redefine as variáveis dentro dele.
+  function _temaClaro() {
+    try {
+      const v = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+      if (!v) return false;
+      const c = _canvas(1, 1), x = c.getContext('2d');
+      x.fillStyle = '#000';
+      x.fillStyle = v;
+      const n = String(x.fillStyle);
+      _liberar(c);
+      let r, g, b;
+      if (n.charAt(0) === '#') {
+        r = parseInt(n.substr(1, 2), 16); g = parseInt(n.substr(3, 2), 16); b = parseInt(n.substr(5, 2), 16);
+      } else {
+        const m = n.match(/[\d.]+/g);
+        if (!m || m.length < 3) return false;
+        r = +m[0]; g = +m[1]; b = +m[2];
+      }
+      return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 > 0.5;
+    } catch (e) { return false; }
+  }
+
+  function _fmt(s) {
+    s = Math.max(0, Math.floor(s));
+    const m = Math.floor(s / 60), r = s % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (r < 10 ? '0' : '') + r;
+  }
+
+  function _erroCamera(e) {
+    const n = (e && e.name) || '';
+    if (n === 'NotAllowedError' || n === 'PermissionDeniedError' || n === 'SecurityError') return 'Permita o acesso à câmera para gravar.';
+    if (n === 'NotFoundError' || n === 'DevicesNotFoundError' || n === 'OverconstrainedError' || n === 'ConstraintNotSatisfiedError') return 'Nenhuma câmera encontrada neste aparelho.';
+    if (n === 'NotReadableError' || n === 'TrackStartError' || n === 'AbortError') return 'A câmera está em uso por outro app. Feche-o e tente de novo.';
+    return 'Não foi possível abrir a câmera.';
+  }
+
+  /**
+   * Abre o gravador em tela cheia. O resultado chega pelos callbacks (sempre assíncronos):
+   *   onPronto(blob, {mime:'video/mp4'|'video/webm', dur, w, h, audio}) · onCancelar() · onErro(msg)
+   * opt: {maxSeg:15, titulo:''}. Retorna {fechar()} — fecha como "Cancelar".
+   */
+  function abrirGravador(opt) {
+    const o = Object.assign({ maxSeg: 15, titulo: '', onPronto: null, onCancelar: null, onErro: null }, opt || {});
+    const maxSeg = Math.min(600, Math.max(1, Math.round(_num(o.maxSeg, 15))));
+    const chamar = (fn, ...args) => {
+      if (typeof fn !== 'function') return;
+      try { fn.apply(null, args); } catch (e) { setTimeout(() => { throw e; }, 0); }
+    };
+    const depois = (fn, ...args) => { setTimeout(() => chamar(fn, ...args), 0); };
+
+    if (_aberto) { depois(o.onCancelar); return _aberto; } // toque duplo no botão: ignora o 2º
+    const recusar = msg => { depois(o.onErro, msg); return { fechar() { /* nada aberto */ } }; };
+    if (window.isSecureContext === false) return recusar('A câmera só funciona em conexão segura (https). Use o botão Galeria.');
+    if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') return recusar('Este navegador não libera a câmera aqui. Use o botão Galeria.');
+    if (typeof MediaRecorder === 'undefined') return recusar(ERR_GALERIA);
+
+    _injetarCss();
+    const titulo = String(o.titulo == null ? '' : o.titulo).trim();
+    const root = document.createElement('div');
+    root.className = 'gv-root' + (_temaClaro() ? ' gv-claro' : '');
+    root.setAttribute('role', 'dialog');
+    root.setAttribute('aria-modal', 'true');
+    root.tabIndex = -1;
+    root.innerHTML =
+      '<video class="gv-preview" autoplay muted playsinline webkit-playsinline disablepictureinpicture aria-hidden="true"></video>' +
+      '<video class="gv-review" controls playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-label="Vídeo gravado"></video>' +
+      '<div class="gv-topo">' +
+        '<div class="gv-prog" role="progressbar" aria-label="Tempo de gravação" aria-valuemin="0"><i></i></div>' +
+        '<div class="gv-cab"><p class="gv-kicker"></p><h2 class="gv-titulo"></h2></div>' +
+        '<div class="gv-chips">' +
+          '<span class="gv-timer" role="timer"><i class="gv-ponto"></i><span><span class="gv-t">00:00</span><span class="gv-lim"></span></span></span>' +
+          '<span class="gv-nota" hidden>' + ICO.semMic + 'Sem áudio</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="gv-msg"><span class="gv-giro" aria-hidden="true"></span><span class="gv-msg-t"></span></div>' +
+      '<div class="gv-aviso" role="status" hidden></div>' +
+      '<div class="gv-barra">' +
+        '<div class="gv-lado-a"><button type="button" class="gv-texto gv-cancelar" aria-label="Cancelar">Cancelar</button></div>' +
+        '<div class="gv-lado-b"><button type="button" class="gv-rec" aria-label="Iniciar gravação" disabled></button></div>' +
+        '<div class="gv-lado-c"><button type="button" class="gv-redondo gv-trocar" aria-label="Trocar câmera" title="Trocar câmera" hidden>' + ICO.trocar + '</button></div>' +
+        '<div class="gv-acoes">' +
+          '<button type="button" class="gv-pilula gv-denovo" aria-label="Gravar de novo">' + ICO.refazer + '<span>Gravar de novo</span></button>' +
+          '<button type="button" class="gv-pilula gv-primario gv-usar" aria-label="Usar vídeo">' + ICO.ok + '<span>Usar vídeo</span></button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="gv-sr" aria-live="polite"></div>';
+
+    const $ = s => root.querySelector(s);
+    const vPrev = $('.gv-preview'), vRev = $('.gv-review');
+    const btnRec = $('.gv-rec'), btnCancelar = $('.gv-cancelar'), btnTrocar = $('.gv-trocar');
+    const btnDeNovo = $('.gv-denovo'), btnUsar = $('.gv-usar');
+    const elProg = $('.gv-prog'), elBarra = $('.gv-prog>i'), elT = $('.gv-t'), elLim = $('.gv-lim');
+    const elKicker = $('.gv-kicker'), elTitulo = $('.gv-titulo'), elNota = $('.gv-nota');
+    const elMsgT = $('.gv-msg-t'), elAviso = $('.gv-aviso'), elSr = $('.gv-sr');
+    elTitulo.id = 'gv-titulo-' + (++_seq);
+    root.setAttribute('aria-labelledby', elTitulo.id);
+    elLim.textContent = ' / ' + _fmt(maxSeg);
+    elProg.setAttribute('aria-valuemax', String(maxSeg));
+    vPrev.muted = true; vPrev.defaultMuted = true; vPrev.playsInline = true;
+
+    let estado = '', fechado = false, stream = null, streams = [], semAudio = false, trocando = false;
+    let rec = null, partes = [], mimePedido = '', t0 = 0, tFim = 0, tique = 0, limite = 0, avisoT = 0, dicaT = 0, tomada = 0;
+    let blob = null, info = null, urlRev = '', urlPoster = '';
+    const focoAntes = document.activeElement;
+    const ovBody = document.body.style.overflow, ovHtml = document.documentElement.style.overflow;
+
+    function setEstado(e) {
+      estado = e;
+      root.setAttribute('data-estado', e);
+      btnRec.disabled = !(e === 'pronto' || e === 'gravando') || trocando;
+      btnRec.setAttribute('aria-label', e === 'gravando' ? 'Parar gravação' : 'Iniciar gravação');
+      btnTrocar.disabled = e !== 'pronto' || trocando;
+      elMsgT.textContent = e === 'processando' ? 'Finalizando o vídeo…' : 'Abrindo a câmera…';
+      const acao = e === 'revisao' ? 'Revisar vídeo' : 'Gravar vídeo';
+      elKicker.textContent = titulo ? acao : '';   // sem título, a ação vira o título
+      elKicker.hidden = !titulo;
+      elTitulo.textContent = titulo || acao;
+    }
+    function mostrarTempo(seg) {
+      const s = Math.min(maxSeg, Math.max(0, seg));
+      elT.textContent = _fmt(s);
+      elBarra.style.transform = 'scaleX(' + (s / maxSeg).toFixed(4) + ')';
+      elProg.setAttribute('aria-valuenow', String(Math.floor(s)));
+    }
+    function anunciar(msg) {
+      elSr.textContent = '';
+      setTimeout(() => { if (!fechado) elSr.textContent = msg; }, 60);
+    }
+    function aviso(msg) {
+      clearTimeout(avisoT);
+      elAviso.textContent = msg;
+      elAviso.hidden = false;
+      avisoT = setTimeout(() => { elAviso.hidden = true; }, 2800);
+    }
+    function focar(el) { try { el.focus({ preventScroll: true }); } catch (e) { /* nada */ } }
+    function tocar(v) { try { const p = v.play(); if (p && p.catch) p.catch(() => { /* nada */ }); } catch (e) { /* nada */ } }
+
+    function pararCamera() {
+      streams.forEach(s => s.getTracks().forEach(t => { t.onended = null; try { t.stop(); } catch (e) { /* nada */ } }));
+      streams = [];
+      stream = null;
+      try { vPrev.pause(); } catch (e) { /* nada */ }
+      vPrev.srcObject = null;
+    }
+    function limparRevisao() {
+      try { vRev.pause(); } catch (e) { /* nada */ }
+      vRev.removeAttribute('src');
+      vRev.removeAttribute('poster');
+      try { vRev.load(); } catch (e) { /* nada */ }
+      if (urlRev) { URL.revokeObjectURL(urlRev); urlRev = ''; }
+      if (urlPoster) { URL.revokeObjectURL(urlPoster); urlPoster = ''; }
+    }
+    // Encerra tudo: gravação, câmera/microfone, overlay, trava de rolagem e foco. → true na 1ª vez
+    function fechar() {
+      if (fechado) return false;
+      fechado = true;
+      clearInterval(tique); clearTimeout(limite); clearTimeout(avisoT); clearTimeout(dicaT);
+      document.removeEventListener('keydown', onTecla, true);
+      document.removeEventListener('visibilitychange', onVisivel);
+      if (rec) {
+        rec.ondataavailable = null; rec.onstop = null; rec.onerror = null;
+        try { if (rec.state !== 'inactive') rec.stop(); } catch (e) { /* nada */ }
+        rec = null;
+      }
+      partes = [];
+      pararCamera();
+      limparRevisao();
+      if (root.parentNode) root.parentNode.removeChild(root);
+      document.body.style.overflow = ovBody;
+      document.documentElement.style.overflow = ovHtml;
+      if (focoAntes && typeof focoAntes.focus === 'function' && document.contains(focoAntes)) focar(focoAntes);
+      if (_aberto === controle) _aberto = null;
+      return true;
+    }
+    function cancelar() { if (fechar()) chamar(o.onCancelar); }
+    function falhar(msg) { if (fechar()) chamar(o.onErro, msg); }
+
+    /* câmera */
+    const VIDEO = { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } };
+
+    async function pedir(video, audio) {
+      const s = await navigator.mediaDevices.getUserMedia({ video, audio });
+      if (fechado) { s.getTracks().forEach(t => t.stop()); throw _FECHADO; }
+      streams.push(s);
+      return s;
+    }
+    function usarStream(s) {
+      stream = s;
+      s.getVideoTracks().forEach(t => { t.onended = trilhaCaiu; });
+      const vt = s.getVideoTracks()[0];
+      const st = vt && vt.getSettings ? vt.getSettings() : {};
+      vPrev.classList.toggle('gv-espelho', st.facingMode === 'user'); // câmera frontal: prévia espelhada
+      vPrev.srcObject = s;
+      return new Promise(res => {
+        let feito = false, tm = 0;
+        const ok = () => {
+          if (feito) return;
+          feito = true; clearTimeout(tm);
+          vPrev.removeEventListener('loadedmetadata', ok);
+          res();
+        };
+        tm = setTimeout(ok, 3000);
+        if (vPrev.readyState >= 1) ok(); else vPrev.addEventListener('loadedmetadata', ok);
+        tocar(vPrev);
+      });
+    }
+    async function ligarCamera() {
+      setEstado('abrindo');
+      clearTimeout(dicaT);
+      dicaT = setTimeout(() => { // pedido de permissão parado na tela
+        if (!fechado && estado === 'abrindo') elMsgT.textContent = 'Toque em “Permitir” para usar a câmera.';
+      }, 4000);
+      let s;
+      try {
+        s = await pedir(VIDEO, true);
+      } catch (e1) {
+        if (e1 === _FECHADO) return;
+        try { s = await pedir(VIDEO, false); } // microfone negado/ausente: grava só a imagem
+        catch (e2) { if (e2 !== _FECHADO) falhar(_erroCamera(e2)); return; }
+      }
+      semAudio = !s.getAudioTracks().length;
+      elNota.hidden = !semAudio;
+      await usarStream(s);
+      if (fechado) return;
+      setEstado('pronto');
+      mostrarTempo(0);
+      if (semAudio) anunciar('Sem áudio: o vídeo será gravado sem som.');
+      focar(btnRec);
+      contarCameras();
+    }
+    async function contarCameras() {
+      let n = 0;
+      try { n = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput').length; } catch (e) { /* nada */ }
+      if (!fechado) btnTrocar.hidden = n < 2;
+    }
+    function trilhaCaiu() {
+      if (fechado || trocando) return;
+      if (estado === 'gravando') { aviso('A câmera foi interrompida.'); parar(false); return; }
+      if (estado === 'pronto' || estado === 'abrindo') falhar('A câmera foi desligada. Tente de novo.');
+    }
+    async function trocar() {
+      if (estado !== 'pronto' || trocando || !stream) return;
+      trocando = true;
+      setEstado('pronto');
+      root.classList.add('gv-trocando');
+      const atual = stream.getVideoTracks()[0];
+      const st = atual && atual.getSettings ? atual.getSettings() : {};
+      const audio = stream.getAudioTracks();
+      let cams = [];
+      try { cams = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput' && d.deviceId); } catch (e) { /* nada */ }
+      if (fechado) return;
+      const opcoes = [];
+      const oposto = st.facingMode === 'user' ? 'environment' : st.facingMode === 'environment' ? 'user' : '';
+      if (oposto) opcoes.push(Object.assign({}, VIDEO, { facingMode: { exact: oposto } }));
+      if (cams.length > 1) {
+        const i = cams.findIndex(d => d.deviceId === st.deviceId);
+        const prox = cams[(i + 1) % cams.length];
+        if (prox && prox.deviceId !== st.deviceId) opcoes.push(Object.assign({}, VIDEO, { facingMode: undefined, deviceId: { exact: prox.deviceId } }));
+      }
+      opcoes.push(st.deviceId ? Object.assign({}, VIDEO, { facingMode: undefined, deviceId: { exact: st.deviceId } }) : VIDEO);
+      if (atual) { atual.onended = null; atual.stop(); } // celular não abre duas câmeras juntas
+      let nova = null;
+      for (let k = 0; k < opcoes.length && !nova; k++) {
+        try { nova = await pedir(opcoes[k], false); } catch (e) { if (e === _FECHADO) return; }
+      }
+      trocando = false;
+      root.classList.remove('gv-trocando');
+      if (fechado) return;
+      if (!nova) { falhar('Não foi possível trocar de câmera.'); return; }
+      const junto = new MediaStream(nova.getVideoTracks().concat(audio.filter(t => t.readyState === 'live')));
+      streams.push(junto);
+      await usarStream(junto);
+      if (!fechado) setEstado('pronto');
+    }
+
+    /* gravação */
+    function novoRecorder() {
+      const tipo = tipoVideoSuportado();
+      const base = { videoBitsPerSecond: 1800000, audioBitsPerSecond: 64000 };
+      const ops = tipo ? [Object.assign({ mimeType: tipo }, base), base, null] : [base, null];
+      for (let i = 0; i < ops.length; i++) {
+        let r = null;
+        try {
+          r = ops[i] ? new MediaRecorder(stream, ops[i]) : new MediaRecorder(stream);
+          const este = r;
+          partes = [];
+          r.ondataavailable = ev => { if (rec === este && ev.data && ev.data.size) partes.push(ev.data); };
+          r.onstop = () => { if (rec === este) finalizar(); };
+          r.onerror = () => { if (rec === este) falhar('A gravação falhou. Tente de novo.'); };
+          rec = r;
+          r.start(1000);
+          mimePedido = (ops[i] && ops[i].mimeType) || '';
+          return true;
+        } catch (e) {
+          rec = null;
+          if (r) {
+            r.ondataavailable = r.onstop = r.onerror = null;
+            try { if (r.state !== 'inactive') r.stop(); } catch (x) { /* nada */ }
+          }
+        }
+      }
+      return false;
+    }
+    function gravar() {
+      if (estado !== 'pronto' || !stream || trocando) return;
+      if (!novoRecorder()) { falhar(ERR_GALERIA); return; }
+      tomada++;
+      t0 = performance.now(); tFim = 0;
+      setEstado('gravando');
+      mostrarTempo(0);
+      capturarPoster(tomada);
+      anunciar('Gravando');
+      tique = setInterval(() => mostrarTempo((performance.now() - t0) / 1000), 200);
+      limite = setTimeout(() => parar(true), maxSeg * 1000);
+    }
+    function parar(auto) {
+      if (estado !== 'gravando' || !rec) return;
+      clearInterval(tique); clearTimeout(limite);
+      tFim = performance.now();
+      mostrarTempo(auto ? maxSeg : (tFim - t0) / 1000);
+      setEstado('processando');
+      try { if (rec.state !== 'inactive') rec.stop(); else finalizar(); } catch (e) { finalizar(); }
+    }
+    function finalizar() {
+      const r = rec;
+      rec = null;
+      if (fechado || !r) return;
+      const mime = _container(r.mimeType || mimePedido || (partes[0] && partes[0].type));
+      const b = new Blob(partes, { type: mime });
+      partes = [];
+      const dur = Math.round(((tFim || performance.now()) - t0) / 100) / 10;
+      const vt = stream && stream.getVideoTracks()[0];
+      const st = vt && vt.getSettings ? vt.getSettings() : {};
+      const w = vPrev.videoWidth || st.width || 0, h = vPrev.videoHeight || st.height || 0;
+      // Revisão com câmera desligada: a luz apaga e, no iPhone, o microfone aberto não abafa o som do vídeo.
+      pararCamera();
+      if (!b.size || dur < 0.5) {
+        aviso('Vídeo muito curto. Grave de novo.');
+        ligarCamera().catch(() => falhar('Não foi possível abrir a câmera.'));
+        return;
+      }
+      blob = b;
+      info = { mime, dur, w, h, audio: !semAudio };
+      urlRev = URL.createObjectURL(b);
+      vRev.src = urlRev;
+      setEstado('revisao');
+      anunciar('Vídeo gravado. Revise e toque em Usar vídeo.');
+      focar(btnUsar);
+    }
+    // Pôster da revisão = 1º quadro gravado (o Safari do iPhone não mostra quadro antes do play).
+    function capturarPoster(n) {
+      try {
+        const w = vPrev.videoWidth, h = vPrev.videoHeight;
+        if (!w || !h) return;
+        const t = _escala(w, h, 720);
+        const c = _desenhar(vPrev, t.w, t.h);
+        _jpeg(c, 0.72).then(b => {
+          _liberar(c);
+          if (fechado || n !== tomada) return;
+          if (urlPoster) URL.revokeObjectURL(urlPoster);
+          urlPoster = URL.createObjectURL(b);
+          vRev.poster = urlPoster;
+        }, () => _liberar(c));
+      } catch (e) { /* sem pôster */ }
+    }
+    // WebM do MediaRecorder sem duração: a barra do player não funcionaria. Busca o fim e volta.
+    vRev.addEventListener('loadedmetadata', () => {
+      if (vRev.duration !== Infinity) return;
+      const volta = () => { vRev.removeEventListener('seeked', volta); try { vRev.currentTime = 0; } catch (e) { /* nada */ } };
+      vRev.addEventListener('seeked', volta);
+      try { vRev.currentTime = 1e101; } catch (e) { vRev.removeEventListener('seeked', volta); }
+    });
+    function deNovo() {
+      if (estado !== 'revisao') return;
+      limparRevisao();
+      blob = null; info = null;
+      mostrarTempo(0);
+      ligarCamera().catch(() => falhar('Não foi possível abrir a câmera.'));
+    }
+    function usar() {
+      if (estado !== 'revisao' || !blob) return;
+      const b = blob, i = info;
+      blob = null; info = null;
+      if (fechar()) chamar(o.onPronto, b, i);
+    }
+
+    /* teclado, foco e app em segundo plano */
+    function onTecla(e) {
+      if (fechado) return;
+      if (e.key === 'Escape' || e.key === 'Esc') { e.preventDefault(); e.stopPropagation(); cancelar(); return; }
+      if (e.key !== 'Tab') return;
+      const fs = Array.prototype.filter.call(root.querySelectorAll('button,video[controls]'),
+        el => !el.disabled && el.getClientRects().length > 0);
+      e.preventDefault();
+      if (!fs.length) return;
+      const i = fs.indexOf(document.activeElement);
+      const j = e.shiftKey ? (i <= 0 ? fs.length - 1 : i - 1) : (i < 0 || i === fs.length - 1 ? 0 : i + 1);
+      focar(fs[j]);
+    }
+    function onVisivel() {
+      if (fechado) return;
+      if (document.hidden) { if (estado === 'gravando') parar(false); } // saiu do app: guarda o que gravou
+      else if (estado === 'pronto') tocar(vPrev);
+    }
+
+    btnRec.addEventListener('click', () => { if (estado === 'pronto') gravar(); else if (estado === 'gravando') parar(false); });
+    btnCancelar.addEventListener('click', cancelar);
+    btnTrocar.addEventListener('click', () => { trocar().catch(() => falhar('Não foi possível trocar de câmera.')); });
+    btnDeNovo.addEventListener('click', deNovo);
+    btnUsar.addEventListener('click', usar);
+    document.addEventListener('keydown', onTecla, true);
+    document.addEventListener('visibilitychange', onVisivel);
+
+    const controle = { fechar: cancelar };
+    _aberto = controle;
+    document.body.appendChild(root);
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    setEstado('abrindo');
+    mostrarTempo(0);
+    focar(root);
+    ligarCamera().catch(() => falhar('Não foi possível abrir a câmera.'));
+    return controle;
+  }
+
+  return { comprimirFoto, thumbDeVideo, tipoVideoSuportado, abrirGravador, filaMidia, MIDIA_CSS };
+})();
+
 /* ===================== Camada de dados =====================
    Dentro do Claude: armazenamento em nuvem da própria página (privado por pessoa).
    Hospedado fora do Claude: Supabase com login por e-mail e senha. */
@@ -524,9 +1901,9 @@ async function initStore(){
   }
   store.ready=true;
 }
-const CAMPOS=['status','placa','marca','modelo','ano','versao','km','combustivel','cambio','tracao','cor','vendedor','fipe','fipe_fonte','fipe_ref','fipe_hist','historico','leilao','answers','notes','obd','repair_overrides','extras','preparo','financeiro','observacoes','decisao','preco_pago','data_compra','preco_venda','data_venda'];
+const CAMPOS=['status','placa','marca','modelo','ano','versao','km','combustivel','cambio','tracao','cor','vendedor','fipe','fipe_fonte','fipe_ref','fipe_hist','historico','leilao','answers','notes','obd','repair_overrides','extras','preparo','financeiro','observacoes','decisao','preco_pago','data_compra','preco_venda','data_venda','inspecao'];
 function serial(a){const o={};CAMPOS.forEach(k=>o[k]=a[k]??null);o.km=a.km?Math.round(num(a.km)):null;o.decisao=a.decisao||null;o.preco_pago=a.preco_pago?num(a.preco_pago):null;o.preco_venda=a.preco_venda?num(a.preco_venda):null;o.data_compra=a.data_compra||null;o.data_venda=a.data_venda||null;o.fipe=a.fipe?num(a.fipe):null;o.score=calcScore(a.answers);o.reparo_total=reparos(a).total;
-  ['answers','notes','repair_overrides','financeiro'].forEach(k=>o[k]=o[k]||{});['obd','extras'].forEach(k=>o[k]=o[k]||[]);o.status=o.status||'em_andamento';return o}
+  ['answers','notes','repair_overrides','financeiro'].forEach(k=>o[k]=o[k]||{});o.inspecao=(a.inspecao&&typeof a.inspecao==='object'&&!Array.isArray(a.inspecao))?a.inspecao:{};if(store.semInspecao)delete o.inspecao;['obd','extras'].forEach(k=>o[k]=o[k]||[]);o.status=o.status||'em_andamento';return o}
 const api={
   async list(){
     if(store.mode==='claude'){const s=await store.base.collection(TABELA).get();return s.docs.map(d=>({...d.data(),id:d.id})).sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)))}
@@ -540,8 +1917,10 @@ const api={
       await store.base.collection(TABELA).doc(a.id).set({...body,numero:a.numero,created_at:a.created_at,updated_at:now});return a;
     }
     if(store.mode==='supabase'){
-      if(!a.id){const {data,error}=await store.sb.from(TABELA).insert(body).select('id,numero,created_at').single();if(error)throw error;Object.assign(a,data);return a}
-      const {error}=await store.sb.from(TABELA).update(body).eq('id',a.id);if(error)throw error;return a;
+      const env=async()=>{if(!a.id){const {data,error}=await store.sb.from(TABELA).insert(body).select('id,numero,created_at').single();if(error)throw error;Object.assign(a,data);return a}
+        const {error}=await store.sb.from(TABELA).update(body).eq('id',a.id);if(error)throw error;return a};
+      try{return await env()}
+      catch(err){if(!store.semInspecao&&'inspecao' in body&&/inspecao/i.test((err&&(err.message||err.details))||'')){store.semInspecao=true;delete body.inspecao;toast('Respostas, prazos, fotos e assinaturas ainda não estão sendo salvos no servidor.');return env()}throw err}
     }
     if(!a.id){a.id=uid();a.created_at=now;a.numero=nextNumero();store.mem.list.unshift(a)}return a;
   },
@@ -564,7 +1943,7 @@ const api={
 function nextNumero(){return state.list.reduce((m,x)=>Math.max(m,Number(x.numero)||0),0)+1}
 
 /* ===================== Motor de cálculo ===================== */
-function calcScore(ans){let s=0,w=0;for(const id in ITENS){const st=(ans||{})[id];if(!st||st==='na')continue;s+=ITENS[id].peso*ST[st].score;w+=ITENS[id].peso}return w?Math.round(s/w*100):null}
+function calcScore(ans){let s=0,w=0,crit=false;for(const id in ITENS){const st=(ans||{})[id];if(!st||!ST[st]||st==='na')continue;if(st==='critico'&&ITENS[id].crit)crit=true;const p=ITENS[id].peso;if(!p)continue;s+=p*ST[st].score;w+=p}if(!w)return null;const n=Math.round(s/w*100);return crit?Math.min(n,49):n}
 function categoria(p){
   if(p==null)return{label:'Sem nota',cls:'',cor:'var(--fg-3)',rec:'Avalie os itens do checklist para gerar a nota.'};
   if(p>=80)return{label:'Excelente',cls:'ok',cor:'var(--ok)',rec:'Compra recomendada. Veículo em ótimo estado.'};
@@ -573,19 +1952,33 @@ function categoria(p){
   if(p>=35)return{label:'Ruim',cls:'warn',cor:'var(--warn)',rec:'Alto risco. Avalie bem os custos de reparo antes de decidir.'};
   return{label:'Crítico',cls:'bad',cor:'var(--bad)',rec:'Não recomendado. Problemas graves identificados.'};
 }
-function completude(ans){const t=Object.keys(ITENS).length;const n=Object.keys(ITENS).filter(id=>(ans||{})[id]).length;return Math.round(n/t*100)}
+/* dados novos da inspeção (respostas, prazos, fotos, assinaturas) ficam em a.inspecao */
+function insp(a){let I=a.inspecao;if(!I||typeof I!=='object'||Array.isArray(I))I=a.inspecao={};I.resp=I.resp||{};I.prazo=I.prazo||{};I.midia=I.midia||{};I.ass=I.ass||{};I.auto=I.auto||{};if(!I.lk)I.lk=uid();return I}
+const ruim=(i,r)=>!!(i&&i.q&&r&&r!==i.q); // "Não sei" conta como resposta ruim
+function legado(a){return a.status==='concluido'&&!(a.inspecao&&a.inspecao.v>=2)}
+function marcaV2(a,id){const I=insp(a);if(I.v>=2)return;if(a.status!=='concluido'||!LEGADO.includes(id))I.v=2}
+function completude(a){const ans=(a&&a.answers)||{};const ids=legado(a)?LEGADO:IDS;return Math.round(ids.filter(id=>ans[id]).length/ids.length*100)}
 function marcados(a,st){return Object.values(ITENS).filter(i=>(a.answers||{})[i.id]===st)}
+function prazoDe(a,i,st){const I=a.inspecao||{};const p=(I.prazo||{})[i.id];if(p!=null&&p!=='')return +p;if(i.mp&&ruim(i,(I.resp||{})[i.id]))return i.mp.pz;return st==='critico'?0:60}
 function reparos(a){
-  const linhas=[];const ov=a.repair_overrides||{};
-  Object.values(ITENS).forEach(i=>{const st=(a.answers||{})[i.id];if(st!=='atencao'&&st!=='critico')return;const c=CUSTO[i.id];if(!c)return;
-    const padrao=st==='critico'?c[2]:c[3];const editado=ov[i.id]!=null&&ov[i.id]!=='';
-    linhas.push({id:i.id,item:i,st,nome:c[0],min:c[1],max:c[2],padrao,valor:editado?num(ov[i.id]):padrao,editado})});
+  const linhas=[];const ov=a.repair_overrides||{};const I=a.inspecao||{};const resp=I.resp||{};const ans=a.answers||{};const vistos={};
+  Object.values(ITENS).forEach(i=>{const st=ans[i.id];
+    // pergunta com resposta ruim: manutenção pendente (a mesma manutenção conta uma vez só)
+    if(i.mp&&ruim(i,resp[i.id])&&st!=='ok'&&st!=='na'){const k='mp_'+i.mp.k;if(vistos[k])return;vistos[k]=1;const ed=ov[k]!=null&&ov[k]!=='';
+      linhas.push({id:k,item:i,st:st||'atencao',tipo:'mp',nome:i.mp.l,min:null,max:null,padrao:i.mp.v,valor:ed?num(ov[k]):i.mp.v,editado:ed,prazo:prazoDe(a,i,st)});return}
+    if(st!=='atencao'&&st!=='critico')return;const c=CUSTO[i.id];const ed=ov[i.id]!=null&&ov[i.id]!=='';
+    if(!c){if(ed&&num(ov[i.id])>0)linhas.push({id:i.id,item:i,st,tipo:'livre',nome:i.label,min:null,max:null,padrao:0,valor:num(ov[i.id]),editado:true,prazo:prazoDe(a,i,st)});return}
+    const padrao=st==='critico'?c[2]:c[3];
+    linhas.push({id:i.id,item:i,st,tipo:'tab',nome:c[0],min:c[1],max:c[2],padrao,valor:ed?num(ov[i.id]):padrao,editado:ed,prazo:prazoDe(a,i,st)})});
+  linhas.sort((x,y)=>x.prazo-y.prazo||y.valor-x.valor);
   const extras=(a.extras||[]).map(e=>({...e,valor:num(e.valor)}));
   const pr=a.preparo||{};const psel=pr.sel||{},pov=pr.ov||{};
   const prep=PREP.filter(p=>psel[p.id]).map(p=>{const ed=pov[p.id]!=null&&pov[p.id]!=='';return{...p,padrao:prepPreco(p.id),valor:ed?num(pov[p.id]):prepPreco(p.id),editado:ed}});
   const prepTotal=prep.reduce((s,p)=>s+p.valor,0);
-  const mecanico=linhas.reduce((s,l)=>s+l.valor,0)+extras.reduce((s,e)=>s+e.valor,0);
-  return{linhas,extras,prep,prepTotal,mecanico,total:mecanico+prepTotal};
+  const avulsos=extras.reduce((s,e)=>s+e.valor,0);
+  const mecanico=linhas.reduce((s,l)=>s+l.valor,0)+avulsos;
+  const porPrazo={};linhas.forEach(l=>porPrazo[l.prazo]=(porPrazo[l.prazo]||0)+l.valor);
+  return{linhas,extras,avulsos,prep,prepTotal,mecanico,porPrazo,total:mecanico+prepTotal};
 }
 /* preparação para revenda (estética): não entra na nota, só no custo */
 const PREP=[
@@ -634,14 +2027,15 @@ function decodeOBD(code){
 }
 
 /* ===================== Estado ===================== */
-const state={view:'home',list:[],perfil:{},cur:null,step:'veiculo',open:{motor:true},q:'',saving:'',confirmDel:false,busy:null,loaded:false,authMode:'entrar',authMsg:'',fipe:null};
+const state={sec:null,sheet:null,assNome:{},view:'home',list:[],perfil:{},cur:null,step:'veiculo',open:{motor:true},q:'',saving:'',confirmDel:false,busy:null,loaded:false,authMode:'entrar',authMsg:'',fipe:null};
 const STEPS=[['veiculo','Veículo'],['historico','Histórico'],['checklist','Checklist'],['obd','Códigos OBD'],['reparos','Reparos'],['negocio','Negócio'],['laudo','Laudo']];
-function nova(){return{id:null,status:'em_andamento',placa:'',marca:'',modelo:'',ano:'',versao:'',km:'',combustivel:'',cambio:'',tracao:'',cor:'',vendedor:'',fipe:'',fipe_fonte:'',fipe_ref:'',answers:{},notes:{},obd:[],repair_overrides:{},extras:[],financeiro:{pedido:'',mercado:'',lucro:''},observacoes:''}}
+function nova(){return{id:null,status:'em_andamento',placa:'',marca:'',modelo:'',ano:'',versao:'',km:'',combustivel:'',cambio:'',tracao:'',cor:'',vendedor:'',fipe:'',fipe_fonte:'',fipe_ref:'',answers:{},notes:{},obd:[],repair_overrides:{},extras:[],financeiro:{pedido:'',mercado:'',lucro:''},observacoes:'',inspecao:{v:2,lk:uid(),resp:{},prazo:{},midia:{},ass:{},auto:{}}}}
 function exemplo(){
-  const ans={};Object.keys(ITENS).forEach(id=>ans[id]='ok');
-  Object.assign(ans,{freio_pastilhas:'critico',int_ar:'atencao',susp_amortecedores:'atencao',carr_pintura:'atencao',pneu_estepe:'na',doc_historico:'atencao'});
+  const ans={},resp={};Object.values(ITENS).forEach(i=>{ans[i.id]='ok';if(i.q)resp[i.id]=i.q});
+  Object.assign(ans,{freio_pastilhas:'critico',int_ar:'atencao',susp_amortecedores:'atencao',carr_pintura:'atencao',pneu_estepe:'na',doc_historico:'atencao',q_cambio:'atencao',q_garantia:'na'});resp.q_cambio='nao';
+  const inspecao={v:2,lk:'exemplo',resp,prazo:{freio_pastilhas:0,int_ar:60,susp_amortecedores:30,carr_pintura:90,doc_historico:30},midia:{},ass:{},auto:{q_cambio:1}};
   return{...nova(),exemplo:true,numero:0,status:'concluido',created_at:new Date().toISOString(),placa:'PEX1A23',marca:'Mercedes-Benz',modelo:'C 200',ano:'2019',versao:'Avantgarde 2.0 Turbo',km:96000,combustivel:'Gasolina',cambio:'Automático',tracao:'RWD',cor:'Prata',vendedor:'Exemplo · particular',
-   fipe:142000,fipe_fonte:'exemplo',answers:ans,
+   fipe:142000,fipe_fonte:'exemplo',answers:ans,inspecao,
    notes:{freio_pastilhas:'2 mm restantes, chiado ao frear',int_ar:'Saída a 14 °C, abaixo do ideal',susp_amortecedores:'Traseiros com suor de óleo',carr_pintura:'Para-choque dianteiro repintado',doc_historico:'Sem revisões após 60 mil km'},
    obd:[{code:'P0171',nota:'Trim de longo prazo +18%'}],extras:[{desc:'P0171 · teste de fumaça na admissão',valor:250}],
    financeiro:{pedido:118000,mercado:'',lucro:8000},observacoes:'Exemplo de avaliação para mostrar como o laudo fica.'};
@@ -699,7 +2093,7 @@ function itemRow(a){
     <span style="min-width:0;display:flex;flex-direction:column;gap:3px">
       <span class="item-title">${titulo(a)} <span class="faint num">${esc(a.ano||'')}</span></span>
       <span class="item-sub">${a.exemplo?'Exemplo · ':''}${a.km?fmtN(a.km)+' km · ':''}${dt(a.created_at)}${a.vendedor?' · '+esc(a.vendedor):''}</span>
-      <span class="row" style="gap:6px">${p!=null?`<span class="pill ${cat.cls}">${cat.label}</span>`:''}${cr?`<span class="pill bad">${cr} crítico${cr>1?'s':''}</span>`:''}${a.decisao?`<span class="pill ${DEC[a.decisao].cls}">${DEC[a.decisao].label}</span>`:a.status!=='concluido'?'<span class="pill">Em andamento</span>':''}</span>
+      <span class="row" style="gap:6px">${p!=null?`<span class="pill ${cat.cls}">${cat.label}</span>`:''}${cr?`<span class="pill bad">${plural(cr,'problema','problemas')}</span>`:''}${a.decisao?`<span class="pill ${DEC[a.decisao].cls}">${DEC[a.decisao].label}</span>`:a.status!=='concluido'?'<span class="pill">Em andamento</span>':''}</span>
     </span>
     ${plate(a.placa)}
     <span class="item-right">${n.ok?`<span>Oferta máx.</span><b class="num">${brl(n.oferta)}</b>`:a.fipe?`<span>FIPE</span><b class="num">${brl(a.fipe)}</b>`:''}</span>
@@ -769,7 +2163,7 @@ async function buscarFipeHoje(a){
 function saudacao(){const h=new Date().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}
 function falta(a){
   if(!a.modelo&&!a.marca)return 'Falta identificar o veículo';
-  const c=completude(a.answers);if(c<100)return `Checklist em ${c}%`;
+  const c=completude(a);if(c<100)return `Checklist em ${c}%`;
   if(!num((a.financeiro||{}).pedido))return 'Falta o preço pedido';
   return 'Pronta para concluir';
 }
@@ -956,7 +2350,7 @@ function authView(){
 function renderEditor(){
   if(state.view!=='editor')return;
   const a=state.cur;if(!a)return;
-  const p=calcScore(a.answers);const comp=completude(a.answers);const cr=marcados(a,'critico').length;const rp=reparos(a);
+  const p=calcScore(a.answers);const comp=completude(a);const cr=marcados(a,'critico').length;const rp=reparos(a);
   const head=`<div class="ed-head">
     <button class="btn ghost sm" data-nav="${a.id?'hist':'home'}" style="padding-left:6px">${ICON.back}Voltar</button>
     <div class="spacer"></div><span class="saved" id="saved">${a.exemplo?'Exemplo · alterações não são salvas':esc(state.saving)}</span></div>
@@ -964,13 +2358,13 @@ function renderEditor(){
     <span id="edPlate">${plate(a.placa,true)}</span>
     <div class="ed-id"><div class="eyebrow" id="edNum">${a.numero?'Avaliação nº '+String(a.numero).padStart(4,'0'):'Nova avaliação'}${a.status==='concluido'?' · Concluída':''}</div>
       <h2 style="margin-top:6px" id="edTitle">${titulo(a)} <span class="faint">${esc(a.ano||'')}</span></h2></div>
-    <div class="progress"><span class="bar"><i style="width:${comp}%"></i></span><span class="num">${comp}%</span>${ring(p)}</div>
+    <div class="progress" id="edProg"><span class="bar"><i style="width:${comp}%"></i></span><span class="num">${comp}%</span>${ring(p)}</div>
   </div>
   <nav class="steps">${STEPS.map(([k,l],n)=>`<button data-step="${k}" aria-current="${state.step===k}"><span class="n">0${n+1}</span>${l}${k==='checklist'&&cr?` <span class="badge">${cr}</span>`:''}${k==='historico'?histBadge(a):''}${k==='obd'&&(a.obd||[]).length?` <span class="badge">${a.obd.length}</span>`:''}${k==='reparos'&&rp.total?` <span class="faint small num">${brl(rp.total)}</span>`:''}</button>`).join('')}</nav>`;
   const body={veiculo:stepVeiculo,historico:stepHistorico,checklist:stepChecklist,obd:stepOBD,reparos:stepReparos,negocio:stepNegocio,laudo:stepLaudo}[state.step](a);
   const idx=STEPS.findIndex(s=>s[0]===state.step);
-  const foot=state.step!=='laudo'?`<div class="row"><div class="spacer"></div>${idx>0?`<button class="btn" data-step="${STEPS[idx-1][0]}">Anterior</button>`:''}<button class="btn primary" data-step="${STEPS[idx+1][0]}">Próximo: ${STEPS[idx+1][1]}</button></div>`:'';
-  const y=window.scrollY;root.innerHTML=shell(head+body+foot);window.scrollTo(0,y);
+  const foot=state.step!=='laudo'&&state.step!=='checklist'?`<div class="row"><div class="spacer"></div>${idx>0?`<button class="btn" data-step="${STEPS[idx-1][0]}">Anterior</button>`:''}<button class="btn primary" data-step="${STEPS[idx+1][0]}">Próximo: ${STEPS[idx+1][1]}</button></div>`:'';
+  const y=window.scrollY;root.innerHTML=shell(head+body+foot);window.scrollTo(0,y);posRender();
 }
 function inp(id,label,ph,o={}){const a=state.cur;return `<div class="field"><label for="f_${id}">${label}</label><input id="f_${id}" data-f="${id}" class="input ${o.cls||''}" placeholder="${ph}" value="${esc(o.fmt?o.fmt(a[id]):a[id]??'')}" ${o.list?`list="${o.list}"`:''} ${o.im?`inputmode="${o.im}"`:''}></div>`}
 function sel(id,label,opts){const a=state.cur;return `<div class="field"><label for="f_${id}">${label}</label><select id="f_${id}" data-f="${id}" class="input"><option value="">Selecione</option>${opts.map(o=>`<option ${a[id]===o?'selected':''}>${esc(o)}</option>`).join('')}</select></div>`}
@@ -1048,7 +2442,10 @@ const SIGLAS=['CSV','HDI','S/A','SA','LTDA','RENAINF','RENAJUD','CRLV','CRV','DE
 const frase=t=>{t=String(t||'').trim();if(!t)return '';let r=t.toLowerCase().replace(/(^|[.!?]\s+)(\S)/g,(m,a,b)=>a+b.toUpperCase());
   r=r.replace(/\b[\wÀ-ú\/]+\b/g,w=>SIGLAS.includes(w.toUpperCase())?w.toUpperCase():w);
   return r.replace(/\bnao\b/gi,m=>m[0]==='N'?'Não':'não').replace(/\bveiculo\b/gi,'veículo').replace(/\binservivel\b/gi,'inservível').replace(/\bleilao\b/gi,'leilão')};
-function recFinal(a,c){const b=[statusHist(a.historico),statusLeilao(a.leilao)].find(x=>x&&x.cls==='bad');return b?`Atenção ao histórico: ${b.label.toLowerCase()}. Confira antes de fechar negócio.`:c.rec}
+function recFinal(a,c){const b=[statusHist(a.historico),statusLeilao(a.leilao)].find(x=>x&&x.cls==='bad');if(b)return `Atenção ao histórico: ${b.label.toLowerCase()}. Confira antes de fechar negócio.`;
+  const cr=Object.values(ITENS).filter(i=>i.crit&&(a.answers||{})[i.id]==='critico');
+  if(cr.length)return `Problema em item crítico (${cr.slice(0,2).map(i=>i.label).join('; ')}${cr.length>2?` e mais ${cr.length-2}`:''}). Só feche com o reparo feito ou descontado.`;
+  return c.rec}
 const HSERV={historico:{nome:'Histórico do veículo',preco:4,desc:'Roubo e furto, bloqueio judicial (Renajud), restrições, veículo baixado, multas, recall e comunicado de venda.'},
   leilao:{nome:'Leilão e sinistro',preco:11.5,desc:'Se o carro passou por leilão, quem leiloou (seguradora indica sinistro indenizado), a condição do carro e a classificação.'}};
 function statusHist(h){if(!h)return null;const f=h.flags||{};const al=h.alertas||[];
@@ -1143,24 +2540,284 @@ async function consultarHist(servico,teste){
   state.hbusy=null;renderEditor();
 }
 const brl2=n=>(Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+/* ===================== Checklist em etapas (estilo folha de inspeção) ===================== */
+const svg=(k,cls)=>`<svg class="ic${cls?' '+cls:''}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${IC[k]||''}</svg>`;
+const OK_SVG='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5.5 12.5l4 4 9-9"/></svg>';
+const plural=(n,um,varios)=>n+' '+(n===1?um:varios);
+function secStats(a,s){const ans=a.answers||{};let f=0,ok=0,at=0,cr=0;s.itens.forEach(i=>{const v=ans[i.id];if(v)f++;if(v==='ok')ok++;else if(v==='atencao')at++;else if(v==='critico')cr++});return{n:s.itens.length,f,ok,at,cr,done:s.itens.length>0&&f===s.itens.length}}
+function secAtual(a){if(state.sec&&SECAO[state.sec])return state.sec;const p=SECOES.find(s=>s.itens.length&&!secStats(a,s).done);return state.sec=(p||SECOES[SECOES.length-1]).id}
+function assinado(a,k){const S=((a.inspecao||{}).ass)||{};const ok=x=>!!(S[x]&&S[x].img);return k?ok(k):ok('aval')&&ok('ciente')}
+const nomeDono=a=>String(a.vendedor||'').split(/[·|/(,]/)[0].replace(/[0-9+\-]/g,'').replace(/\s+/g,' ').trim();
+function railHTML(a,sid){
+  return SECOES.map(x=>{let st='',t=null;
+    if(x.itens.length){t=secStats(a,x);st=t.cr?'bad':t.at?'warn':t.done?'done':''}else st=assinado(a)?'done':'';
+    return `<button class="sx" data-sec="${x.id}" role="tab" aria-selected="${x.id===sid}" aria-current="${x.id===sid}" title="${esc(x.label)}" aria-label="${esc(x.label)}${t?` · ${t.f} de ${t.n} avaliados`:''}">${svg(x.ic)}${st?`<span class="sx-st ${st}">${st==='done'?OK_SVG:''}</span>`:''}<span class="sx-l">${esc(x.label)}</span></button>`}).join('');
+}
+function cabecaSecao(a,s){
+  const k=SECOES.indexOf(s);const t=s.itens.length?secStats(a,s):null;const ans=a.answers||{};
+  const podeOk=s.itens.some(i=>!i.q&&!ans[i.id]);
+  const acoes=t?[t.cr?`<span class="pill bad">${plural(t.cr,'problema','problemas')}</span>`:'',t.at?`<span class="pill warn">${plural(t.at,'ponto de atenção','pontos de atenção')}</span>`:'',
+    podeOk?`<button class="btn sm" data-allok="${s.id}">Marcar restantes como OK</button>`:'',s.id==='scanner'?'<button class="btn ghost sm" data-step="obd">Registrar códigos</button>':''].filter(Boolean):[];
+  return `<span class="eyebrow">Etapa ${k+1} de ${SECOES.length}${t?` · ${t.f} de ${t.n} avaliados`:''}</span><h2>${esc(s.titulo)}</h2>${s.nota?`<p class="hint">${esc(s.nota)}</p>`:''}${acoes.length?`<div class="row" style="gap:8px">${acoes.join('')}</div>`:''}`;
+}
 function stepChecklist(a){
-  const comp=completude(a.answers);
-  const cont=st=>marcados(a,st).length;
-  return `<div class="row"><span class="muted small num">${comp}% avaliado · a nota usa o peso de cada item</span><div class="spacer"></div>
-     <span class="pill ok">${cont('ok')} OK</span><span class="pill warn">${cont('atencao')} atenção</span><span class="pill bad">${cont('critico')} crítico</span></div>
-   <div>${CATEGORIAS.map(c=>{
-     const r=c.itens.map(([id])=>(a.answers||{})[id]);const feitos=r.filter(Boolean).length;const nc=r.filter(x=>x==='critico').length,na=r.filter(x=>x==='atencao').length;
-     return `<details class="sys" data-sys="${c.id}" ${state.open[c.id]?'open':''}>
-      <summary><span class="t">${c.label}</span>${nc?`<span class="pill bad">${nc}</span>`:''}${na?`<span class="pill warn">${na}</span>`:''}<span class="pill num">${feitos}/${c.itens.length}</span>${ICON.chev}</summary>
-      <div class="sys-body">
-        <div style="padding-bottom:6px"><button class="btn sm" data-allok="${c.id}">Marcar restantes como OK</button></div>
-        ${c.itens.map(([id,label,peso])=>{const s=(a.answers||{})[id];const n=(a.notes||{})[id]||'';
-          return `<div class="ck"><span class="ck-name">${esc(label)} <small>peso ${peso}</small></span>
-            <span class="seg" role="group" aria-label="${esc(label)}">${Object.keys(ST).map(v=>`<button data-ans="${id}" data-v="${v}" aria-pressed="${s===v}">${ST[v].label}</button>`).join('')}</span>
-            ${s==='atencao'||s==='critico'||n?`<div class="ck-note"><input class="input" id="n_${id}" data-note="${id}" placeholder="Observação: medida, local, ruído…" value="${esc(n)}"></div>`:''}
-          </div>`}).join('')}
-      </div></details>`}).join('')}</div>
-   ${prepPanel(a)}`;
+  insp(a);const sid=secAtual(a);const s=SECAO[sid];const k=SECOES.indexOf(s);const rp=reparos(a);const ult=k===SECOES.length-1;
+  const corpo=sid==='final'?secFinal(a,rp):`<div class="ckl">${s.itens.map(i=>linhaItem(a,ITENS[i.id],rp)).join('')}</div>`;
+  return `<div class="ckx" id="ckx">
+    <div class="sx-rail" id="sxRail" role="tablist" aria-label="Etapas do checklist">${railHTML(a,sid)}</div>
+    <div class="sx-head" id="sxHead">${cabecaSecao(a,s)}</div>
+    ${corpo}
+    <div class="sx-foot"><button class="btn" data-secnav="-1">${ICON.back}<span>${k===0?'Histórico':'Voltar'}</span></button><span class="sx-pos num">${k+1}/${SECOES.length}</span><button class="btn primary" data-secnav="1"><span>${ult?'Concluir checklist':'Avançar'}</span></button></div>
+  </div>${state.sheet?folha(a,rp):''}`;
+}
+function linhaItem(a,i,rp){
+  const I=insp(a);const st=(a.answers||{})[i.id]||'';const r=I.resp[i.id]||'';const n=(a.notes||{})[i.id]||'';const ms=I.midia[i.id]||[];
+  const opts=i.q?['sim','nao','ns'].map(v=>`<button class="o ${v===i.q?'ok':v==='ns'?'neu':'warn'}" role="radio" aria-checked="${r===v}" data-resp="${i.id}" data-v="${v}"><i></i><span>${RESP[v]}</span></button>`).join('')
+    :['ok','atencao','critico'].map(v=>`<button class="o ${ST[v].cls}" role="radio" aria-checked="${st===v}" data-ans="${i.id}" data-v="${v}"><i></i><span>${ST[v].label}</span></button>`).join('');
+  const l=(rp||reparos(a)).linhas.find(x=>x.item===i);const flag=st==='atencao'||st==='critico';
+  const x=[];
+  if(st==='na')x.push('<span class="pill">Não se aplica</span>');
+  else if(i.q&&st&&(!r||(ruim(i,r)?st!=='atencao':st!=='ok')))x.push(`<span class="pill ${ST[st].cls}">Avaliado como ${ST[st].label}</span>`);
+  if(flag||l){const pz=l?l.prazo:prazoDe(a,i,st);x.push(`<span class="pill ${pz===0?'bad':'warn'}">${pz===0?'Resolver agora':'Em até '+pz+' dias'}</span>`)}
+  if(l)x.push(`<span class="num small muted">${brl(l.valor)}${l.tipo==='mp'?' · manutenção pendente':''}</span>`);
+  if(ms.length)x.push(`<span class="mini">${ms.slice(0,4).map(m=>`<button class="mi" data-ver="${i.id}|${m.id}" aria-label="Ver ${m.tipo==='video'?'vídeo':'foto'}">${imgMidia(m)}${m.tipo==='video'?`<span class="mi-v">${svg('play')}</span>`:''}${m.pend?'<span class="mi-p" title="Aguardando envio"></span>':''}</button>`).join('')}${ms.length>4?`<b>+${ms.length-4}</b>`:''}</span>`);
+  else if((flag||(i.q&&ruim(i,r)))&&!n&&!state.cur?.exemplo)x.push(`<button class="linkbtn small" data-mais="${i.id}">Adicionar foto, observação e prazo</button>`);
+  return `<div class="ckr" data-s="${st}" id="r_${i.id}">
+    <div class="ckr-t"><span>${esc(i.label)}</span>${i.crit?'<span class="ctag" title="Problema aqui é motivo para desistir">crítico</span>':''}</div>
+    ${i.h?`<p class="ckr-h">${esc(i.h)}</p>`:''}
+    <div class="ckr-card"><span class="ckr-ic">${svg(i.ic)}</span><div class="opts" role="radiogroup" aria-label="${esc(i.label)}">${opts}</div>
+      <button class="mais" data-mais="${i.id}" aria-label="Fotos, observação e prazo: ${esc(i.label)}">${svg('plus')}${ms.length?`<b>${ms.length}</b>`:n?'<b class="dot"></b>':''}</button></div>
+    ${x.length||n?`<div class="ckr-x">${x.join('')}${n?`<span class="ckr-nota">${esc(n)}</span>`:''}</div>`:''}
+  </div>`;
+}
+/* folha de detalhes do item (o botão +): avaliação, fotos e vídeos, observação, prazo e custo */
+function folha(a,rp){
+  const id=state.sheet;const i=ITENS[id];if(!i)return '';const I=insp(a);const st=(a.answers||{})[id]||'';const r=I.resp[id]||'';const ms=I.midia[id]||[];const n=(a.notes||{})[id]||'';
+  rp=rp||reparos(a);const l=rp.linhas.find(x=>x.item===i);const flag=st==='atencao'||st==='critico'||!!l;const c=CUSTO[id];
+  const pz=l?l.prazo:prazoDe(a,i,st);const ovKey=l?l.id:id;const padrao=l?l.padrao:(c?(st==='critico'?c[2]:c[3]):0);
+  const mpOutro=i.mp&&ruim(i,r)&&!l&&st!=='ok'&&st!=='na';
+  const hintCusto=l&&l.tipo==='mp'?`Manutenção pendente. Em branco, usa ${brl(l.padrao)}.`:c?`Faixa de mercado: ${brl(c[1])} a ${brl(c[2])}. Em branco, usa ${brl(padrao)}.`:'Informe se já souber quanto custa resolver.';
+  const anim=state.shAnim?' anim':'';state.shAnim=false;
+  return `<div class="sh-bg${anim}" data-shbg="1"><div class="sh${anim}" role="dialog" aria-modal="true" aria-labelledby="shT">
+    <div class="sh-grip" aria-hidden="true"></div>
+    <div class="sh-top"><span class="ckr-ic">${svg(i.ic)}</span><div style="min-width:0"><span class="eyebrow">${esc(i.cat.label)}${i.crit?' · crítico':''}</span><h3 id="shT">${esc(i.label)}</h3></div><button class="ibtn" data-shfecha="1" aria-label="Fechar">${svg('close')}</button></div>
+    ${i.h?`<p class="hint">${esc(i.h)}</p>`:''}
+    ${i.q?`<div class="field"><span class="lbl">Resposta do vendedor</span><div class="seg4 s3">${['sim','nao','ns'].map(v=>`<button data-resp="${id}" data-v="${v}" aria-pressed="${r===v}" class="${v===i.q?'ok':v==='ns'?'neu':'warn'}">${RESP[v]}</button>`).join('')}</div></div>`:''}
+    <div class="field"><span class="lbl">Avaliação</span><div class="seg4">${['ok','atencao','critico','na'].map(v=>`<button data-ans="${id}" data-v="${v}" aria-pressed="${st===v}" class="${ST[v].cls||'neu'}">${ST[v].label}</button>`).join('')}</div></div>
+    <div class="field"><span class="lbl">Fotos e vídeos${ms.length?' · '+ms.length:''}</span>
+      ${a.exemplo?'<p class="hint">Na avaliação de exemplo as fotos não são salvas.</p>':`<div class="macts">
+        <label class="mact">${svg('camera')}<span>Foto</span><input type="file" accept="image/*" capture="environment" data-up="${id}" hidden></label>
+        <button class="mact" data-grava="${id}">${svg('video')}<span>Vídeo 15 s</span></button>
+        <label class="mact">${svg('gallery')}<span>Galeria</span><input type="file" accept="image/*,video/*" multiple data-up="${id}" hidden></label></div>`}
+      ${ms.length?`<div class="mgrid">${ms.map(m=>`<button class="mt" data-ver="${id}|${m.id}" aria-label="Ver ${m.tipo==='video'?'vídeo':'foto'}">${imgMidia(m)}${m.tipo==='video'?`<span class="mt-v">${svg('play')}${m.dur?`<small>${Math.round(m.dur)} s</small>`:''}</span>`:''}${m.pend?`<span class="mt-p">${store.mode==='supabase'?'Enviando…':'Neste aparelho'}</span>`:''}</button>`).join('')}</div>`:''}
+      ${state.midiaMsg?`<p class="hint" style="color:var(--warn)">${esc(state.midiaMsg)}</p>`:state.midiaErro&&ms.some(m=>m.pend)?`<p class="hint" style="color:var(--warn)">${esc(state.midiaErro)}</p>`:''}
+    </div>
+    <div class="field"><label for="shN">Observação</label><textarea id="shN" class="input" data-note="${id}" rows="2" placeholder="Medida, local, ruído, o que viu…">${esc(n)}</textarea></div>
+    ${flag?`<div class="field"><span class="lbl">Prazo para resolver</span><div class="seg4">${PRAZOS.map(([d,lb])=>`<button data-prazo="${id}" data-v="${d}" aria-pressed="${pz===d}" class="${d===0?'bad':'neu'}">${lb}</button>`).join('')}</div></div>
+    <div class="field"><label for="shC">Custo estimado</label><div class="money"><span>R$</span><input id="shC" class="input" inputmode="numeric" data-ov="${ovKey}" placeholder="${padrao?fmtN(padrao):'0'}" value="${l&&l.editado?esc(fmtN(l.valor)):''}"></div><span class="hint">${hintCusto}</span></div>`:
+     mpOutro?'<p class="hint">O custo desta manutenção já está contado em outra pergunta.</p>':''}
+    <button class="btn primary" data-shfecha="1" style="height:48px">Concluir</button>
+  </div></div>`;
+}
+/* última etapa: resumo, preparação para revenda e assinaturas */
+function secFinal(a,rp){
+  const I=insp(a);const ss=SECOES.filter(s=>s.itens.length).map(s=>({s,t:secStats(a,s)}));
+  const tot=ss.reduce((o,{t})=>({n:o.n+t.n,f:o.f+t.f,ok:o.ok+t.ok,at:o.at+t.at,cr:o.cr+t.cr}),{n:0,f:0,ok:0,at:0,cr:0});
+  const crit=Object.values(ITENS).filter(i=>i.crit&&(a.answers||{})[i.id]==='critico');
+  const faltam=ss.filter(x=>!x.t.done);
+  const lm=Object.values(I.midia).flat();const pend=lm.filter(m=>m.pend).length;
+  return `<div class="panel grid" style="gap:16px">
+    <div class="panel-head" style="margin:0"><h3>Resumo da inspeção</h3><span class="faint small num">${tot.f} de ${tot.n} itens</span></div>
+    <div class="fin-st"><div class="ok"><b class="num">${tot.ok}</b><span>OK</span></div><div class="warn"><b class="num">${tot.at}</b><span>Atenção</span></div><div class="bad"><b class="num">${tot.cr}</b><span>Problema</span></div><div><b class="num">${lm.length}</b><span>Fotos e vídeos</span></div></div>
+    ${crit.length?`<div class="verdict bad"><div><strong>Problema em item crítico</strong>${crit.map(i=>esc(i.label)).join(' · ')}</div></div>`:''}
+    ${faltam.length?`<p class="hint">Faltam itens em: ${faltam.map(x=>`<button class="linkbtn" data-sec="${x.s.id}">${esc(x.s.label)} (${x.t.n-x.t.f})</button>`).join(', ')}.</p>`:''}
+    ${pend?`<p class="hint" style="color:var(--warn)">${plural(pend,'arquivo aguardando','arquivos aguardando')} envio. O envio continua sozinho quando houver internet.</p>`:''}
+    <dl class="kv">${PRAZOS.filter(([d])=>rp.porPrazo[d]).map(([d])=>`<dt>Reparos ${d===0?'para agora':'em até '+d+' dias'}</dt><dd>${brl(rp.porPrazo[d])}</dd>`).join('')}${rp.avulsos?`<dt>Itens avulsos</dt><dd>${brl(rp.avulsos)}</dd>`:''}<dt>Total de reparos</dt><dd><b>${brl(rp.mecanico)}</b></dd></dl>
+  </div>
+  ${prepPanel(a)}
+  <div class="panel grid" style="gap:20px"><div class="panel-head" style="margin:0"><h3>Assinaturas</h3><span class="hint">Saem no laudo em PDF</span></div>
+    ${padAss(a,'aval','Avaliador',state.perfil.responsavel||'','Quem fez a vistoria.')}${padAss(a,'ciente','Dono do carro',nomeDono(a),'Ao assinar, o dono declara que acompanhou a vistoria e está ciente do resultado.')}
+    ${assinado(a,'aval')&&!assinado(a,'ciente')?'<p class="hint" style="color:var(--warn)">Falta a assinatura do dono do carro. Ela dá respaldo à loja na negociação.</p>':''}</div>`;
+}
+function padAss(a,k,titulo,nomePadrao,decl){
+  const s=insp(a).ass[k];const dc=decl?`<span class="hint" style="margin-top:-6px">${esc(decl)}</span>`:'';
+  if(s&&s.img)return `<div class="ass"><div class="row"><span class="lbl">${esc(titulo)}</span><div class="spacer"></div>${a.exemplo?'':`<button class="btn ghost sm" data-assapaga="${k}">Assinar de novo</button>`}</div>
+    ${dc}<div class="ass-img"><img src="${s.img}" alt="Assinatura: ${esc(titulo)}"></div>
+    <div class="field"><label for="assn_${k}">Nome</label><input id="assn_${k}" class="input" data-assnome="${k}" value="${esc(s.nome||'')}" placeholder="Nome de quem assinou"></div><span class="hint">Assinado em ${dt(s.em)}</span></div>`;
+  const nome=(state.assNome||{})[k]??nomePadrao;
+  return `<div class="ass"><span class="lbl">${esc(titulo)}</span>${dc}
+    <div class="ass-pad" data-pad="${k}"><canvas aria-label="Quadro de assinatura: ${esc(titulo)}"></canvas><span class="ass-dica">Assine aqui com o dedo</span><span class="ass-linha"></span></div>
+    <div class="ass-row"><input class="input" id="assn_${k}" data-assnome="${k}" value="${esc(nome)}" placeholder="Nome de quem assina"><button class="btn sm" data-asslimpa="${k}">Limpar</button><button class="btn primary sm" data-assok="${k}">Salvar assinatura</button></div></div>`;
+}
+/* ---------- assinatura no dedo ---------- */
+const pads={};
+function desenharTracos(c,tracos){tracos.forEach(t=>{if(!t.length)return;c.beginPath();c.moveTo(t[0].x,t[0].y);if(t.length===1)c.lineTo(t[0].x+.1,t[0].y+.1);else{for(let i=1;i<t.length-1;i++){const mx=(t[i].x+t[i+1].x)/2,my=(t[i].y+t[i+1].y)/2;c.quadraticCurveTo(t[i].x,t[i].y,mx,my)}const u=t[t.length-1];c.lineTo(u.x,u.y)}c.stroke()})}
+function estiloTinta(c){c.lineCap='round';c.lineJoin='round';c.strokeStyle='#15181d';c.lineWidth=2.3}
+function redesenharPad(k){const q=pads[k];if(!q||!q.ctx)return;q.ctx.clearRect(0,0,q.w,q.h);desenharTracos(q.ctx,q.tracos)}
+function initPads(){document.querySelectorAll('[data-pad]').forEach(box=>{
+  const k=box.dataset.pad;const cv=box.querySelector('canvas');if(!cv)return;
+  const q=pads[k]=pads[k]||{tracos:[]};const r=box.getBoundingClientRect();if(!r.width)return;const dpr=Math.min(3,window.devicePixelRatio||1);
+  cv.width=Math.max(1,Math.round(r.width*dpr));cv.height=Math.max(1,Math.round(r.height*dpr));
+  const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);estiloTinta(c);q.ctx=c;q.w=r.width;q.h=r.height;redesenharPad(k);box.classList.toggle('sujo',q.tracos.length>0);
+  if(cv._lig)return;cv._lig=1;let atual=null;
+  const pos=e=>{const b=cv.getBoundingClientRect();return{x:e.clientX-b.left,y:e.clientY-b.top}};
+  cv.addEventListener('pointerdown',e=>{e.preventDefault();try{cv.setPointerCapture(e.pointerId)}catch(x){}atual=[pos(e)];pads[k].tracos.push(atual);box.classList.add('sujo');redesenharPad(k)});
+  cv.addEventListener('pointermove',e=>{if(!atual)return;e.preventDefault();(e.getCoalescedEvents?e.getCoalescedEvents():[e]).forEach(ev=>atual.push(pos(ev)));redesenharPad(k)});
+  const fim=()=>{atual=null};['pointerup','pointercancel','lostpointercapture'].forEach(t=>cv.addEventListener(t,fim));
+})}
+window.addEventListener('resize',()=>{if(state.view==='editor'&&state.step==='checklist')initPads()});
+function exportarPad(P){
+  const pts=[].concat(...P.tracos);if(pts.length<4)return null;
+  let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;pts.forEach(p=>{x0=Math.min(x0,p.x);y0=Math.min(y0,p.y);x1=Math.max(x1,p.x);y1=Math.max(y1,p.y)});
+  if(x1-x0<12&&y1-y0<12)return null;
+  x0-=6;y0-=6;x1+=6;y1+=6;const w=x1-x0,h=y1-y0;const s=Math.min(3,600/w,220/h);
+  const cv=document.createElement('canvas');cv.width=Math.max(1,Math.round(w*s));cv.height=Math.max(1,Math.round(h*s));
+  const c=cv.getContext('2d');c.setTransform(s,0,0,s,-x0*s,-y0*s);estiloTinta(c);desenharTracos(c,P.tracos);
+  return{img:cv.toDataURL('image/png'),w:cv.width,h:cv.height};
+}
+/* ---------- fotos e vídeos: aparelho → fila (IndexedDB) → Supabase Storage (pasta privada por usuário) ---------- */
+const MIDIA_BUCKET='midia',MAX_VIDEO=30*1048576;
+const localMidia={},urlCache={};
+const limpaMime=m=>String(m||'').split(';')[0].trim().toLowerCase();
+function imgMidia(m){const u=(localMidia[m.id]&&localMidia[m.id].t)||(m.t&&urlCache[m.t]&&urlCache[m.t].exp>Date.now()?urlCache[m.t].url:null);
+  return u?`<img src="${u}" alt="" loading="lazy">`:m.t?`<img data-mt="${esc(m.t)}" alt="">`:'<span class="mt-sem"></span>'}
+async function assinar(paths,seg){seg=seg||3600;const lista=[...new Set(paths.filter(Boolean))];const falta=lista.filter(p=>!(urlCache[p]&&urlCache[p].exp>Date.now()+60000));
+  if(falta.length&&store.sb){try{const {data,error}=await store.sb.storage.from(MIDIA_BUCKET).createSignedUrls(falta,seg);if(!error)(data||[]).forEach(d=>{const u=d.signedUrl||d.signedURL;if(u&&d.path)urlCache[d.path]={url:u,exp:Date.now()+seg*1000}})}catch(e){}}
+  return paths.map(p=>p&&urlCache[p]?urlCache[p].url:null)}
+async function hidratarMidia(){const imgs=[...document.querySelectorAll('img[data-mt]')];if(!imgs.length)return;const us=await assinar(imgs.map(i=>i.dataset.mt));imgs.forEach((im,k)=>{if(us[k]){im.src=us[k];im.removeAttribute('data-mt')}})}
+async function adicionarMidia(a,item,tipo,blob,thumb,meta){
+  const I=insp(a);marcaV2(a,item);const mid='m'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const mime=limpaMime(meta.mime||blob.type)||(tipo==='foto'?'image/jpeg':'video/mp4');
+  const ext=tipo==='foto'?'jpg':/webm/.test(mime)?'webm':/quicktime/.test(mime)?'mov':'mp4';
+  const m={id:mid,tipo,ext,w:meta.w||null,h:meta.h||null,dur:meta.dur?Math.round(meta.dur*10)/10:null,em:new Date().toISOString(),pend:1};
+  (I.midia[item]=I.midia[item]||[]).push(m);
+  localMidia[mid]={t:URL.createObjectURL(thumb||blob),f:URL.createObjectURL(blob)};
+  await filaMidia.put({key:mid,aval:I.lk,item,tipo,blob,thumb:thumb||null,meta:{ext,mime},criado:Date.now()});
+  persistir(a);if(a===state.cur){if(state.sheet===item)refreshSheet();else refreshLinha(item)}
+  enviarPendentes();
+}
+let enviando=false,reenvioT=null;
+async function enviarPendentes(){
+  if(enviando||store.mode!=='supabase'||!store.user)return;enviando=true;clearTimeout(reenvioT);let falhou=false;
+  try{const recs=await filaMidia.all();
+    for(const rec of recs){
+      const x=[state.cur,...state.list].find(e=>e&&e.inspecao&&e.inspecao.lk===rec.aval);if(!x)continue;
+      const m=(((x.inspecao.midia||{})[rec.item])||[]).find(z=>z.id===rec.key);
+      if(!m){await filaMidia.del(rec.key);continue} // apagada antes de enviar
+      if(!x.id){if(x===state.cur){flushSave();await fila}if(!x.id){falhou=true;continue}}
+      const base=`${store.user.id}/${x.id}/${rec.item}/${rec.key}`;const st=store.sb.storage.from(MIDIA_BUCKET);
+      const u1=await st.upload(`${base}.${rec.meta.ext}`,rec.blob,{contentType:rec.meta.mime,upsert:true,cacheControl:'31536000'});
+      if(u1.error){falhou=true;state.midiaErro=/bucket/i.test(u1.error.message||'')?'O envio de fotos ainda não foi ativado no servidor. Elas ficam guardadas neste aparelho.':'Sem conexão para enviar. As fotos ficam guardadas neste aparelho e o envio continua sozinho.';continue}
+      let tp=`${base}.${rec.meta.ext}`;
+      if(rec.thumb){const u2=await st.upload(`${base}_t.jpg`,rec.thumb,{contentType:'image/jpeg',upsert:true,cacheControl:'31536000'});if(!u2.error)tp=`${base}_t.jpg`}
+      m.p=`${base}.${rec.meta.ext}`;m.t=tp;delete m.pend;await filaMidia.del(rec.key);state.midiaErro='';
+      persistir(x);if(x===state.cur&&state.view==='editor'){if(state.sheet===rec.item)refreshSheet();else refreshLinha(rec.item)}
+    }
+  }catch(e){falhou=true}
+  finally{enviando=false}
+  if(falhou)reenvioT=setTimeout(enviarPendentes,30000);
+}
+async function apagarMidia(a,item,mid){
+  const I=insp(a);const l=I.midia[item]||[];const k=l.findIndex(m=>m.id===mid);if(k<0)return;const m=l[k];l.splice(k,1);if(!l.length)delete I.midia[item];
+  try{await filaMidia.del(mid)}catch(e){}
+  const paths=[...new Set([m.p,m.t].filter(Boolean))];if(paths.length&&store.sb)store.sb.storage.from(MIDIA_BUCKET).remove(paths).catch(()=>{});
+  if(m.qr&&store.sb){try{store.sb.from('midia_links').delete().eq('code',m.qr).then(()=>{},()=>{})}catch(e){}}
+  if(localMidia[mid]){URL.revokeObjectURL(localMidia[mid].t);URL.revokeObjectURL(localMidia[mid].f);delete localMidia[mid]}
+  persistir(a);
+}
+async function apagarMidiasDa(a){ // ao excluir a avaliação
+  const I=a.inspecao||{};const todas=Object.values(I.midia||{}).flat();const paths=[...new Set(todas.flatMap(m=>[m.p,m.t]).filter(Boolean))];
+  if(paths.length&&store.sb){try{await store.sb.storage.from(MIDIA_BUCKET).remove(paths)}catch(e){}}
+  const cods=todas.map(m=>m.qr).filter(Boolean);if(cods.length&&store.sb){try{await store.sb.from('midia_links').delete().in('code',cods)}catch(e){}}
+  try{const recs=await filaMidia.all();for(const r of recs)if(r.aval===I.lk)await filaMidia.del(r.key)}catch(e){}
+}
+async function carregarPendentes(){try{const recs=await filaMidia.all();recs.forEach(r=>{if(!localMidia[r.key]&&r.blob)localMidia[r.key]={t:URL.createObjectURL(r.thumb||r.blob),f:URL.createObjectURL(r.blob)}})}catch(e){}enviarPendentes()}
+async function processarArquivos(item,files){
+  const a=state.cur;if(!a||a.exemplo)return;state.midiaMsg='';
+  for(const f of files){
+    try{
+      if(/^video\//.test(f.type)){
+        if(f.size>MAX_VIDEO){state.midiaMsg=`Vídeo muito grande (${Math.round(f.size/1048576)} MB). O limite é 30 MB: grave pelo botão “Vídeo 15 s”.`;continue}
+        let th=null,dur=null,w=null,h=null;try{const t=await thumbDeVideo(f);th=t.thumb;dur=t.dur;w=t.w;h=t.h}catch(e){}
+        await adicionarMidia(a,item,'video',f,th,{mime:f.type,w,h,dur});
+      }else{const r=await comprimirFoto(f);await adicionarMidia(a,item,'foto',r.blob,r.thumb,{mime:'image/jpeg',w:r.w,h:r.h})}
+    }catch(e){state.midiaMsg=(e&&e.message)||'Não foi possível usar este arquivo.'}
+  }
+  if(state.sheet===item)refreshSheet();
+}
+function gravarVideo(item){
+  const a=state.cur;if(!a||a.exemplo)return;
+  abrirGravador({maxSeg:15,titulo:ITENS[item]?ITENS[item].label:'',
+    onPronto:async(blob,info)=>{let th=null,dur=info.dur,w=info.w,h=info.h;try{const t=await thumbDeVideo(blob);th=t.thumb;if(t.dur)dur=t.dur;w=t.w||w;h=t.h||h}catch(e){}
+      await adicionarMidia(a,item,'video',blob,th,{mime:info.mime,w,h,dur})},
+    onCancelar(){},onErro(msg){state.midiaMsg=msg;refreshSheet()}});
+}
+/* ---------- visualizador de foto/vídeo ---------- */
+function abrirViewer(item,mid){
+  const a=state.cur;if(!a)return;const m=((insp(a).midia[item])||[]).find(x=>x.id===mid);if(!m)return;fecharViewer(true);
+  const el=document.createElement('div');el.className='vw';el.id='vw';el.dataset.item=item;el.dataset.mid=mid;el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Foto ou vídeo');
+  el.innerHTML=`<div class="vw-top"><span class="vw-t">${esc(ITENS[item]?ITENS[item].label:'')}</span>${a.exemplo?'':`<button class="ibtn claro" data-vwdel="1" aria-label="Excluir">${svg('trash')}</button>`}<button class="ibtn claro" data-vwfecha="1" aria-label="Fechar">${svg('close')}</button></div>
+    <div class="vw-body" id="vwBody"><span class="vw-msg">Carregando…</span></div>
+    <div class="vw-conf" id="vwConf" hidden><span>Excluir ${m.tipo==='video'?'este vídeo':'esta foto'}?</span><button class="btn sm danger" data-vwdelok="1">Excluir</button><button class="btn sm" data-vwdelno="1">Cancelar</button></div>`;
+  document.body.appendChild(el);pushHist('vw');
+  const put=u=>{const b=$('#vwBody');if(!b)return;b.innerHTML=m.tipo==='video'?`<video src="${u}" controls autoplay playsinline></video>`:`<img src="${u}" alt="">`};
+  const loc=localMidia[mid];if(loc)put(loc.f);
+  else if(m.p)assinar([m.p]).then(us=>{if(us[0])put(us[0]);else{const b=$('#vwBody');if(b)b.innerHTML='<span class="vw-msg">Não foi possível abrir. Verifique a conexão.</span>'}});
+  else{const b=$('#vwBody');if(b)b.innerHTML='<span class="vw-msg">Arquivo ainda não enviado e não está neste aparelho.</span>'}
+}
+function fecharViewer(viaHist){const el=$('#vw');if(!el)return;const v=el.querySelector('video');if(v)try{v.pause()}catch(e){}el.remove();if(!viaHist)popHist()}
+/* ---------- folha (abrir/fechar, botão voltar do celular) ---------- */
+function pushHist(t){try{history.pushState({dc:t},'')}catch(e){}}
+function popHist(){if(history.state&&history.state.dc){state.ignorarPop=(state.ignorarPop||0)+1;history.back()}}
+window.addEventListener('popstate',()=>{if(state.ignorarPop){state.ignorarPop--;return}if($('#vw')){fecharViewer(true);return}if(state.sheet)fecharFolha(true)});
+function abrirFolha(id){if(!ITENS[id]||!state.cur)return;state.sheet=id;state.shAnim=true;state.midiaMsg='';pushHist('sh');document.documentElement.classList.add('travado');refreshSheet();setTimeout(()=>{const b=$('.sh .ibtn');if(b)b.focus({preventScroll:true})},60)}
+function fecharFolha(viaHist){if(!state.sheet)return;const id=state.sheet;state.sheet=null;state.midiaMsg='';const el=$('.sh-bg');if(el)el.remove();document.documentElement.classList.remove('travado');refreshLinha(id);refreshCk();if(!viaHist)popHist();const r=$('#r_'+id+' .mais');if(r)r.focus({preventScroll:true})}
+function refreshSheet(){
+  const a=state.cur;let el=$('.sh-bg');if(!a||!state.sheet||state.step!=='checklist'||state.view!=='editor'){if(el)el.remove();return}
+  const sh=el&&el.querySelector('.sh');const sc=sh?sh.scrollTop:0;const ae=document.activeElement;
+  const foco=el&&ae&&el.contains(ae)&&ae.id?{id:ae.id,s:ae.selectionStart,e:ae.selectionEnd}:null;
+  const tmp=document.createElement('div');tmp.innerHTML=folha(a);const n=tmp.firstElementChild;
+  if(el)el.replaceWith(n);else root.appendChild(n);const s2=n.querySelector('.sh');if(s2)s2.scrollTop=sc;
+  if(foco){const f=document.getElementById(foco.id);if(f){f.focus({preventScroll:true});try{if(foco.s!=null)f.setSelectionRange(foco.s,foco.e)}catch(x){}}}
+  refreshLinha(state.sheet);refreshCk();hidratarMidia();
+}
+function refreshLinha(id){const a=state.cur;const row=$('#r_'+id);if(a&&row&&ITENS[id]){row.outerHTML=linhaItem(a,ITENS[id],reparos(a));hidratarMidia()}}
+function refreshCk(){const a=state.cur;if(!a||state.step!=='checklist')return;const sid=secAtual(a);const r=$('#sxRail');if(r)r.innerHTML=railHTML(a,sid);const h=$('#sxHead');if(h)h.innerHTML=cabecaSecao(a,SECAO[sid]);refreshProg()}
+function refreshProg(){const a=state.cur;const e=$('#edProg');if(!a||!e)return;const comp=completude(a);e.innerHTML=`<span class="bar"><i style="width:${comp}%"></i></span><span class="num">${comp}%</span>${ring(calcScore(a.answers))}`}
+function railNoCentro(){const r=$('#sxRail');const c=r&&r.querySelector('[aria-current="true"]');if(!c)return;const alvo=c.offsetLeft-(r.clientWidth-c.offsetWidth)/2;r.scrollLeft=Math.max(0,alvo)}
+function posRender(){if(state.view!=='editor')return;if(state.step==='checklist'){railNoCentro();initPads();if(state.sheet)document.documentElement.classList.add('travado')}hidratarMidia()}
+function irSecao(id){state.sec=id;state.sheet=null;document.documentElement.classList.remove('travado');renderEditor();const c=$('#ckx');if(c){const y=c.getBoundingClientRect().top+window.scrollY-64;window.scrollTo(0,Math.max(0,y))}}
+/* cliques do checklist (chamado pelo ouvinte geral); devolve true se tratou */
+function cliqueCk(d,a){
+  if(d.sec){irSecao(d.sec);return true}
+  if(d.secnav){const k=SECOES.findIndex(s=>s.id===secAtual(a))+Number(d.secnav);
+    if(k<0){state.step='historico';render();window.scrollTo(0,0);return true}
+    if(k>=SECOES.length){state.step='obd';render();window.scrollTo(0,0);return true}
+    irSecao(SECOES[k].id);return true}
+  if(d.resp){const it=ITENS[d.resp];const I=insp(a);const prev=I.resp[d.resp];
+    if(prev===d.v){delete I.resp[d.resp];if(I.auto[d.resp]){delete a.answers[d.resp];delete I.auto[d.resp]}}
+    else{I.resp[d.resp]=d.v;const cur=a.answers[d.resp];if(!cur||I.auto[d.resp]){a.answers[d.resp]=ruim(it,d.v)?'atencao':'ok';I.auto[d.resp]=1}}
+    marcaV2(a,d.resp);touch();if(state.sheet)refreshSheet();else{refreshLinha(d.resp);refreshCk()}return true}
+  if(d.ans){const cur=a.answers[d.ans];if(cur===d.v)delete a.answers[d.ans];else a.answers[d.ans]=d.v;if(a.inspecao&&a.inspecao.auto)delete a.inspecao.auto[d.ans];
+    marcaV2(a,d.ans);touch();if(state.sheet)refreshSheet();else{refreshLinha(d.ans);refreshCk()}return true}
+  if(d.allok){const s=SECAO[d.allok];if(!s)return true;s.itens.forEach(i=>{if(!i.q&&!a.answers[i.id]){a.answers[i.id]='ok';marcaV2(a,i.id)}});touch();renderEditor();return true}
+  if(d.mais){abrirFolha(d.mais);return true}
+  if(d.shfecha){fecharFolha();return true}
+  if(d.prazo){insp(a).prazo[d.prazo]=Number(d.v);touch();refreshSheet();return true}
+  if(d.grava){gravarVideo(d.grava);return true}
+  if(d.ver){const [it,mid]=d.ver.split('|');abrirViewer(it,mid);return true}
+  if(d.vwfecha){fecharViewer();return true}
+  if(d.vwdel){const c=$('#vwConf');if(c)c.hidden=false;return true}
+  if(d.vwdelno){const c=$('#vwConf');if(c)c.hidden=true;return true}
+  if(d.vwdelok){const el=$('#vw');if(!el)return true;const it=el.dataset.item,mid=el.dataset.mid;fecharViewer();apagarMidia(a,it,mid).then(()=>{if(state.sheet)refreshSheet();else refreshLinha(it)});toast('Excluído');return true}
+  if(d.assok){const P=pads[d.assok];const r=P&&exportarPad(P);if(!r){toast('Assine no quadro antes de salvar.');return true}
+    const inp=document.querySelector(`[data-assnome="${d.assok}"]`);const nome=String(inp?inp.value:(((state.assNome||{})[d.assok])??(d.assok==='aval'?state.perfil.responsavel||'':nomeDono(a)))).trim();if(state.assNome)delete state.assNome[d.assok];
+    insp(a).ass[d.assok]={img:r.img,w:r.w,h:r.h,nome,em:new Date().toISOString()};pads[d.assok]={tracos:[]};touch();renderEditor();toast('Assinatura salva');return true}
+  if(d.asslimpa){if(pads[d.asslimpa])pads[d.asslimpa].tracos=[];redesenharPad(d.asslimpa);const box=$(`[data-pad="${d.asslimpa}"]`);if(box)box.classList.remove('sujo');return true}
+  if(d.assapaga){delete insp(a).ass[d.assapaga];pads[d.assapaga]={tracos:[]};touch();renderEditor();return true}
+  if(d.irprep){state.step='checklist';state.sec='final';render();window.scrollTo(0,0);return true}
+  if(d.pzc){const it=ITENS[d.pzc];if(!it)return true;const st=a.answers[d.pzc];const at=prazoDe(a,it,st);const ord=[0,30,60,90];insp(a).prazo[d.pzc]=ord[(ord.indexOf(at)+1)%ord.length];touch();renderEditor();return true}
+  return false;
 }
 function prepPanel(a){
   const sel=(a.preparo||{}).sel||{};const r=reparos(a);
@@ -1198,14 +2855,17 @@ function stepOBD(a){
 }
 function stepReparos(a){
   const r=reparos(a);
+  const pzBtn=l=>`<button class="pill pz ${l.prazo===0?'bad':'warn'}" data-pzc="${l.item.id}" title="Toque para mudar o prazo">${l.prazo===0?'Agora':l.prazo+' dias'}</button>`;
   return `<div class="panel">
-    <div class="panel-head"><h3>Estimativa automática</h3><span class="hint">Atenção usa o valor médio; crítico usa o máximo da faixa</span></div>
+    <div class="panel-head"><h3>Estimativa automática</h3><span class="hint">Atenção usa o valor médio; Problema usa o máximo da faixa. Toque no prazo para mudar.</span></div>
     ${r.linhas.length?`<div>${r.linhas.map(l=>`<div class="rep">
-        <span class="pill ${l.st==='critico'?'bad':'warn'}">${l.st==='critico'?'Crítico':'Atenção'}</span>
-        <div style="min-width:0"><div>${esc(l.nome)}</div><div class="range">${esc(l.item.cat.label)} · ${esc(l.item.label)} · faixa ${brl(l.min)} a ${brl(l.max)}</div></div>
-        <div class="row" style="gap:6px;flex-wrap:nowrap">${l.editado?`<button class="btn ghost sm" data-resetov="${l.id}" title="Voltar ao valor padrão" aria-label="Voltar ao valor padrão">${ICON.reset}</button>`:''}
-          <div class="money ${l.editado?'edited':''}"><span>R$</span><input class="input" id="ov_${l.id}" data-ov="${l.id}" inputmode="numeric" value="${esc(fmtN(l.valor))}"></div></div>
-      </div>`).join('')}</div>`:`<p class="muted" style="margin:0">Os custos aparecem aqui sozinhos quando você marca itens como Atenção ou Crítico no checklist.</p>`}
+        <span class="row" style="gap:6px;flex-wrap:nowrap"><span class="pill ${l.tipo==='mp'?'':ST[l.st].cls}">${l.tipo==='mp'?'Pendente':ST[l.st].label}</span>${pzBtn(l)}</span>
+        <div style="min-width:0"><div>${esc(l.nome)}</div><div class="range">${esc(l.item.cat.label)} · ${esc(l.item.label)}${l.min!=null?` · faixa ${brl(l.min)} a ${brl(l.max)}`:l.tipo==='mp'?' · manutenção pendente':' · valor informado'}</div></div>
+        <div class="row" style="gap:6px;flex-wrap:nowrap">${l.editado&&l.tipo!=='livre'?`<button class="btn ghost sm" data-resetov="${l.id}" title="Voltar ao valor padrão" aria-label="Voltar ao valor padrão">${ICON.reset}</button>`:''}
+          <div class="money ${l.editado&&l.tipo!=='livre'?'edited':''}"><span>R$</span><input class="input" id="ov_${l.id}" data-ov="${l.id}" inputmode="numeric" value="${esc(fmtN(l.valor))}"></div></div>
+      </div>`).join('')}</div>
+      <div class="pz-tot" style="margin-top:12px">${PRAZOS.filter(([d])=>r.porPrazo[d]).map(([d])=>`<span>${d===0?'Para agora':'Em até '+d+' dias'}: <b class="num">${brl(r.porPrazo[d])}</b></span>`).join('')}</div>`
+     :`<p class="muted" style="margin:0">Os custos aparecem aqui sozinhos quando você marca itens como Atenção ou Problema no checklist, ou quando uma resposta do vendedor aponta manutenção pendente.</p>`}
   </div>
   <div class="panel">
     <div class="panel-head"><h3>Itens avulsos</h3><button class="btn sm" data-addex="1">${ICON.plus}Adicionar item</button></div>
@@ -1215,11 +2875,11 @@ function stepReparos(a){
         <button class="btn ghost sm" data-delex="${k}" aria-label="Remover item">×</button></div>`).join(''):'<p class="hint">Use para gastos fora do checklist: reparo apontado pelo scanner, despachante, documentação.</p>'}
   </div>
   <div class="panel">
-    <div class="panel-head"><h3>Preparação para revenda</h3><button class="btn ghost sm" data-step="checklist">Escolher itens</button></div>
+    <div class="panel-head"><h3>Preparação para revenda</h3><button class="btn ghost sm" data-irprep="1">Escolher itens</button></div>
     ${r.prep.length?r.prep.map(p=>`<div class="rep" style="grid-template-columns:minmax(0,1fr) auto">
         <div style="min-width:0"><div>${esc(p.nome)}</div><div class="range">Preço da sua tabela: ${brl(p.padrao)}</div></div>
         <div class="row" style="gap:6px;flex-wrap:nowrap">${p.editado?`<button class="btn ghost sm" data-resetpov="${p.id}" title="Voltar ao preço da tabela" aria-label="Voltar ao preço da tabela">${ICON.reset}</button>`:''}
-          <div class="money ${p.editado?'edited':''}"><span>R$</span><input class="input" id="pov_${p.id}" data-pov="${p.id}" inputmode="numeric" value="${esc(fmtN(p.valor))}"></div></div></div>`).join(''):'<p class="hint">Nenhum item de preparação marcado. Marque no fim do Checklist, ou deixe assim se o carro já está pronto para venda.</p>'}
+          <div class="money ${p.editado?'edited':''}"><span>R$</span><input class="input" id="pov_${p.id}" data-pov="${p.id}" inputmode="numeric" value="${esc(fmtN(p.valor))}"></div></div></div>`).join(''):'<p class="hint">Nenhum item de preparação marcado. Marque na última etapa do Checklist, ou deixe assim se o carro já está pronto para venda.</p>'}
     <div class="sum"><span class="lbl">Reparos ${brl(r.mecanico)} + preparação ${brl(r.prepTotal)}</span><b class="num" id="repTotal">${brl(r.total)}</b></div>
   </div>`;
 }
@@ -1262,21 +2922,24 @@ function stepNegocio(a){
 }
 function textoResumo(a){
   const p=calcScore(a.answers);const c=categoria(p);const n=negocio(a);const r=reparos(a);
-  const it=[...marcados(a,'critico').map(i=>'❌ '+i.label),...marcados(a,'atencao').map(i=>'⚠️ '+i.label)];
-  return `*Laudo de avaliação ${a.numero?'nº '+String(a.numero).padStart(4,'0'):''}*${state.perfil.nome?'\n'+state.perfil.nome:''}\n\n🚗 ${[a.marca,a.modelo,a.versao,a.ano].filter(Boolean).join(' ')}${a.placa?' · '+fmtPlaca(a.placa):''}${a.km?' · '+fmtN(a.km)+' km':''}\nNota: ${p??'—'}/100 (${c.label})\n${recFinal(a,c)}\n\n${it.length?it.join('\n'):'Nenhum item com problema.'}${(a.obd||[]).length?'\n\nCódigos OBD: '+a.obd.map(o=>o.code).join(', '):''}${a.historico||a.leilao?'\n\n*Histórico do veículo*\n'+linhasHistorico(a).filter(x=>x[2]!=='').map(([k,v,c])=>(c==='bad'?'🔴 ':c==='warn'?'🟡 ':'🟢 ')+k+': '+v).join('\n'):''}\n\nReparos estimados: ${brl(r.total)}${a.fipe?'\nFIPE: '+brl(a.fipe):''}${n.ok?'\nOferta máxima: '+brl(n.oferta):''}`;
+  const lin=(i,st)=>{const l=r.linhas.find(x=>x.item===i);return `${st==='critico'?'❌':'⚠️'} ${i.label}${l?` · ${brl(l.valor)}, ${pzTxt(l.prazo)}`:''}`};
+  const it=[...marcados(a,'critico').map(i=>lin(i,'critico')),...marcados(a,'atencao').map(i=>lin(i,'atencao'))];
+  const mm=Object.values((a.inspecao||{}).midia||{}).flat();const nf=mm.filter(m=>m.tipo!=='video').length,nv=mm.length-nf;const nm=mm.length;
+  return `*Laudo de avaliação ${a.numero?'nº '+String(a.numero).padStart(4,'0'):''}*${state.perfil.nome?'\n'+state.perfil.nome:''}\n\n🚗 ${[a.marca,a.modelo,a.versao,a.ano].filter(Boolean).join(' ')}${a.placa?' · '+fmtPlaca(a.placa):''}${a.km?' · '+fmtN(a.km)+' km':''}\nNota: ${p??'—'}/100 (${c.label})\n${recFinal(a,c)}\n\n${it.length?it.join('\n'):'Nenhum problema ou ponto de atenção.'}${(a.obd||[]).length?'\n\nCódigos OBD: '+a.obd.map(o=>o.code).join(', '):''}${a.historico||a.leilao?'\n\n*Histórico do veículo*\n'+linhasHistorico(a).filter(x=>x[2]!=='').map(([k,v,c])=>(c==='bad'?'🔴 ':c==='warn'?'🟡 ':'🟢 ')+k+': '+v).join('\n'):''}\n\nReparos estimados: ${brl(r.total)}${r.porPrazo[0]?` (para agora: ${brl(r.porPrazo[0])})`:''}${a.fipe?'\nFIPE: '+brl(a.fipe):''}${n.ok?'\nOferta máxima: '+brl(n.oferta):''}${nm?`\n📷 ${[nf?plural(nf,'foto','fotos'):'',nv?plural(nv,'vídeo','vídeos'):''].filter(Boolean).join(' e ')} no laudo`:''}`;
 }
 function stepLaudo(a){
   const p=calcScore(a.answers);const c=categoria(p);const n=negocio(a);const r=reparos(a);
-  const crit=marcados(a,'critico'),aten=marcados(a,'atencao');
-  const linha=(i,st)=>{const l=r.linhas.find(x=>x.id===i.id);return `<div class="find"><span class="pill ${st==='critico'?'bad':'warn'}">${ST[st].label}</span><span>${esc(i.label)}</span><span class="num faint small">${l?brl(l.valor):''}</span><span class="k">${esc(i.cat.label)}${(a.notes||{})[i.id]?' · '+esc(a.notes[i.id]):''}</span></div>`};
+  const crit=marcados(a,'critico'),aten=marcados(a,'atencao');const I=a.inspecao||{};
+  const linha=(i,st)=>{const l=r.linhas.find(x=>x.item===i);const ms=(I.midia||{})[i.id]||[];const rs=(I.resp||{})[i.id];
+    return `<div class="find"><span class="pill ${ST[st].cls}">${ST[st].label}</span><span>${esc(i.label)}${rs?` <span class="faint small">· ${RESP[rs]}</span>`:''}</span><span class="num faint small">${l?brl(l.valor):''}</span><span class="k">${esc(i.cat.label)}${l?' · '+pzTxt(l.prazo):''}${(a.notes||{})[i.id]?' · '+esc(a.notes[i.id]):''}</span>${ms.length?`<span class="k"><span class="mini">${ms.slice(0,6).map(m=>`<button class="mi" data-ver="${i.id}|${m.id}" aria-label="Ver ${m.tipo==='video'?'vídeo':'foto'}">${imgMidia(m)}${m.tipo==='video'?`<span class="mi-v">${svg('play')}</span>`:''}</button>`).join('')}</span></span>`:''}</div>`};
   return `<div class="report">
     <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
-      <div class="panel"><div class="panel-head"><h3>Pontos críticos e de atenção</h3><span class="faint small num">${marcados(a,'ok').length} itens OK</span></div>
-        ${crit.length+aten.length?crit.map(i=>linha(i,'critico')).join('')+aten.map(i=>linha(i,'atencao')).join(''):'<p class="muted" style="margin:0">Nenhum item crítico ou de atenção.</p>'}</div>
+      <div class="panel"><div class="panel-head"><h3>Problemas e pontos de atenção</h3><span class="faint small num">${plural(marcados(a,'ok').length,'item OK','itens OK')}</span></div>
+        ${crit.length+aten.length?crit.map(i=>linha(i,'critico')).join('')+aten.map(i=>linha(i,'atencao')).join(''):'<p class="muted" style="margin:0">Nenhum problema ou ponto de atenção.</p>'}</div>
       ${a.historico||a.leilao?`<div class="panel">${quadroHist(a)}</div>`:''}
       ${(a.obd||[]).length?`<div class="panel"><div class="panel-head"><h3>Códigos OBD</h3></div>${a.obd.map(o=>{const d=decodeOBD(o.code);return `<div class="find"><span class="mono">${esc(d.code)}</span><span>${esc(d.desc||o.ai?.descricao||'Código fora da base local')}</span><span></span>${o.nota?`<span class="k">${esc(o.nota)}</span>`:''}</div>`}).join('')}</div>`:''}
-      <div class="panel"><div class="panel-head"><h3>Resumo por sistema</h3></div><div class="cats">${CATEGORIAS.map(ct=>{const s=ct.itens.map(([id])=>(a.answers||{})[id]);const ok=s.filter(x=>x==='ok').length,at=s.filter(x=>x==='atencao').length,cr=s.filter(x=>x==='critico').length;
-        return `<div class="cat"><span>${ct.label}</span><span class="row" style="gap:6px">${cr?`<span class="pill bad">${cr} crítico</span>`:''}${at?`<span class="pill warn">${at} atenção</span>`:''}${ok?`<span class="pill ok">${ok} OK</span>`:''}${!ok&&!at&&!cr?'<span class="faint small">Não avaliado</span>':''}</span></div>`}).join('')}</div></div>
+      <div class="panel"><div class="panel-head"><h3>Resumo por etapa</h3></div><div class="cats">${SECOES.filter(s=>s.itens.length).map(ct=>{const t=secStats(a,ct);
+        return `<div class="cat"><span>${esc(ct.titulo)}</span><span class="row" style="gap:6px">${t.cr?`<span class="pill bad">${plural(t.cr,'problema','problemas')}</span>`:''}${t.at?`<span class="pill warn">${plural(t.at,'ponto de atenção','pontos de atenção')}</span>`:''}${t.ok?`<span class="pill ok">${plural(t.ok,'OK','OK')}</span>`:''}${!t.f?'<span class="faint small">Não avaliado</span>':''}</span></div>`}).join('')}</div></div>
       <div class="panel"><div class="field"><label for="f_obs">Observações do avaliador</label><textarea id="f_obs" class="input" data-f="observacoes" placeholder="Impressões do test-drive, histórico, pontos de negociação…">${esc(a.observacoes||'')}</textarea></div></div>
     </div>
     <aside class="report-side">
@@ -1288,7 +2951,7 @@ function stepLaudo(a){
           <dt>FIPE</dt><dd>${a.fipe?brl(a.fipe):'—'}</dd>
           ${n.aj?`<dt>FIPE ajustada</dt><dd>${brl(n.aj.ajustado)}</dd>`:''}
           <dt>Preço pedido</dt><dd>${n.pedido?brl(n.pedido):'—'}</dd>
-          <dt>Reparos</dt><dd>${brl(r.mecanico)}</dd>${r.prepTotal?`<dt>Preparação</dt><dd>${brl(r.prepTotal)}</dd>`:''}
+          <dt>Reparos</dt><dd>${brl(r.mecanico)}</dd>${r.porPrazo[0]&&r.porPrazo[0]!==r.mecanico?`<dt>Para agora</dt><dd>${brl(r.porPrazo[0])}</dd>`:''}${r.prepTotal?`<dt>Preparação</dt><dd>${brl(r.prepTotal)}</dd>`:''}
           ${n.ok&&n.pedido?`<dt>Resultado</dt><dd style="color:${n.liquido>=0?'var(--ok)':'var(--bad)'}">${n.liquido<0?'−':''}${brl(Math.abs(n.liquido))}</dd>`:''}
         </dl>
         <div style="width:100%;display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:12px"><span class="eyebrow">Oferta máxima</span><span style="font-family:var(--f-display);font-size:28px" class="num">${n.ok?brl(n.oferta):'—'}</span></div>
@@ -1324,7 +2987,7 @@ function registrarFontes(doc,id){
 const hexRgb=h=>{const m=/^#?([0-9a-f]{6})$/i.exec(h||'');if(!m)return[30,34,40];const n=parseInt(m[1],16);return[n>>16&255,n>>8&255,n&255]};
 const marcaCfg=()=>({logo_h:14,nome_ao_lado:true,wm:false,wm_tam:60,wm_op:7,...(state.perfil.marca||{})});
 
-function gerarPDF(a,k=1){
+function gerarPDF(a,k=1,ext={}){
   const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4'});
   const pf=state.perfil;const mc=marcaCfg();const FT=registrarFontes(doc,pf.fonte||'moderna');
   const W=210,M=16,BOTTOM=282;let y=16;
@@ -1381,23 +3044,28 @@ function gerarPDF(a,k=1){
       if(c==='bad')B('bold');doc.setTextColor(...COR[c||'']);doc.text(vl,M+66,y);B();y+=L(4.9)+(nl-1)*L(3.9)});
     doc.setFontSize(9);y+=L(4);
   }
-  sec('Resumo por sistema');
-  CATEGORIAS.forEach((ct,i)=>{const s=ct.itens.map(([id])=>(a.answers||{})[id]);const cr=s.filter(x=>x==='critico').length,at=s.filter(x=>x==='atencao').length,ok=s.filter(x=>x==='ok').length;
-    const colx=i%2?W/2+3:M;if(i%2===0&&i)y+=L(5.2);need(6);doc.setTextColor(...ink);doc.text(ct.label,colx,y);
-    const t=cr?[`${cr} crítico${at?' · '+at+' atenção':''}`,RED]:at?[`${at} atenção`,AMB]:ok?['OK',GRN]:['Não avaliado',gray];
-    doc.setTextColor(...t[1]);doc.text(t[0],colx+(W/2-M-7),y,{align:'right'})});
+  sec('Resumo por etapa');
+  SECOES.filter(s=>s.itens.length).forEach((ct,i)=>{const t=secStats(a,ct);
+    const colx=i%2?W/2+3:M;if(i%2===0&&i)y+=L(5.2);need(6);doc.setTextColor(...ink);doc.text(ct.titulo.split(':')[0],colx,y);
+    const tx=t.cr?[`${plural(t.cr,'problema','problemas')}${t.at?' · '+plural(t.at,'ponto de atenção','pontos de atenção'):''}`,RED]:t.at?[plural(t.at,'ponto de atenção','pontos de atenção'),AMB]:t.ok?['OK',GRN]:['Não avaliado',gray];
+    doc.setTextColor(...tx[1]);doc.text(tx[0],colx+(W/2-M-7),y,{align:'right'})});
   y+=L(9);
 
   const flag=[...marcados(a,'critico').map(i=>[i,'critico']),...marcados(a,'atencao').map(i=>[i,'atencao'])];
-  sec(`Pontos críticos e de atenção (${flag.length})`);
-  if(!flag.length){doc.setTextColor(...gray);doc.text('Nenhum item crítico ou de atenção.',M,y);y+=L(6.5)}
-  flag.forEach(([i,st])=>{const nota=(a.notes||{})[i.id];const nl=nota?doc.splitTextToSize(nota,100):[];need(L(6)+nl.length*L(4));const l=r.linhas.find(x=>x.id===i.id);
-    B('bold');doc.setFontSize(7);doc.setTextColor(...(st==='critico'?RED:AMB));doc.text(st==='critico'?'CRÍTICO':'ATENÇÃO',M,y);
-    B();doc.setFontSize(9);doc.setTextColor(...ink);doc.text(i.label,M+19,y);doc.setTextColor(...gray);doc.text(i.cat.label,M+124,y);doc.setTextColor(...ink);doc.text(l?brl(l.valor):'',W-M,y,{align:'right'});
-    if(nl.length){doc.setFontSize(8);doc.setTextColor(...gray);doc.text(nl,M+19,y+L(4));doc.setFontSize(9);y+=nl.length*L(4)}y+=L(5.8)});
+  sec(`Problemas e pontos de atenção (${flag.length})`);
+  if(!flag.length){doc.setTextColor(...gray);doc.text('Nenhum problema ou ponto de atenção.',M,y);y+=L(6.5)}
+  flag.forEach(([i,st])=>{const nota=(a.notes||{})[i.id];const l=r.linhas.find(x=>x.item===i);const rs=((a.inspecao||{}).resp||{})[i.id];
+    const det=[i.cat.label,rs?'resposta: '+RESP[rs].toLowerCase():'',l?(l.tipo==='mp'?'manutenção pendente, ':'')+pzTxt(l.prazo):'',nota||''].filter(Boolean).join(' · ');
+    doc.setFontSize(9);const tl=doc.splitTextToSize(i.label,W-2*M-19-28);doc.setFontSize(8);const dl=doc.splitTextToSize(det,W-2*M-19-28);
+    need(L(5.8)+(tl.length-1)*L(4)+dl.length*L(3.8));
+    B('bold');doc.setFontSize(7);doc.setTextColor(...(st==='critico'?RED:AMB));doc.text(st==='critico'?'PROBLEMA':'ATENÇÃO',M,y);
+    B();doc.setFontSize(9);doc.setTextColor(...ink);doc.text(tl,M+19,y);doc.text(l?brl(l.valor):'',W-M,y,{align:'right'});y+=(tl.length-1)*L(4);
+    if(dl.length){doc.setFontSize(8);doc.setTextColor(...gray);doc.text(dl,M+19,y+L(3.9));doc.setFontSize(9);y+=dl.length*L(3.8)}y+=L(5.8)});
   (a.extras||[]).forEach(e=>{need(7);B('bold');doc.setFontSize(7);doc.setTextColor(...gray);doc.text('AVULSO',M,y);B();doc.setFontSize(9);doc.setTextColor(...ink);doc.text(doc.splitTextToSize(String(e.desc||'—'),122)[0],M+19,y);doc.text(brl(e.valor),W-M,y,{align:'right'});y+=L(5.8)});
   r.prep.forEach(pp=>{need(7);B('bold');doc.setFontSize(7);doc.setTextColor(...gray);doc.text('PREPARO',M,y);B();doc.setFontSize(9);doc.setTextColor(...ink);doc.text(pp.nome,M+19,y);doc.text(brl(pp.valor),W-M,y,{align:'right'});y+=L(5.8)});
-  need(10);doc.setDrawColor(...line);doc.setLineWidth(.3);doc.line(W-M-62,y-L(2),W-M,y-L(2));y+=L(3);B('bold');doc.setTextColor(...ink);doc.text(r.prepTotal?'Reparos + preparação':'Reparos estimados',W-M-62,y);doc.text(brl(r.total),W-M,y,{align:'right'});B();y+=L(8);
+  need(10);doc.setDrawColor(...line);doc.setLineWidth(.3);doc.line(W-M-62,y-L(2),W-M,y-L(2));y+=L(3);B('bold');doc.setTextColor(...ink);doc.text(r.prepTotal?'Reparos + preparação':'Reparos estimados',W-M-62,y);doc.text(brl(r.total),W-M,y,{align:'right'});B();
+  const pzs=PRAZOS.filter(([d])=>r.porPrazo[d]);if(pzs.length>1||(pzs.length===1&&r.porPrazo[pzs[0][0]]!==r.mecanico)){y+=L(4.6);doc.setFontSize(7.8);doc.setTextColor(...gray);doc.text(pzs.map(([d])=>`${d===0?'para agora':'em até '+d+' dias'}: ${brl(r.porPrazo[d])}`).join('   ·   '),W-M,y,{align:'right'});doc.setFontSize(9)}
+  y+=L(8);
 
   if((a.obd||[]).length){sec('Códigos de falha (OBD)');a.obd.forEach(o=>{const d=decodeOBD(o.code);const ds=doc.splitTextToSize(d.desc||o.ai?.descricao||'Código fora da base local',125);const nt=o.nota?doc.splitTextToSize(o.nota,125):[];need(L(5)+(ds.length+nt.length)*L(4));
     doc.setFont('courier','bold');doc.setTextColor(...ink);doc.text(d.code,M,y);B();doc.text(ds,M+19,y);y+=ds.length*L(4);if(nt.length){doc.setTextColor(...gray);doc.setFontSize(8);doc.text(nt,M+19,y);doc.setFontSize(9);y+=nt.length*L(3.6)}y+=L(2.4)});y+=L(3)}
@@ -1413,18 +3081,72 @@ function gerarPDF(a,k=1){
   y+=half*L(5.4)+L(1);doc.setFontSize(9);
   if(n.ok){need(14);doc.setDrawColor(...ACC);doc.setLineWidth(.4);doc.line(M,y,W-M,y);y+=L(7.5);T();doc.setFontSize(14);doc.setTextColor(...ink);doc.text('Oferta máxima sugerida',M,y);doc.setTextColor(...ACC);doc.text(brl(n.oferta),W-M,y,{align:'right'});B();doc.setFontSize(9);y+=L(10)}
 
+  const fotos=ext.fotos||[];
+  if(fotos.length){sec(`Registro fotográfico (${fotos.length})`);
+    const cols=3,gap=4,cw=(W-2*M-gap*(cols-1))/cols,ch=cw*.72;
+    for(let j=0;j<fotos.length;j+=cols){need(ch+15);
+      fotos.slice(j,j+cols).forEach((f,c)=>{const x=M+c*(cw+gap);B();doc.setFontSize(7.4);const lt=doc.splitTextToSize(f.label,cw-4).slice(0,2);doc.setFillColor(240,241,243);doc.rect(x,y,cw,ch,'F');
+        if(f.data){const ar=f.w&&f.h?f.w/f.h:4/3;let iw=cw,ih=cw/ar;if(ih>ch){ih=ch;iw=ch*ar}try{doc.addImage(f.data,/^data:image\/png/.test(f.data)?'PNG':'JPEG',x+(cw-iw)/2,y+(ch-ih)/2,iw,ih,'f_'+f.id,'FAST')}catch(e){}}
+        if(f.tipo==='video'){const cx=x+cw/2,cy=y+ch/2;doc.saveGraphicsState();doc.setGState(new doc.GState({opacity:.5}));doc.setFillColor(0,0,0);doc.circle(cx,cy,6,'F');doc.restoreGraphicsState();doc.setFillColor(255,255,255);doc.triangle(cx-2,cy-3.3,cx-2,cy+3.3,cx+3.6,cy,'F');if(f.link)doc.link(x,y,cw,ch,{url:f.link});
+          if(f.qr){const qs=Math.min(17,ch*.46);if(!desenharQR(doc,f.qr,x+cw-qs-1.5,y+ch-qs-1.5,qs))f.qr=null}}
+        doc.setFillColor(...(f.st==='critico'?RED:f.st==='atencao'?AMB:f.st==='ok'?GRN:gray));doc.circle(x+1.1,y+ch+3.3,.9,'F');
+        B();doc.setFontSize(7.4);doc.setTextColor(...ink);doc.text(lt,x+3,y+ch+4.1);
+        doc.setFontSize(6.8);doc.setTextColor(...gray);doc.text(doc.splitTextToSize(f.tipo==='video'?(f.qr?'Vídeo · aponte a câmera para o QR code':f.link?'Vídeo · toque para assistir (link de 30 dias)':'Vídeo (disponível no app)'):f.cat,cw-4)[0],x+3,y+ch+4.1+lt.length*3.2+.4)});
+      y+=ch+14.5}
+    doc.setFontSize(9);y+=L(2)}
+
   if(a.observacoes){const tx=doc.splitTextToSize(a.observacoes,W-2*M);need(L(14)+Math.min(3,tx.length)*L(4.2));sec('Observações do avaliador');tx.forEach(ln=>{need(L(4.2));doc.setTextColor(...ink);doc.setFontSize(9);doc.text(ln,M,y);y+=L(4.2)});y+=L(3)}
 
   // assinaturas logo após o conteúdo
-  need(L(22));y+=L(14);doc.setDrawColor(...gray);doc.setLineWidth(.2);doc.line(M,y,M+75,y);doc.line(W-M-75,y,W-M,y);B();doc.setFontSize(7.8);doc.setTextColor(...gray);
-  doc.text(pf.responsavel?'Avaliador: '+pf.responsavel:'Avaliador responsável',M,y+4.2);doc.text('Ciente',W-M-75,y+4.2);
+  const ass=ext.ass||{};const sa=ass.aval&&ass.aval.img?ass.aval:null,sc=ass.ciente&&ass.ciente.img?ass.ciente:null;
+  need(L(22)+(sa||sc?16:0));y+=L(14)+(sa||sc?14:0);
+  const assImg=(s,x)=>{if(!s)return;const ar=s.w&&s.h?s.w/s.h:3;let h=15,w=h*ar;if(w>72){w=72;h=w/ar}try{doc.addImage(s.img,'PNG',x+(75-w)/2,y-h-1,w,h,undefined,'FAST')}catch(e){}};
+  assImg(sa,M);assImg(sc,W-M-75);
+  doc.setDrawColor(...gray);doc.setLineWidth(.2);doc.line(M,y,M+75,y);doc.line(W-M-75,y,W-M,y);B();doc.setFontSize(7.8);doc.setTextColor(...gray);
+  const nAval=(sa&&sa.nome)||pf.responsavel;const nDono=(sc&&sc.nome)||nomeDono(a);const um=t=>doc.splitTextToSize(t,75)[0];
+  doc.text(um(nAval?'Avaliador: '+nAval:'Avaliador responsável'),M,y+4.2);doc.text(um(nDono?'Dono do carro: '+nDono:'Dono do carro'),W-M-75,y+4.2);
+  doc.setFontSize(6.8);if(sa)doc.text('Assinado em '+dt(sa.em),M,y+7.6);doc.text(sc?'Ciente do resultado · assinado em '+dt(sc.em):'Ciente do resultado desta vistoria',W-M-75,y+7.6);
   const tp=doc.getNumberOfPages();for(let i=1;i<=tp;i++){doc.setPage(i);B();doc.setFontSize(6.8);doc.setTextColor(...gray);doc.text(`${pf.nome?pf.nome+' · ':''}valores de reparo são estimativas de mercado${tp>1?` · página ${i} de ${tp}`:''}`,W/2,291,{align:'center'})}
   return doc;
 }
+/* QR code dos vídeos: link curto (função "video" no Supabase) que não expira enquanto o vídeo existir */
+let qrLib=null;
+function carregarQR(){if(window.qrcode)return Promise.resolve(true);if(qrLib)return qrLib;
+  qrLib=new Promise(res=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';s.onload=()=>res(!!window.qrcode);s.onerror=()=>{qrLib=null;res(false)};document.head.appendChild(s)});return qrLib}
+function codigoCurto(){const A='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';const r=new Uint32Array(12);crypto.getRandomValues(r);return Array.from(r,x=>A[x%A.length]).join('')}
+const linkVideo=c=>`${SUPA_URL}/functions/v1/video?c=${c}`;
+function desenharQR(doc,txt,x,y,t){if(!window.qrcode)return false;let q;try{q=qrcode(0,'M');q.addData(txt);q.make()}catch(e){return false}
+  const n=q.getModuleCount(),mg=2,u=t/(n+2*mg);doc.setFillColor(255,255,255);doc.rect(x,y,t,t,'F');doc.setFillColor(0,0,0);
+  for(let r=0;r<n;r++){let c=0;while(c<n){if(q.isDark(r,c)){let e=c;while(e+1<n&&q.isDark(r,e+1))e++;doc.rect(x+(mg+c)*u,y+(mg+r)*u,(e-c+1)*u,u*1.04,'F');c=e+1}else c++}}
+  return true}
+const blobDataURL=b=>new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=()=>rej(fr.error);fr.readAsDataURL(b)});
+const dimImagem=src=>new Promise(res=>{const im=new Image();im.onload=()=>res({w:im.naturalWidth,h:im.naturalHeight});im.onerror=()=>res({w:0,h:0});im.src=src});
+async function fotosPDF(a){
+  const I=a.inspecao||{};const ord={critico:0,atencao:1,ok:2,na:3};const lista=[];
+  Object.entries(I.midia||{}).forEach(([id,ms])=>{const i=ITENS[id];if(!i)return;const st=(a.answers||{})[id]||'';(ms||[]).forEach(m=>lista.push({m,i,st}))});
+  lista.sort((x,y)=>(ord[x.st]??4)-(ord[y.st]??4));const sel=lista.slice(0,24);if(!sel.length)return[];
+  await assinar(sel.map(x=>x.m.t).filter(Boolean));
+  const links={},qrs={};const vsel=sel.filter(x=>x.m.tipo==='video'&&x.m.p);
+  if(vsel.length&&store.sb&&store.user&&!a.exemplo){
+    const temQR=await carregarQR();let mudou=false;
+    for(const {m} of vsel){
+      if(!m.qr){const code=codigoCurto();try{const {error}=await store.sb.from('midia_links').insert({code,path:m.p});if(!error){m.qr=code;mudou=true}}catch(e){}}
+      if(m.qr){links[m.p]=linkVideo(m.qr);if(temQR)qrs[m.p]=links[m.p]}}
+    if(mudou)persistir(a);
+    const semLink=vsel.map(x=>x.m.p).filter(pt=>!links[pt]);
+    if(semLink.length){try{const {data}=await store.sb.storage.from(MIDIA_BUCKET).createSignedUrls(semLink,2592000);(data||[]).forEach(d=>{const u=d.signedUrl||d.signedURL;if(u&&d.path)links[d.path]=u})}catch(e){}}}
+  const out=[];
+  for(const {m,i,st} of sel){const src=(localMidia[m.id]&&localMidia[m.id].t)||(m.t&&urlCache[m.t]?urlCache[m.t].url:null);let data=null,w=m.w,h=m.h;
+    if(src){try{const r=await fetch(src);if(r.ok){data=await blobDataURL(await r.blob());const d=await dimImagem(data);if(d.w){w=d.w;h=d.h}}}catch(e){}}
+    out.push({id:m.id,tipo:m.tipo,data,w,h,label:i.label,cat:i.cat.label,st,link:m.p?links[m.p]||null:null,qr:m.p?qrs[m.p]||null:null})}
+  return out;
+}
 async function montarPDF(a){
   await carregarFontes(state.perfil.fonte||'moderna');
-  let doc=gerarPDF(a,1);
-  if(doc.getNumberOfPages()>1){for(const k of [.9,.82,.74]){const d2=gerarPDF(a,k);if(d2.getNumberOfPages()<doc.getNumberOfPages()){doc=d2;break}}}
+  let fotos=[];try{fotos=await fotosPDF(a)}catch(e){}
+  const ext={fotos,ass:(a.inspecao||{}).ass||{}};
+  let doc=gerarPDF(a,1,ext);
+  if(doc.getNumberOfPages()>1){for(const k of [.9,.82,.74]){const d2=gerarPDF(a,k,ext);if(d2.getNumberOfPages()<doc.getNumberOfPages()){doc=d2;break}}}
   return doc;
 }
 async function baixarPDF(){
@@ -1526,16 +3248,15 @@ function abrir(id){
   flushSave();
   if(id==='exemplo'){state.cur=exemplo();state.step='laudo'}
   else{const x=state.list.find(i=>i.id===id);if(!x)return;state.cur=JSON.parse(JSON.stringify(x));state.step=x.status==='concluido'?'laudo':'veiculo'}
-  state.view='editor';state.saving=state.cur.exemplo?'':'Salvo';state.confirmDel=false;state.fipe=null;state.placa=null;state.hteste=null;state.hconf=null;state.herr=null;render();window.scrollTo(0,0);
+  state.view='editor';state.sec=null;state.sheet=null;document.documentElement.classList.remove('travado');state.saving=state.cur.exemplo?'':'Salvo';state.confirmDel=false;state.fipe=null;state.placa=null;state.hteste=null;state.hconf=null;state.herr=null;render();window.scrollTo(0,0);
 }
 document.addEventListener('click',async e=>{
+  if(e.target&&e.target.dataset&&e.target.dataset.shbg){fecharFolha();return}
   const b=e.target.closest('button,[data-open]');if(!b)return;const d=b.dataset;const a=state.cur;
-  if(d.nav){e.preventDefault();flushSave();if(d.nav==='nova'){state.cur=nova();state.view='editor';state.step='veiculo';state.saving='';state.confirmDel=false;state.fipe=null;state.placa=null;state.hteste=null;state.hconf=null;state.herr=null}else state.view=d.nav;render();window.scrollTo(0,0);return}
+  if(d.nav){e.preventDefault();flushSave();state.sheet=null;document.documentElement.classList.remove('travado');if(d.nav==='nova'){state.cur=nova();state.sec=null;state.view='editor';state.step='veiculo';state.saving='';state.confirmDel=false;state.fipe=null;state.placa=null;state.hteste=null;state.hconf=null;state.herr=null}else state.view=d.nav;render();window.scrollTo(0,0);return}
   if(d.open){abrir(d.open);return}
-  if(d.step){state.step=d.step;state.confirmDel=false;render();window.scrollTo(0,0);return}
-  if(d.ans){const cur=a.answers[d.ans];if(cur===d.v)delete a.answers[d.ans];else a.answers[d.ans]=d.v;touch();renderEditor();
-    if(d.v==='atencao'||d.v==='critico'){const n=$('#n_'+d.ans);if(n&&!n.value)n.focus({preventScroll:true})}return}
-  if(d.allok){const c=CATEGORIAS.find(x=>x.id===d.allok);c.itens.forEach(([id])=>{if(!a.answers[id])a.answers[id]='ok'});touch();renderEditor();return}
+  if(d.step){state.step=d.step;state.confirmDel=false;state.sheet=null;document.documentElement.classList.remove('travado');render();window.scrollTo(0,0);return}
+  if(state.view==='editor'&&a&&cliqueCk(d,a))return;
   if(d.resetov){delete a.repair_overrides[d.resetov];touch();renderEditor();return}
   if(d.prep){a.preparo=a.preparo||{sel:{},ov:{}};a.preparo.sel=a.preparo.sel||{};a.preparo.sel[d.prep]=!a.preparo.sel[d.prep];if(!a.preparo.sel[d.prep])delete a.preparo.sel[d.prep];touch();renderEditor();return}
   if(d.prepall){a.preparo=a.preparo||{sel:{},ov:{}};a.preparo.sel={};if(d.prepall==='tudo')PREP.filter(p=>p.id!=='vitrificacao').forEach(p=>a.preparo.sel[p.id]=true);touch();renderEditor();toast(d.prepall==='tudo'?'Pacote completo marcado (sem vitrificação)':'Preparação zerada');return}
@@ -1572,7 +3293,7 @@ document.addEventListener('click',async e=>{
   if(act==='reabrir'){a.status='em_andamento';touch();renderEditor()}
   if(act==='del'){state.confirmDel=true;renderEditor()}
   if(act==='delno'){state.confirmDel=false;renderEditor()}
-  if(act==='delok'){try{await api.remove(a.id);state.list=state.list.filter(x=>x.id!==a.id);state.cur=null;state.view='hist';render();toast('Avaliação excluída')}catch(err){toast('Não foi possível excluir. Tente de novo.')}}
+  if(act==='delok'){try{await api.remove(a.id);apagarMidiasDa(a);state.list=state.list.filter(x=>x.id!==a.id);state.cur=null;state.view='hist';render();toast('Avaliação excluída')}catch(err){toast('Não foi possível excluir. Tente de novo.')}}
   if(act==='authswap'){state.authMode=state.authMode==='entrar'?'criar':'entrar';state.authMsg='';render()}
   if(act==='sair'){flushSave();await fila;await store.sb.auth.signOut();store.user=null;state.list=[];state.loaded=false;state.cur=null;state.view='home';state.perfil={};state.q='';aplicarFonte();render()}
 });
@@ -1591,11 +3312,12 @@ document.addEventListener('input',e=>{
     if(f==='placa'){v=fmtPlaca(v);el.value=v;const bt=$('[data-act="placa"]');if(bt)bt.disabled=!/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(v)||!!(state.placa&&state.placa.busy)}
     if(f==='km'||f==='fipe'){v=num(v);if(f==='fipe'){a.fipe_fonte=v?'manual':'';a.fipe_ref='';a.fipe_hist=null}}
     a[f]=v;if(['placa','marca','modelo','ano'].includes(f))refreshHead();touch();return}
-  if(el.dataset.note){a.notes[el.dataset.note]=el.value;touch();return}
+  if(el.dataset.note){a.notes=a.notes||{};a.notes[el.dataset.note]=el.value;marcaV2(a,el.dataset.note);touch();return}
+  if(el.dataset.assnome){const k=el.dataset.assnome;const I=insp(a);if(I.ass[k]&&I.ass[k].img){I.ass[k].nome=el.value;touch()}else state.assNome[k]=el.value;return}
   if(el.dataset.obdnote!=null){a.obd[+el.dataset.obdnote].nota=el.value;touch();return}
   if(el.dataset.fd){const f=el.dataset.fd;a[f]=/^preco/.test(f)?(el.value===''?null:num(el.value)):(el.value||null);const o=$('#resOut');if(o)o.innerHTML=resultadoOut(a);touch();return}
   if(el.dataset.pov){a.preparo=a.preparo||{sel:{},ov:{}};a.preparo.ov=a.preparo.ov||{};if(el.value==='')delete a.preparo.ov[el.dataset.pov];else a.preparo.ov[el.dataset.pov]=num(el.value);refreshReparos();touch();return}
-  if(el.dataset.ov){a.repair_overrides[el.dataset.ov]=el.value===''?null:num(el.value);if(el.value==='')delete a.repair_overrides[el.dataset.ov];refreshReparos();touch();return}
+  if(el.dataset.ov){a.repair_overrides=a.repair_overrides||{};a.repair_overrides[el.dataset.ov]=el.value===''?null:num(el.value);if(el.value==='')delete a.repair_overrides[el.dataset.ov];refreshReparos();touch();return}
   if(el.dataset.ex){const [k,f]=el.dataset.ex.split('|');a.extras[+k][f]=f==='valor'?num(el.value):el.value;refreshReparos();touch();return}
   if(el.dataset.fin){a.financeiro=a.financeiro||{};a.financeiro[el.dataset.fin]=el.value===''?'':num(el.value);refreshNegocio();touch();return}
 });
@@ -1606,17 +3328,18 @@ document.addEventListener('change',async e=>{
     try{const r=await processarLogo(el.files[0]);state.perfil.logo=r.src;state.perfil.marca={...marcaCfg(),lw:r.w,lh:r.h};render();salvarPerfilDepois();
       const m2=$('#logoMsg');if(m2&&r.claro){m2.textContent='Atenção: seu logo é muito claro e pode sumir no papel branco. Se tiver a versão escura, envie ela.';m2.style.color='var(--warn)'}}
     catch(err){const m3=$('#logoMsg');if(m3){m3.textContent=err.message;m3.style.color='var(--bad)'}}return}
+  if(el.dataset.up&&el.files&&el.files.length&&a){const files=[...el.files];el.value='';processarArquivos(el.dataset.up,files);return}
   if(el.tagName==='SELECT'&&el.dataset.f){a[el.dataset.f]=el.value;refreshHead();touch();return}
   if(el.dataset.fp==='marca'&&el.value)fipeModelos(el.value);
   if(el.dataset.fp==='modelo'&&el.value)fipeAnos(el.value);
   if(el.dataset.fp==='ano'&&el.value)fipeValor(el.value);
-  if(el.dataset.f==='km'||el.dataset.km==='km_ano'||el.dataset.f==='fipe'||el.dataset.fin||(el.dataset.fd&&/^preco/.test(el.dataset.fd))||el.dataset.ov||el.dataset.pf==='lucro_padrao'||(el.dataset.ex&&el.dataset.ex.endsWith('valor'))){if(el.value)el.value=fmtN(el.value)}
+  if(el.dataset.f==='km'||el.dataset.km==='km_ano'||el.dataset.f==='fipe'||el.dataset.fin||(el.dataset.ov&&el.id==='shC')||(el.dataset.fd&&/^preco/.test(el.dataset.fd))||el.dataset.ov||el.dataset.pf==='lucro_padrao'||(el.dataset.ex&&el.dataset.ex.endsWith('valor'))){if(el.value)el.value=fmtN(el.value)}
 });
 document.addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target;
   if(f.id==='formStart'){flushSave();const i=$('#startPlaca');const pl=fmtPlaca(i.value);
     if(!/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(pl)){toast('Placa inválida. Use o formato ABC1D23 ou ABC1234.');i.focus();return}
-    state.cur=nova();state.cur.placa=pl;state.view='editor';state.step='veiculo';state.saving='';state.confirmDel=false;state.fipe=null;state.placa=null;state.hteste=null;state.hconf=null;state.herr=null;
+    state.cur=nova();state.cur.placa=pl;state.sec=null;state.sheet=null;state.view='editor';state.step='veiculo';state.saving='';state.confirmDel=false;state.fipe=null;state.placa=null;state.hteste=null;state.hconf=null;state.herr=null;
     render();window.scrollTo(0,0);if(store.mode==='supabase')buscarPlaca(false);else touch();return}
   if(f.id==='formOBD'){const i=$('#obdIn');const c=i.value.trim().toUpperCase();const m=$('#obdMsg');
     if(!/^[PBCU][0-3][0-9A-F]{3}$/.test(c)){m.textContent='Formato inválido. Use P, B, C ou U seguido de 4 caracteres, como P0300.';m.style.color='var(--bad)';return}
@@ -1631,7 +3354,9 @@ document.addEventListener('submit',async e=>{
 async function carregar(){
   try{const [l,p]=await Promise.all([api.list(),api.getPerfil()]);state.list=l;state.perfil=p||{}}catch(e){toast('Não foi possível carregar os dados.')}
   aplicarFonte();
-  state.loaded=true;render();
+  state.loaded=true;render();carregarPendentes();
 }
+document.addEventListener('keydown',e=>{if(e.key!=='Escape'||document.querySelector('.gv-root'))return;if($('#vw')){fecharViewer();return}if(state.sheet)fecharFolha()});
+window.addEventListener('online',()=>enviarPendentes());
 (async()=>{aplicarFonte();render();await initStore();render();if(store.mode!=='supabase'||store.user)await carregar()})();
 </script>
